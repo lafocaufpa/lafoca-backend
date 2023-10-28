@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.UserDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.PhotoInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,19 +67,24 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-//    @PostMapping(value = "{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<Void> addPhoto(@RequestPart PhotoInputDto photo, @PathVariable Long userId) throws IOException {
-//
-//        final User user = userService.read(userId);
-//
-//        String originalFilename = user.getUserId() + "_" + user.getName() + Objects.requireNonNull(photo.getPhoto().getOriginalFilename()).substring(photo.getPhoto().getOriginalFilename().lastIndexOf("."));
-//
-//        photo.setFileName(originalFilename);
-//        photo.setPhotoId(userId);
-//
-//
-//        return ResponseEntity.noContent().build();
-//
-//    }
+    @PostMapping(value = "{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> addPhoto(PhotoInputDto photo, @PathVariable Long userId) throws IOException {
+
+        final User user = userService.read(userId);
+
+        String originalFilename = user.getUserId() + "_" + user.getName() + Objects.requireNonNull(photo.getPhoto().getOriginalFilename()).substring(photo.getPhoto().getOriginalFilename().lastIndexOf("."));
+
+        final Path path = Path.of("src/resources/photos/", String.valueOf(userId));
+        final Path resolve = path.resolve(originalFilename);
+
+        if(!path.toFile().exists()){
+            path.toFile().mkdirs();
+        }
+
+        photo.setFileName(originalFilename);
+        photo.getPhoto().transferTo(resolve);
+        return ResponseEntity.noContent().build();
+
+    }
 
 }
