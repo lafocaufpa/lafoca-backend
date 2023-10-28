@@ -8,12 +8,12 @@ import javax.persistence.*;
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Role {
+public class FunctionStudent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long roleId;
+    private Long functionStudentId;
 
     @Column(nullable = false)
     private String name;
@@ -22,6 +22,6 @@ public class Role {
     private String description;
 
     @OneToOne
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private Student student;
 }

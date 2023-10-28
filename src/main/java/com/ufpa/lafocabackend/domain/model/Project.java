@@ -28,7 +28,7 @@ public class Project {
     private String status;
 
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private User user;
 
 }

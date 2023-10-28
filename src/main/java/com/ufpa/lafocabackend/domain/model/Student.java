@@ -30,4 +30,7 @@ public class Student {
     @Column(columnDefinition = "datetime", nullable = false)
     private OffsetDateTime dateRegister;
 
+    @OneToOne
+    @JoinColumn(name = "photo_id")
+    private Photo photo;
 }

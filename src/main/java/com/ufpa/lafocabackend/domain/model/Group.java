@@ -10,6 +10,7 @@ import java.util.Set;
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "access_group")
 public class Group {
 
     @Id

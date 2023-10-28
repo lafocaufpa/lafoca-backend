@@ -17,10 +17,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id;
+    private Long userId;
 
     @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false)
     private String password;
@@ -34,6 +37,10 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> groups = new HashSet<>();
+
+    @OneToOne
+    @JoinColumn(name = "photo_id")
+    private Photo photo;
 
     public Boolean passwordIsEquals(String password){
         return this.password.equals(password);

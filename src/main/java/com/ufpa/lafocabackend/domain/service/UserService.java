@@ -2,9 +2,12 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,20 +18,51 @@ public class UserService {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-//
-//    @Transactional
-//    public User save(User user) {
-//        userRepository.detach(user); /*Antes de chamar o findbyEmail o SDJPA faz o commit dos objetos gerenciados
-//        por isso é necessário desanexar do contexto de persistencia, pois vai adicionar no bd um user com o mesmo
-//        email*/
-//
-//        final Optional<User> usuarioExistente = userRepository.findByEmail(user.getEmail());
-//
-//        /*Se um user vindo do banco com o mesmo email for diferente do user vindo da requisição, cai no if */
-//        if(usuarioExistente.isPresent() && !usuarioExistente.get().equals(user)){
-//            throw new NegocioException(String.format(ErrorMessage.EMAIL_JA_CADASTRADO.get(), user.getEmail()));
-//        }
-//        user.setSenha(passwordEncoder.encode(user.getSenha()));
-//        return userRepository.save(user);
-//    }
+
+    @Transactional
+    public User save(User user) {
+        /*userRepository.detach(user); Antes de chamar o findbyEmail o SDJPA faz o commit dos objetos gerenciados
+        por isso é necessário desanexar do contexto de persistencia, pois vai adicionar no bd um user com o mesmo
+        email*/
+
+        final Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+
+        /*Se um user vindo do banco com o mesmo email for diferente do user vindo da requisição, cai no if */
+        if(existingUser.isPresent() && !existingUser.get().equals(user)){
+            throw new RuntimeException("User already registered");
+        }
+        return userRepository.save(user);
+    }
+
+    public List<User> list(){
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public User update(User user){
+        return save(user);
+    }
+
+    @Transactional
+    public void delete(Long userId){
+
+        try {
+            userRepository.deleteById(userId);
+            userRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Entity in use: id " + userId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new RuntimeException("User not found: id " + userId);
+        }
+
+    }
+
+    private User getOrFail(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: id " + userId));
+    }
+
+    public User read(Long userId) {
+        return getOrFail(userId);
+    }
 }
