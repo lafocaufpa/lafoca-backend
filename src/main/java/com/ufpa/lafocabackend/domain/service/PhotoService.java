@@ -21,8 +21,9 @@ public class PhotoService {
     @Transactional
     public Photo save (Photo photo, InputStream inputStream ){
 
-        PhotoStorageService.newPhoto newPhoto = PhotoStorageService.newPhoto.
-                builder().fileName(photo.getFileName())
+        PhotoStorageService.newPhoto newPhoto = PhotoStorageService.newPhoto.builder()
+                .fileName(photo.getFileName())
+                .id(photo.getPhotoId())
                 .inputStream(inputStream)
                 .build();
         final Photo photoSaved = photoRepository.save(photo);

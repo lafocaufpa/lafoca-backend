@@ -17,7 +17,7 @@ public class LocalPhotoStorageService implements PhotoStorageService {
     @Override
     public void armazenar(newPhoto newPhoto) {
 
-        Path path = getFilePath(newPhoto.getFileName());
+        Path path = getFilePath(newPhoto.getId(), newPhoto.getFileName());
 
         try {
             FileCopyUtils.copy(newPhoto.getInputStream(), Files.newOutputStream(path));
@@ -26,12 +26,13 @@ public class LocalPhotoStorageService implements PhotoStorageService {
         }
     }
 
-    private Path getFilePath (String fileName){
+    private Path getFilePath (Long id, String fileName){
 
-        if(!localPath.toFile().exists()){
-            localPath.toFile().mkdirs();
+        final Path resolve = localPath.resolve(String.valueOf(id));
+        if(!resolve.toFile().exists()){
+            resolve.toFile().mkdirs();
         }
 
-        return localPath.resolve(fileName);
+        return resolve.resolve(fileName);
     }
 }

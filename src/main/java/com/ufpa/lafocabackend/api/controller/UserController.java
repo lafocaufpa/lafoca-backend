@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> atualizar(@RequestBody UserDtoInput userDtoInput, @PathVariable Long userId) {
+    public ResponseEntity<UserDto> update (@RequestBody UserDtoInput userDtoInput, @PathVariable Long userId) {
 
         final User existingUser = userService.read(userId);
         modelMapper.map(userDtoInput, existingUser);

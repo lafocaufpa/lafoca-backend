@@ -16,6 +16,7 @@ public interface PhotoStorageService {
     @Builder
     class newPhoto {
 
+        private Long id;
         private String fileName;
         private InputStream inputStream;
     }
