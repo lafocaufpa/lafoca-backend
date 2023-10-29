@@ -17,4 +17,10 @@ public class Photo {
     @Column(nullable = false)
     private String fileName;
 
+    @Column(nullable = false)
+    private Long size;
+    
+    @Column(nullable = false)
+    private String contentType;
+
 }
