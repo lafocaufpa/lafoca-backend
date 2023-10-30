@@ -20,7 +20,6 @@ public class News {
     @Column(nullable = false)
     private String tittle;
     
-    @Column(nullable = false)
     private String description;
 
     @CreationTimestamp
@@ -29,4 +28,19 @@ public class News {
     
     @Column(nullable = false)
     private String tags;
+
+    @Column(nullable = false)
+    private String slug;
+
+    @Column(nullable = false)
+    private String content;
+
+    @OneToOne
+    private User user;
+
+    public void createSlug(){
+
+        if(this.tittle != null)
+            this.slug = this.tittle.replaceAll("\\s", "-");
+    }
 }

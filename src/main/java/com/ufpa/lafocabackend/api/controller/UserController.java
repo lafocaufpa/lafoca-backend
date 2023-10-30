@@ -9,22 +9,18 @@ import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.service.PhotoService;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-
 
     private final UserService userService;
     private final ModelMapper modelMapper;
@@ -57,8 +53,6 @@ public class UserController {
     public ResponseEntity<UserDto> read(@PathVariable Long userId) {
 
         final User user = userService.read(userId);
-
-
 
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
@@ -99,7 +93,7 @@ public class UserController {
         photoUser.setSize(photoFile.getSize());
         photoUser.setContentType(photoFile.getContentType());
 
-//        final Path path = Path.of("src/main/resources/photos/", String.valueOf(userId));
+//        final     Path path = Path.of("src/main/resources/photos/", String.valueOf(userId));
 //        final Path resolve = path.resolve(originalFilename);
 
 //        if(!path.toFile().exists()){
