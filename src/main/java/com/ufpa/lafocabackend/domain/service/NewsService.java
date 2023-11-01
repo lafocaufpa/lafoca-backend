@@ -48,12 +48,12 @@ public class NewsService {
 
     }
 
-    private News getOrFail(Long newsId) {
-        return newsRepository.findById(newsId)
-                .orElseThrow(() -> new RuntimeException("News not found: id " + newsId));
+    private News getOrFail(String newsSlug) {
+        return newsRepository.findBySlug(newsSlug)
+                .orElseThrow(() -> new RuntimeException("News not found: " + newsSlug));
     }
 
-    public News read(Long newsId) {
-        return getOrFail(newsId);
+    public News read(String newsSlug) {
+        return getOrFail(newsSlug);
     }
 }
