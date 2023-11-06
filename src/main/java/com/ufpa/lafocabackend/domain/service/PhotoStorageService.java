@@ -11,6 +11,8 @@ public interface PhotoStorageService {
 
     void armazenar(newPhoto newPhoto);
 
+    RecoveredPhoto recuperar (String fileName);
+
     @Getter
     @Setter
     @Builder
@@ -18,6 +20,22 @@ public interface PhotoStorageService {
 
         private Long id;
         private String fileName;
+        private String contentType;
         private InputStream inputStream;
+    }
+
+    @Getter
+    @Builder
+    class RecoveredPhoto {
+        private InputStream inputStream;
+        private String url;
+
+        public boolean hasUrl () {
+            return url != null;
+        }
+
+        public boolean hasInputStream () {
+            return inputStream != null;
+        }
     }
 }

@@ -23,6 +23,7 @@ public class PhotoService {
 
         PhotoStorageService.newPhoto newPhoto = PhotoStorageService.newPhoto.builder()
                 .fileName(photo.getFileName())
+                .contentType(photo.getContentType())
                 .id(photo.getPhotoId())
                 .inputStream(inputStream)
                 .build();

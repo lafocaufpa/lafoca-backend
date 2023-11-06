@@ -44,7 +44,7 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
-    @GetMapping("/{newsId}")
+    @GetMapping("/{newsSlug}")
     public ResponseEntity<NewsDto> read (@PathVariable String newsSlug ){
 
         final News news = newsService.read(newsSlug);

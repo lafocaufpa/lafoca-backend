@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface NewsRepository extends JpaRepository<News, Long> {
-
     Optional<News> findBySlug(String newsSlug);
 }

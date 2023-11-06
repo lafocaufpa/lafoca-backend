@@ -52,6 +52,13 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version> <!-- Verifique a versão mais recente -->
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.333</version>
+        </dependency>
+
     </dependencies>
 
     <build>
