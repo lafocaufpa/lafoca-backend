@@ -7,8 +7,12 @@ import com.ufpa.lafocabackend.domain.model.dto.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.PhotoInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.service.PhotoService;
+import com.ufpa.lafocabackend.domain.service.PhotoStorageService.RecoveredPhoto;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +64,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> update (@RequestBody UserDtoInput userDtoInput, @PathVariable Long userId) {
+    public ResponseEntity<UserDto> update(@RequestBody UserDtoInput userDtoInput, @PathVariable Long userId) {
 
         final User existingUser = userService.read(userId);
         modelMapper.map(userDtoInput, existingUser);
@@ -85,7 +89,7 @@ public class UserController {
                 + "_"
                 + user.getName()
                 + Objects.requireNonNull
-                    (photo.getPhoto().getOriginalFilename())
+                        (photo.getPhoto().getOriginalFilename())
                 .substring(photo.getPhoto().getOriginalFilename().lastIndexOf("."));
 
         photoUser.setPhotoId(user.getUserId());
@@ -93,19 +97,40 @@ public class UserController {
         photoUser.setSize(photoFile.getSize());
         photoUser.setContentType(photoFile.getContentType());
 
-//        final     Path path = Path.of("src/main/resources/photos/", String.valueOf(userId));
-//        final Path resolve = path.resolve(originalFilename);
-
-//        if(!path.toFile().exists()){
-//            path.toFile().mkdirs();
-//        }
 
         final Photo save = photoService.save(photoUser, photoFile.getInputStream());
         final PhotoDto photoDto = modelMapper.map(save, PhotoDto.class);
-//        photo.getPhoto().transferTo(resolve);
 
         return ResponseEntity.ok(photoDto);
 
+    }
+
+    @GetMapping(value = "{userId}/photo")
+    public ResponseEntity<?> getPhoto(@PathVariable Long userId) {
+
+        final User user = userService.read(userId);
+
+        final RecoveredPhoto recoveredPhoto = photoService.get(user.getUserId());
+
+        if (recoveredPhoto.hasUrl()) {
+            return ResponseEntity
+                    .status(HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, recoveredPhoto
+                            .getUrl()).build();
+        } else {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg"); // ou o tipo de conteúdo apropriado
+
+            return ResponseEntity.ok().headers(headers).body(new InputStreamResource(recoveredPhoto.getInputStream()));
+        }
+
+    }
+
+    @DeleteMapping(value = "{userId}/photo")
+    public ResponseEntity<Void> deletePhoto(@PathVariable Long userId) {
+        photoService.delete(userId);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

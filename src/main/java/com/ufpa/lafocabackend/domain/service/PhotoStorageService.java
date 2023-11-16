@@ -13,6 +13,8 @@ public interface PhotoStorageService {
 
     RecoveredPhoto recuperar (String fileName);
 
+    void deletar(String fileName);
+
     @Getter
     @Setter
     @Builder
@@ -29,6 +31,7 @@ public interface PhotoStorageService {
     class RecoveredPhoto {
         private InputStream inputStream;
         private String url;
+        private String contentType;
 
         public boolean hasUrl () {
             return url != null;

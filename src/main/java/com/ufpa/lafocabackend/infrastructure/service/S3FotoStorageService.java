@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 import java.io.InputStream;
 import java.net.URL;
 
-@Service
 public class S3FotoStorageService implements PhotoStorageService {
 
     private final StorageProperties storageProperties;
-    @Autowired
+
     private AmazonS3 amazonS3;
 
-    public S3FotoStorageService(StorageProperties storageProperties) {
+    public S3FotoStorageService(StorageProperties storageProperties, AmazonS3 amazonS3) {
         this.storageProperties = storageProperties;
+        this.amazonS3 = amazonS3;
     }
 
     @Override
@@ -45,6 +45,11 @@ public class S3FotoStorageService implements PhotoStorageService {
         final URL url = amazonS3.getUrl(storageProperties.getS3().getBucket(), recoveredPath);
 
         return RecoveredPhoto.builder().url(url.toString()).build();
+    }
+
+    @Override
+    public void deletar(String fileName) {
+
     }
 
     private String getCaminhoArquivo(String fileName) {

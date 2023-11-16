@@ -2,15 +2,13 @@ package com.ufpa.lafocabackend.infrastructure.service;
 
 import com.ufpa.lafocabackend.core.storage.StorageProperties;
 import com.ufpa.lafocabackend.domain.service.PhotoStorageService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
-//@Service
 public class LocalPhotoStorageService implements PhotoStorageService {
 
     private final StorageProperties storageProperties;
@@ -36,16 +34,74 @@ public class LocalPhotoStorageService implements PhotoStorageService {
 
     @Override
     public RecoveredPhoto recuperar(String fileName) {
-        return null;
+
+        try {
+            final Path diretorioFotos = storageProperties.getLocal().getDiretorioFotos();
+            final String[] idBeforeUnderscore = fileName.split("_");
+            String idPath = idBeforeUnderscore[0];
+
+            Path path = diretorioFotos.resolve(idPath);
+            path = path.resolve(fileName);
+
+           InputStream inputStream = Files.newInputStream(path);
+
+                return RecoveredPhoto.builder().inputStream(inputStream).build();
+
+
+        } catch (IOException e) {
+            throw new RuntimeException("Não foi possível recuperar a foto: " + e);
+        }
     }
 
-    private Path getFilePath (Long id, String fileName){
+    @Override
+    public void deletar(String fileName) {
+        try {
+            final Path diretorioFotos = storageProperties.getLocal().getDiretorioFotos();
+            final String[] idBeforeUnderscore = fileName.split("_");
+            String idPath = idBeforeUnderscore[0];
+
+            Path path = diretorioFotos.resolve(idPath);
+
+            deletarPasta(path);
+
+//            path = path.resolve(fileName);
+
+            //src/main/resources/upload/photos/2/2_joao.jpg
+//            Files.delete(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Não foi possível deletar a foto: " + e);
+        }
+    }
+
+    private Path getFilePath(Long id, String fileName) {
 
         final Path resolve = storageProperties.getLocal().getDiretorioFotos().resolve(String.valueOf(id));
-        if(!resolve.toFile().exists()){
+        if (!resolve.toFile().exists()) {
             resolve.toFile().mkdirs();
         }
 
         return resolve.resolve(fileName);
+    }
+
+    public void deletarPasta(Path diretorio) throws IOException {
+        try {
+            Files.deleteIfExists(diretorio);
+        } catch (DirectoryNotEmptyException e) {
+            Files.walkFileTree(diretorio, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+
+            Files.deleteIfExists(diretorio);
+        }
     }
 }

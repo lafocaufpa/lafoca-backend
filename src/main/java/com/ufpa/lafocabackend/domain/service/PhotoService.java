@@ -1,11 +1,13 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.model.Photo;
+import com.ufpa.lafocabackend.domain.service.PhotoStorageService.RecoveredPhoto;
 import com.ufpa.lafocabackend.repository.PhotoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 @Service
 public class PhotoService {
@@ -35,9 +37,21 @@ public class PhotoService {
         return photoSaved;
     }
 
+    public RecoveredPhoto get(Long photId){
+
+        final Photo photo = getOrFail(photId);
+
+        final String fileName = photo.getFileName();
+
+        final RecoveredPhoto recoveredPhoto = photoStorageService.recuperar(fileName);
+        return recoveredPhoto;
+    }
+
     @Transactional
     public void delete (Long photoId){
         final Photo photo = getOrFail(photoId);
+        final String fileName = photo.getFileName();
+        photoStorageService.deletar(fileName);
         this.photoRepository.deleteById(photo.getPhotoId());
     }
 
