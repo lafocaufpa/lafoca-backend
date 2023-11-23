@@ -92,7 +92,7 @@ public class UserController {
                         (photo.getPhoto().getOriginalFilename())
                 .substring(photo.getPhoto().getOriginalFilename().lastIndexOf("."));
 
-        photoUser.setPhotoId(user.getUserId());
+        photoUser.setPhotoId(user.getUserId().toString());
         photoUser.setFileName(originalFilename);
         photoUser.setSize(photoFile.getSize());
         photoUser.setContentType(photoFile.getContentType());
@@ -110,7 +110,7 @@ public class UserController {
 
         final User user = userService.read(userId);
 
-        final RecoveredPhoto recoveredPhoto = photoService.get(user.getUserId());
+        final RecoveredPhoto recoveredPhoto = photoService.get(String.valueOf(user.getUserId()));
 
         if (recoveredPhoto.hasUrl()) {
             return ResponseEntity
@@ -119,7 +119,7 @@ public class UserController {
                             .getUrl()).build();
         } else {
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg"); // ou o tipo de conteúdo apropriado
+            headers.add(HttpHeaders.CONTENT_TYPE, recoveredPhoto.getContentType());
 
             return ResponseEntity.ok().headers(headers).body(new InputStreamResource(recoveredPhoto.getInputStream()));
         }
@@ -128,7 +128,7 @@ public class UserController {
 
     @DeleteMapping(value = "{userId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable Long userId) {
-        photoService.delete(userId);
+        photoService.delete(String.valueOf(userId));
 
         return ResponseEntity.noContent().build();
     }

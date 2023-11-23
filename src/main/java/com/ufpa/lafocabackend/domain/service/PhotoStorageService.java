@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 public interface PhotoStorageService {
@@ -20,7 +19,7 @@ public interface PhotoStorageService {
     @Builder
     class newPhoto {
 
-        private Long id;
+        private String id;
         private String fileName;
         private String contentType;
         private InputStream inputStream;

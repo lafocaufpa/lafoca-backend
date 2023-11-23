@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -18,6 +19,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long userId;
+
+    private String code;
 
     @Column(nullable = false)
     private String email;
@@ -41,6 +44,11 @@ public class User {
     @OneToOne
     @JoinColumn(name = "photo_id")
     private Photo photo;
+
+    @PrePersist
+    private void setCodigo() {
+        this.code = UUID.randomUUID().toString();
+    }
 
     public Boolean passwordIsEquals(String password){
         return this.password.equals(password);

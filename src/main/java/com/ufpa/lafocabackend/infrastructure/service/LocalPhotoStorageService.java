@@ -37,15 +37,28 @@ public class LocalPhotoStorageService implements PhotoStorageService {
 
         try {
             final Path diretorioFotos = storageProperties.getLocal().getDiretorioFotos();
-            final String[] idBeforeUnderscore = fileName.split("_");
-            String idPath = idBeforeUnderscore[0];
 
-            Path path = diretorioFotos.resolve(idPath);
-            path = path.resolve(fileName);
+            if (isPhotoUser(fileName)) {
+                final String[] idBeforeUnderscore = fileName.split("_");
+                String idPath = idBeforeUnderscore[0];
 
-           InputStream inputStream = Files.newInputStream(path);
+                Path path = diretorioFotos.resolve(idPath);
+                path = path.resolve(fileName);
+
+                InputStream inputStream = Files.newInputStream(path);
 
                 return RecoveredPhoto.builder().inputStream(inputStream).build();
+            } else {
+
+                final String[] fileNameBeforeDot = fileName.split("\\.");
+
+                final Path path = diretorioFotos.resolve(fileNameBeforeDot[0]);
+                final Path resolve = path.resolve(fileName);
+
+                final InputStream inputStream = Files.newInputStream(resolve);
+
+                return RecoveredPhoto.builder().inputStream(inputStream).build();
+            }
 
 
         } catch (IOException e) {
@@ -73,7 +86,7 @@ public class LocalPhotoStorageService implements PhotoStorageService {
         }
     }
 
-    private Path getFilePath(Long id, String fileName) {
+    private Path getFilePath(String id, String fileName) {
 
         final Path resolve = storageProperties.getLocal().getDiretorioFotos().resolve(String.valueOf(id));
         if (!resolve.toFile().exists()) {
@@ -103,5 +116,10 @@ public class LocalPhotoStorageService implements PhotoStorageService {
 
             Files.deleteIfExists(diretorio);
         }
+    }
+
+    public boolean isPhotoUser(String fileName) {
+
+        return fileName.contains("_");
     }
 }

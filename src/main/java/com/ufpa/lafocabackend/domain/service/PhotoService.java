@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.Optional;
 
 @Service
 public class PhotoService {
@@ -21,7 +20,7 @@ public class PhotoService {
     }
 
     @Transactional
-    public Photo save (Photo photo, InputStream inputStream ){
+    public Photo save(Photo photo, InputStream inputStream) {
 
         PhotoStorageService.newPhoto newPhoto = PhotoStorageService.newPhoto.builder()
                 .fileName(photo.getFileName())
@@ -37,7 +36,7 @@ public class PhotoService {
         return photoSaved;
     }
 
-    public RecoveredPhoto get(Long photId){
+    public RecoveredPhoto get(String photId) {
 
         final Photo photo = getOrFail(photId);
 
@@ -48,14 +47,14 @@ public class PhotoService {
     }
 
     @Transactional
-    public void delete (Long photoId){
+    public void delete(String photoId) {
         final Photo photo = getOrFail(photoId);
         final String fileName = photo.getFileName();
         photoStorageService.deletar(fileName);
         this.photoRepository.deleteById(photo.getPhotoId());
     }
 
-    private Photo getOrFail(Long photoId) {
+    private Photo getOrFail(String photoId) {
         return photoRepository.findById(photoId)
                 .orElseThrow(() -> new RuntimeException("Photo not found: id " + photoId));
     }

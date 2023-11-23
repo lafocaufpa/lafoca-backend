@@ -12,7 +12,7 @@ public class Photo {
 
     @Id
     @EqualsAndHashCode.Include
-    private Long photoId;
+    private String photoId;
     
     @Column(nullable = false)
     private String fileName;
