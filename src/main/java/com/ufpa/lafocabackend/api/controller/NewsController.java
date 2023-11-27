@@ -88,6 +88,16 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
+    @DeleteMapping("/{newsSlug}")
+    public ResponseEntity<Void> delete (@PathVariable String newsSlug){
+
+        final News news = newsService.read(newsSlug);
+
+        newsService.delete(news.getSlug());
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping(value = "/{newsSlug}/news-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto (PhotoInputDto photoInputDto, @PathVariable String newsSlug) throws IOException {
 

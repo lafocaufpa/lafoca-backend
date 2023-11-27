@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> read(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> read(@PathVariable String userId) {
 
         final User user = userService.read(userId);
 
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> update(@RequestBody UserDtoInput userDtoInput, @PathVariable Long userId) {
+    public ResponseEntity<UserDto> update(@RequestBody UserDtoInput userDtoInput, @PathVariable String userId) {
 
         final User existingUser = userService.read(userId);
         modelMapper.map(userDtoInput, existingUser);
@@ -73,13 +73,13 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> delete(@PathVariable Long userId) {
+    public ResponseEntity<Void> delete(@PathVariable String userId) {
         userService.delete(userId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping(value = "{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto(PhotoInputDto photo, @PathVariable Long userId) throws IOException {
+    public ResponseEntity<PhotoDto> addPhoto(PhotoInputDto photo, @PathVariable String userId) throws IOException {
 
         final User user = userService.read(userId);
         Photo photoUser = new Photo();
@@ -106,7 +106,7 @@ public class UserController {
     }
 
     @GetMapping(value = "{userId}/photo")
-    public ResponseEntity<?> getPhoto(@PathVariable Long userId) {
+    public ResponseEntity<?> getPhoto(@PathVariable String userId) {
 
         final User user = userService.read(userId);
 
@@ -127,8 +127,8 @@ public class UserController {
     }
 
     @DeleteMapping(value = "{userId}/photo")
-    public ResponseEntity<Void> deletePhoto(@PathVariable Long userId) {
-        photoService.delete(String.valueOf(userId));
+    public ResponseEntity<Void> deletePhoto(@PathVariable String userId) {
+        photoService.delete(userId);
 
         return ResponseEntity.noContent().build();
     }

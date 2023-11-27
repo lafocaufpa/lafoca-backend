@@ -16,11 +16,8 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long userId;
-
-    private String code;
+    private String userId;
 
     @Column(nullable = false)
     private String email;
@@ -47,7 +44,7 @@ public class User {
 
     @PrePersist
     private void setCodigo() {
-        this.code = UUID.randomUUID().toString();
+        this.userId = UUID.randomUUID().toString();
     }
 
     public Boolean passwordIsEquals(String password){

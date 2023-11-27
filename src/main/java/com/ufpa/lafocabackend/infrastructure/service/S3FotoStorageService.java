@@ -2,12 +2,11 @@ package com.ufpa.lafocabackend.infrastructure.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ufpa.lafocabackend.core.storage.StorageProperties;
 import com.ufpa.lafocabackend.domain.service.PhotoStorageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -50,6 +49,13 @@ public class S3FotoStorageService implements PhotoStorageService {
     @Override
     public void deletar(String fileName) {
 
+        final String bucket = storageProperties.getS3().getBucket();
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, getCaminhoArquivo(fileName));
+        try {
+            amazonS3.deleteObject(deleteObjectRequest);
+        } catch (Exception e) {
+            throw new RuntimeException("Não foi possível excluir arquivo na Amazon S3.", e);
+        }
     }
 
     private String getCaminhoArquivo(String fileName) {

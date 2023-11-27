@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.domain.model.dto;
 
-import com.ufpa.lafocabackend.domain.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,5 +21,5 @@ public class NewsDto {
 
     private String content;
 
-    private User user;
+    private UserDto user;
 }

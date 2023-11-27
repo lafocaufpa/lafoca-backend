@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.domain.model.dto.input;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +13,6 @@ public class NewsInputDto {
 
     private String tags;
 
-    private Long userId;
+    private String userId;
 
 }

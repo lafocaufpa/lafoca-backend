@@ -14,9 +14,11 @@ public class NewsService {
 
 
     private final NewsRepository newsRepository;
+    private final PhotoService photoService;
 
-    public NewsService(NewsRepository newsRepository) {
+    public NewsService(NewsRepository newsRepository, PhotoService photoService) {
         this.newsRepository = newsRepository;
+        this.photoService = photoService;
     }
     
     public News save(News news){
@@ -35,10 +37,10 @@ public class NewsService {
     }
 
     @Transactional
-    public void delete(Long newsId){
+    public void delete(String newsId){
 
         try {
-            newsRepository.deleteById(newsId);
+            newsRepository.deleteBySlug(newsId);
             newsRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Entity in use: id " + newsId);
@@ -46,6 +48,7 @@ public class NewsService {
             throw new RuntimeException("News not found: id " + newsId);
         }
 
+        photoService.delete(newsId);
     }
 
     private News getOrFail(String newsSlug) {

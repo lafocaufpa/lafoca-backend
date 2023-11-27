@@ -14,10 +14,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PhotoStorageService photoStorageService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PhotoStorageService photoStorageService) {
         this.userRepository = userRepository;
-
+        this.photoStorageService = photoStorageService;
     }
 
     @Transactional
@@ -45,7 +46,7 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(Long userId){
+    public void delete(String userId){
 
         try {
             userRepository.deleteById(userId);
@@ -56,14 +57,15 @@ public class UserService {
             throw new RuntimeException("User not found: id " + userId);
         }
 
+        photoStorageService.deletar(userId);
     }
 
-    private User getOrFail(Long userId) {
+    private User getOrFail(String userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: id " + userId));
     }
 
-    public User read(Long userId) {
+    public User read(String userId) {
         return getOrFail(userId);
     }
 }

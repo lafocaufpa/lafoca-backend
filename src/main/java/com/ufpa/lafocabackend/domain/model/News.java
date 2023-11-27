@@ -17,7 +17,7 @@ public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long noticeId;
+    private Long newsId;
 
     @Column(nullable = false)
     private String tittle;
