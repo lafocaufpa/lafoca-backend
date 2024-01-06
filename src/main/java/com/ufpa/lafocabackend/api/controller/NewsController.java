@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.security.LafocaSecurity;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.Photo;
 import com.ufpa.lafocabackend.domain.model.User;
@@ -35,12 +36,14 @@ public class NewsController {
     private final ModelMapper modelMapper;
     private final UserService userService;
     private final PhotoService photoService;
+    private final LafocaSecurity lafocaSecurity;
 
-    public NewsController(NewsService newsService, ModelMapper modelMapper, UserService userService, PhotoService photoService) {
+    public NewsController(NewsService newsService, ModelMapper modelMapper, UserService userService, PhotoService photoService, LafocaSecurity lafocaSecurity) {
         this.newsService = newsService;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.photoService = photoService;
+        this.lafocaSecurity = lafocaSecurity;
     }
 
     @PostMapping
@@ -50,7 +53,7 @@ public class NewsController {
         news.createSlug();
         news.createDescription();
 
-        final User user = userService.read(newsInputDto.getUserId());
+        final User user = userService.read(lafocaSecurity.getUserId());
         news.setUser(user);
 
         final NewsDto newsDto = modelMapper.map(newsService.save(news), NewsDto.class);

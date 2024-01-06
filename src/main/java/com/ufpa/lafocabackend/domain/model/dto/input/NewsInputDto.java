@@ -13,6 +13,4 @@ public class NewsInputDto {
 
     private String tags;
 
-    private String userId;
-
 }

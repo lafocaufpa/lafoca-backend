@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +16,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PhotoStorageService photoStorageService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PhotoStorageService photoStorageService) {
+    public UserService(UserRepository userRepository, PhotoStorageService photoStorageService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.photoStorageService = photoStorageService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -33,6 +36,8 @@ public class UserService {
         if(existingUser.isPresent() && !existingUser.get().equals(user)){
             throw new RuntimeException("User already registered");
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
