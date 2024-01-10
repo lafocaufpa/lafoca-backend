@@ -34,6 +34,8 @@ public class StorageProperties {
         private String bucket;
         private Regions regiao;
         private String diretorio;
+        private String diretorio_news;
+        private String diretorio_users;
     }
 
 }

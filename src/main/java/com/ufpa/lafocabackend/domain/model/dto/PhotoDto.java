@@ -15,4 +15,6 @@ public class PhotoDto {
 
     private String contentType;
 
+    private String url;
+
 }

@@ -40,7 +40,7 @@ public class User {
 
     @OneToOne
     @JoinColumn(name = "photo_id")
-    private Photo photo;
+    private UserPhoto photo;
 
     @PrePersist
     private void setCodigo() {

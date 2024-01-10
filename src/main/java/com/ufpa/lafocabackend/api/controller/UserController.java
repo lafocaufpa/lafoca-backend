@@ -1,13 +1,15 @@
 package com.ufpa.lafocabackend.api.controller;
 
-import com.ufpa.lafocabackend.domain.model.Photo;
+import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.User;
+import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.UserDto;
-import com.ufpa.lafocabackend.domain.model.dto.input.PhotoInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
+import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
 import com.ufpa.lafocabackend.domain.service.PhotoService;
 import com.ufpa.lafocabackend.domain.service.PhotoStorageService.RecoveredPhoto;
+import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.InputStreamResource;
@@ -29,21 +31,26 @@ public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final PhotoService photoService;
+    private final UserPhotoService userPhotoService;
 
-    public UserController(UserService userService, ModelMapper modelMapper, PhotoService photoService) {
+    public UserController(UserService userService, ModelMapper modelMapper, PhotoService photoService, UserPhotoService userPhotoService) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.photoService = photoService;
+        this.userPhotoService = userPhotoService;
     }
 
+    @CheckSecurityPermissionMethods.L1
     @PostMapping
-    public ResponseEntity<User> add(@RequestBody UserDtoInput userDtoInput) {
+    public ResponseEntity<UserDto> add(@RequestBody UserDtoInput userDtoInput) {
 
         final User user = modelMapper.map(userDtoInput, User.class);
-        final User savedUser = userService.save(user);
-        return ResponseEntity.ok(savedUser);
+        final UserDto userDto = modelMapper.map(userService.save(user), UserDto.class);
+
+        return ResponseEntity.ok(userDto);
     }
 
+    @CheckSecurityPermissionMethods.User.L1L2
     @GetMapping
     public ResponseEntity<List<UserDto>> list() {
 
@@ -53,6 +60,7 @@ public class UserController {
         return ResponseEntity.ok(dtos);
     }
 
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> read(@PathVariable String userId) {
 
@@ -63,6 +71,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> update(@RequestBody UserDtoInput userDtoInput, @PathVariable String userId) {
 
@@ -72,52 +81,72 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> delete(@PathVariable String userId) {
         userService.delete(userId);
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{userId}/password")
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    public ResponseEntity<Void> updatePassword(@RequestBody userInputPasswordDTO passwordDTO, @PathVariable String userId) {
+
+        userService.changePassword(passwordDTO, userId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping(value = "{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto(PhotoInputDto photo, @PathVariable String userId) throws IOException {
+    public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
 
         final User user = userService.read(userId);
-        Photo photoUser = new Photo();
-        MultipartFile photoFile = photo.getPhoto();
+//        Photo photoUser = new Photo();
 
         String originalFilename = user.getUserId()
                 + "_"
                 + user.getName()
                 + Objects.requireNonNull
-                        (photo.getPhoto().getOriginalFilename())
-                .substring(photo.getPhoto().getOriginalFilename().lastIndexOf("."));
+                        (photo.getOriginalFilename())
+                .substring(photo.getOriginalFilename().lastIndexOf("."));
 
-        photoUser.setPhotoId(user.getUserId().toString());
-        photoUser.setFileName(originalFilename);
-        photoUser.setSize(photoFile.getSize());
-        photoUser.setContentType(photoFile.getContentType());
+//        photoUser.setPhotoId(user.getUserId());
+//        photoUser.setFileName(originalFilename);
+//        photoUser.setSize(photo.getSize());
+//        photoUser.setContentType(photo.getContentType());
 
+        final UserPhoto userPhoto = new UserPhoto();
+        userPhoto.setFileName(originalFilename);
+        userPhoto.setSize(photo.getSize());
+        userPhoto.setContentType(photo.getContentType());
 
-        final Photo save = photoService.save(photoUser, photoFile.getInputStream());
-        final PhotoDto photoDto = modelMapper.map(save, PhotoDto.class);
+        final UserPhoto photoSaved = userPhotoService.save(userPhoto, photo.getInputStream());
+
+        user.setPhoto(photoSaved);
+        userService.save(user);
+
+        final PhotoDto photoDto = modelMapper.map(photoSaved, PhotoDto.class);
 
         return ResponseEntity.ok(photoDto);
-
     }
 
     @GetMapping(value = "{userId}/photo")
     public ResponseEntity<?> getPhoto(@PathVariable String userId) {
 
         final User user = userService.read(userId);
+        final UserPhoto photo = user.getPhoto();
 
-        final RecoveredPhoto recoveredPhoto = photoService.get(String.valueOf(user.getUserId()));
+        if(photo == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-        if (recoveredPhoto.hasUrl()) {
+        if (photo.getUrl() != null) {
             return ResponseEntity
                     .status(HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, recoveredPhoto
-                            .getUrl()).build();
+                    .header(HttpHeaders.LOCATION, photo.getUrl()).build();
         } else {
+
+            final RecoveredPhoto recoveredPhoto = userPhotoService.get(photo.getFileName());
+
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, recoveredPhoto.getContentType());
 

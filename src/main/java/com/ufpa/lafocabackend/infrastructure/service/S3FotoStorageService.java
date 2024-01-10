@@ -6,6 +6,8 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ufpa.lafocabackend.core.storage.StorageProperties;
+import com.ufpa.lafocabackend.domain.model.News;
+import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.service.PhotoStorageService;
 
 import java.io.InputStream;
@@ -23,24 +25,35 @@ public class S3FotoStorageService implements PhotoStorageService {
     }
 
     @Override
-    public void armazenar(newPhoto newPhoto) {
+    public String armazenar(newPhoto newPhoto) {
 
-        final String caminho = getCaminhoArquivo(newPhoto.getFileName());
+        String diretorio = null;
+
+        if(newPhoto.getNewsOrUser() instanceof UserPhoto){
+        diretorio = getCaminhoArquivo(storageProperties.getS3().getDiretorio_users(), newPhoto.getFileName());
+        } else if (newPhoto.getNewsOrUser() instanceof News){
+            diretorio = getCaminhoArquivo(storageProperties.getS3().getDiretorio_news(), newPhoto.getFileName());
+        }
+
         final String bucket = storageProperties.getS3().getBucket();
         final InputStream inputStream = newPhoto.getInputStream();
         final ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(newPhoto.getContentType());
         final CannedAccessControlList publicRead = CannedAccessControlList.PublicRead;
 
-        final PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, caminho, inputStream, objectMetadata);
+        final PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, diretorio, inputStream, objectMetadata);
         putObjectRequest.withCannedAcl(publicRead);
         amazonS3.putObject(putObjectRequest);
+
+        return amazonS3.getUrl(bucket, diretorio).toString();
     }
 
     @Override
     public RecoveredPhoto recuperar(String fileName) {
 
-        final String recoveredPath = getCaminhoArquivo(fileName);
+
+
+        final String recoveredPath = getCaminhoArquivo(null, fileName);
         final URL url = amazonS3.getUrl(storageProperties.getS3().getBucket(), recoveredPath);
 
         return RecoveredPhoto.builder().url(url.toString()).build();
@@ -50,7 +63,7 @@ public class S3FotoStorageService implements PhotoStorageService {
     public void deletar(String fileName) {
 
         final String bucket = storageProperties.getS3().getBucket();
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, getCaminhoArquivo(fileName));
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, getCaminhoArquivo(null, fileName));
         try {
             amazonS3.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
@@ -58,7 +71,7 @@ public class S3FotoStorageService implements PhotoStorageService {
         }
     }
 
-    private String getCaminhoArquivo(String fileName) {
-        return String.format("%s/%s", storageProperties.getS3().getDiretorio(), fileName);
+    private String getCaminhoArquivo(String diretorioS3, String fileName) {
+        return String.format("%s/%s", diretorioS3, fileName);
     }
 }

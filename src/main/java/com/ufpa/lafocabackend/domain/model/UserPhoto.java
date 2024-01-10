@@ -1,5 +1,7 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,22 +10,21 @@ import javax.persistence.*;
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Photo {
+@Builder
+@AllArgsConstructor
+public class UserPhoto {
+
+    public UserPhoto() {
+
+    }
 
     @Id
     @EqualsAndHashCode.Include
-    private String photoId;
-    
-    @Column(nullable = false)
-    private String fileName;
-
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userPhotoId;
     private Long size;
-    
-    @Column(nullable = false)
     private String contentType;
-
-    @Column(nullable = true)
     private String url;
+    private String fileName;
 
 }

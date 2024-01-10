@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 public interface PhotoStorageService {
 
-    void armazenar(newPhoto newPhoto);
+    String armazenar(newPhoto newPhoto);
 
     RecoveredPhoto recuperar (String fileName);
 
@@ -23,6 +23,7 @@ public interface PhotoStorageService {
         private String fileName;
         private String contentType;
         private InputStream inputStream;
+        private Object newsOrUser;
     }
 
     @Getter

@@ -21,15 +21,17 @@ public class LocalPhotoStorageService implements PhotoStorageService {
 
 
     @Override
-    public void armazenar(newPhoto newPhoto) {
+    public String armazenar(newPhoto newPhoto) {
 
-        Path path = getFilePath(newPhoto.getId(), newPhoto.getFileName());
+        Path path = getFilePath(newPhoto.getFileName().split("_")[0], newPhoto.getFileName());
 
         try {
             FileCopyUtils.copy(newPhoto.getInputStream(), Files.newOutputStream(path));
         } catch (IOException e) {
             throw new RuntimeException("Não foi possível armazenar o arquivo.");
         }
+
+        return null;
     }
 
     @Override

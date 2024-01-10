@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.model.User;
+import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
 import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -72,5 +73,15 @@ public class UserService {
 
     public User read(String userId) {
         return getOrFail(userId);
+    }
+
+    @Transactional
+    public void changePassword(userInputPasswordDTO passwordDTO, String userId) {
+        final User user = getOrFail(userId);
+
+        if(!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword()))
+            throw new RuntimeException("Password does not match");
+
+        user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
     }
 }

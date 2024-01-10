@@ -1,6 +1,8 @@
 package com.ufpa.lafocabackend.core.security;
 
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -12,17 +14,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers(HttpMethod .POST, "/news/**").hasAuthority("ESCREVER_NOTICIAS")
-                .antMatchers(HttpMethod.DELETE, "/news/**").hasAuthority("DELETAR_NOTICIAS")
-                .antMatchers(HttpMethod.GET, "/news/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .cors().and()
+        http
+                .cors().and().csrf().disable()
                 .oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
     }
 
@@ -41,4 +39,9 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
         return jwtAuthenticationConverter;
     }
 
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
 }
