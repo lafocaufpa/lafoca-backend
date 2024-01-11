@@ -148,7 +148,7 @@ public class UserController {
             final RecoveredPhoto recoveredPhoto = userPhotoService.get(photo.getFileName());
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, recoveredPhoto.getContentType());
+            headers.add(HttpHeaders.CONTENT_TYPE, photo.getContentType());
 
             return ResponseEntity.ok().headers(headers).body(new InputStreamResource(recoveredPhoto.getInputStream()));
         }
