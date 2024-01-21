@@ -14,11 +14,9 @@ public class NewsService {
 
 
     private final NewsRepository newsRepository;
-    private final PhotoService photoService;
 
-    public NewsService(NewsRepository newsRepository, PhotoService photoService) {
+    public NewsService(NewsRepository newsRepository) {
         this.newsRepository = newsRepository;
-        this.photoService = photoService;
     }
     
     public News save(News news){
@@ -48,7 +46,6 @@ public class NewsService {
             throw new RuntimeException("News not found: id " + newsId);
         }
 
-        photoService.delete(newsId);
     }
 
     private News getOrFail(String newsSlug) {

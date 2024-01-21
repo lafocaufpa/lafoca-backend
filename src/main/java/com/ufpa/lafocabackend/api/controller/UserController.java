@@ -7,7 +7,6 @@ import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
-import com.ufpa.lafocabackend.domain.service.PhotoService;
 import com.ufpa.lafocabackend.domain.service.PhotoStorageService.RecoveredPhoto;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.domain.service.UserService;
@@ -30,13 +29,11 @@ public class UserController {
 
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private final PhotoService photoService;
     private final UserPhotoService userPhotoService;
 
-    public UserController(UserService userService, ModelMapper modelMapper, PhotoService photoService, UserPhotoService userPhotoService) {
+    public UserController(UserService userService, ModelMapper modelMapper, UserPhotoService userPhotoService) {
         this.userService = userService;
         this.modelMapper = modelMapper;
-        this.photoService = photoService;
         this.userPhotoService = userPhotoService;
     }
 
@@ -100,7 +97,6 @@ public class UserController {
     public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
 
         final User user = userService.read(userId);
-//        Photo photoUser = new Photo();
 
         String originalFilename = user.getUserId()
                 + "_"
@@ -109,19 +105,15 @@ public class UserController {
                         (photo.getOriginalFilename())
                 .substring(photo.getOriginalFilename().lastIndexOf("."));
 
-//        photoUser.setPhotoId(user.getUserId());
-//        photoUser.setFileName(originalFilename);
-//        photoUser.setSize(photo.getSize());
-//        photoUser.setContentType(photo.getContentType());
-
         final UserPhoto userPhoto = new UserPhoto();
+        userPhoto.setUserPhotoId(user.getUserId());
         userPhoto.setFileName(originalFilename);
         userPhoto.setSize(photo.getSize());
         userPhoto.setContentType(photo.getContentType());
 
         final UserPhoto photoSaved = userPhotoService.save(userPhoto, photo.getInputStream());
 
-        user.setPhoto(photoSaved);
+        user.setUserPhoto(photoSaved);
         userService.save(user);
 
         final PhotoDto photoDto = modelMapper.map(photoSaved, PhotoDto.class);
@@ -133,7 +125,7 @@ public class UserController {
     public ResponseEntity<?> getPhoto(@PathVariable String userId) {
 
         final User user = userService.read(userId);
-        final UserPhoto photo = user.getPhoto();
+        final UserPhoto photo = user.getUserPhoto();
 
         if(photo == null) {
             return ResponseEntity.notFound().build();
@@ -157,7 +149,9 @@ public class UserController {
 
     @DeleteMapping(value = "{userId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String userId) {
-        photoService.delete(userId);
+
+        userService.userExists(userId);
+        userPhotoService.delete(userId);
 
         return ResponseEntity.noContent().build();
     }

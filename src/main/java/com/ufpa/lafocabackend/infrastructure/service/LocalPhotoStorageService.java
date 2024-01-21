@@ -12,16 +12,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 public class LocalPhotoStorageService implements PhotoStorageService {
 
     private final StorageProperties storageProperties;
-//    @Value("${lafoca.storage.local.path}")
-//    private Path localPath;
 
     public LocalPhotoStorageService(StorageProperties storageProperties) {
         this.storageProperties = storageProperties;
     }
 
-
     @Override
-    public String armazenar(newPhoto newPhoto) {
+    public String armazenar(StorageUtils newPhoto) {
 
         Path path = getFilePath(newPhoto.getFileName().split("_")[0], newPhoto.getFileName());
 
@@ -69,10 +66,10 @@ public class LocalPhotoStorageService implements PhotoStorageService {
     }
 
     @Override
-    public void deletar(String fileName) {
+    public void deletar(StorageUtils storageUtils) {
         try {
             final Path diretorioFotos = storageProperties.getLocal().getDiretorioFotos();
-            final String[] idBeforeUnderscore = fileName.split("_");
+            final String[] idBeforeUnderscore = storageUtils.getFileName().split("_");
             String idPath = idBeforeUnderscore[0];
 
             Path path = diretorioFotos.resolve(idPath);

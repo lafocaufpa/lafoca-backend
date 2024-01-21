@@ -16,12 +16,10 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PhotoStorageService photoStorageService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PhotoStorageService photoStorageService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.photoStorageService = photoStorageService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -63,7 +61,13 @@ public class UserService {
             throw new RuntimeException("User not found: id " + userId);
         }
 
-        photoStorageService.deletar(userId);
+    }
+
+    public void userExists(String userId){
+
+        if(!userRepository.existsByUserId(userId)){
+            throw new RuntimeException("User not found: id " + userId);
+        }
     }
 
     private User getOrFail(String userId) {

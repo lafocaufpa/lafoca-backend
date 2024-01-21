@@ -32,5 +32,5 @@ public class Student {
 
     @OneToOne
     @JoinColumn(name = "photo_id")
-    private Photo photo;
+    private UserPhoto photo;
 }

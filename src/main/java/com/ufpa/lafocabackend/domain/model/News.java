@@ -40,6 +40,10 @@ public class News {
     @OneToOne
     private User user;
 
+    @OneToOne
+    @JoinColumn
+    private NewsPhoto newsPhoto;
+
     public void createSlug() {
 
         if (this.tittle != null){

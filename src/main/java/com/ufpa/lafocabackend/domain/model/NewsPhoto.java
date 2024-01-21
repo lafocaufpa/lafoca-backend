@@ -3,27 +3,20 @@ package com.ufpa.lafocabackend.domain.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Photo {
+public class NewsPhoto {
 
     @Id
     @EqualsAndHashCode.Include
-    private String photoId;
-    
-    @Column(nullable = false)
-    private String fileName;
-
-    @Column(nullable = false)
+    private Long newsPhotoId;
     private Long size;
-    
-    @Column(nullable = false)
     private String contentType;
-
-    @Column(nullable = true)
     private String url;
+    private String fileName;
 
 }

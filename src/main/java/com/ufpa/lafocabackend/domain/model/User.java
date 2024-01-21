@@ -38,9 +38,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> groups = new HashSet<>();
 
-    @OneToOne
-    @JoinColumn(name = "photo_id")
-    private UserPhoto photo;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn
+    private UserPhoto userPhoto;
 
     @PrePersist
     private void setCodigo() {
