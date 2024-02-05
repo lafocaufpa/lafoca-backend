@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.security.LafocaSecurity;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
@@ -30,11 +31,13 @@ public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final UserPhotoService userPhotoService;
+    private final LafocaSecurity lafocaSecurity;
 
-    public UserController(UserService userService, ModelMapper modelMapper, UserPhotoService userPhotoService) {
+    public UserController(UserService userService, ModelMapper modelMapper, UserPhotoService userPhotoService, LafocaSecurity lafocaSecurity) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.userPhotoService = userPhotoService;
+        this.lafocaSecurity = lafocaSecurity;
     }
 
     @CheckSecurityPermissionMethods.L1
@@ -63,6 +66,8 @@ public class UserController {
 
         final User user = userService.read(userId);
 
+        // chamar algum método que retorne 401 nao autorizado depois de verificar se o usuario existe
+
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
         return ResponseEntity.ok(userDto);
@@ -89,6 +94,7 @@ public class UserController {
     @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     public ResponseEntity<Void> updatePassword(@RequestBody userInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
+        userService.userExists(userId);
         userService.changePassword(passwordDTO, userId);
         return ResponseEntity.noContent().build();
     }

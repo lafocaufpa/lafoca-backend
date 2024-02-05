@@ -71,11 +71,11 @@ public class UserService {
     }
 
     private User getOrFail(String userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: id " + userId));
+        return userRepository.findById(userId).get();
     }
 
     public User read(String userId) {
+        userExists(userId);
         return getOrFail(userId);
     }
 

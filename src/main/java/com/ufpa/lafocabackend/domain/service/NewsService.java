@@ -49,11 +49,18 @@ public class NewsService {
     }
 
     private News getOrFail(String newsSlug) {
-        return newsRepository.findBySlug(newsSlug)
-                .orElseThrow(() -> new RuntimeException("News not found: " + newsSlug));
+        return newsRepository.findBySlug(newsSlug).get();
     }
 
     public News read(String newsSlug) {
+        newsExists(newsSlug);
         return getOrFail(newsSlug);
+    }
+
+    public void newsExists(String newsSlug){
+
+        if(!newsRepository.existsByNewsSlug(newsSlug)){
+            throw new RuntimeException("User not found: id " + newsSlug);
+        }
     }
 }
