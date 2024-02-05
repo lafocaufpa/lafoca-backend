@@ -66,8 +66,6 @@ public class UserController {
 
         final User user = userService.read(userId);
 
-        // chamar algum método que retorne 401 nao autorizado depois de verificar se o usuario existe
-
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
         return ResponseEntity.ok(userDto);
@@ -78,6 +76,7 @@ public class UserController {
     public ResponseEntity<UserDto> update(@RequestBody UserDtoInput userDtoInput, @PathVariable String userId) {
 
         final User existingUser = userService.read(userId);
+
         modelMapper.map(userDtoInput, existingUser);
         final UserDto userDto = modelMapper.map(existingUser, UserDto.class);
         return ResponseEntity.ok(userDto);
