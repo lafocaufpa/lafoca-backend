@@ -1,5 +1,7 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
+import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.repository.NewsRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,9 +43,9 @@ public class NewsService {
             newsRepository.deleteBySlug(newsId);
             newsRepository.flush();
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("Entity in use: id " + newsId);
+            throw new EntityInUseException(News.class.getSimpleName(), newsId);
         } catch (EmptyResultDataAccessException e) {
-            throw new RuntimeException("News not found: id " + newsId);
+            throw new EntityNotFoundException(News.class.getSimpleName(), newsId);
         }
 
     }
@@ -60,7 +62,7 @@ public class NewsService {
     public void newsExists(String newsSlug){
 
         if(!newsRepository.existsByNewsSlug(newsSlug)){
-            throw new RuntimeException("User not found: id " + newsSlug);
+            throw new EntityNotFoundException(News.class.getSimpleName(), newsSlug);
         }
     }
 }

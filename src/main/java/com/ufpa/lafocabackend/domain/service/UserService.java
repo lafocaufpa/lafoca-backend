@@ -1,5 +1,9 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
+import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
+import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
+import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
 import com.ufpa.lafocabackend.repository.UserRepository;
@@ -33,7 +37,7 @@ public class UserService {
 
         /*Se um user vindo do banco com o mesmo email for diferente do user vindo da requisição, cai no if */
         if(existingUser.isPresent() && !existingUser.get().equals(user)){
-            throw new RuntimeException("User already registered");
+            throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), user.getEmail());
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -56,9 +60,9 @@ public class UserService {
             userRepository.deleteById(userId);
             userRepository.flush();
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("Entity in use: id " + userId);
+            throw new EntityInUseException(User.class.getSimpleName(), userId);
         } catch (EmptyResultDataAccessException e) {
-            throw new RuntimeException("User not found: id " + userId);
+            throw new EntityNotFoundException(User.class.getSimpleName(), userId);
         }
 
     }
@@ -66,7 +70,9 @@ public class UserService {
     public void userExists(String userId){
 
         if(!userRepository.existsByUserId(userId)){
-            throw new RuntimeException("User not found: id " + userId);
+//            throw new RuntimeException("User not found: id " + userId);
+            throw new EntityNotFoundException(User.class.getSimpleName(), userId);
+
         }
     }
 
@@ -84,7 +90,7 @@ public class UserService {
         final User user = getOrFail(userId);
 
         if(!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword()))
-            throw new RuntimeException("Password does not match");
+            throw new PasswordDoesNotMachException();
 
         user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
     }
