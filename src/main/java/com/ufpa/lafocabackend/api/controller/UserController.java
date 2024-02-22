@@ -40,7 +40,7 @@ public class UserController {
         this.lafocaSecurity = lafocaSecurity;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.User.L1L2
     @PostMapping
     public ResponseEntity<UserDto> add(@RequestBody UserDtoInput userDtoInput) {
 
@@ -98,6 +98,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     @PostMapping(value = "{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
 
@@ -126,6 +127,7 @@ public class UserController {
         return ResponseEntity.ok(photoDto);
     }
 
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     @GetMapping(value = "{userId}/photo")
     public ResponseEntity<?> getPhoto(@PathVariable String userId) {
 
@@ -152,6 +154,7 @@ public class UserController {
 
     }
 
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     @DeleteMapping(value = "{userId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String userId) {
 

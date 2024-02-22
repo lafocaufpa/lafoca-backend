@@ -41,6 +41,7 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return userRepository.save(user);
     }
 
@@ -64,7 +65,6 @@ public class UserService {
         } catch (EmptyResultDataAccessException e) {
             throw new EntityNotFoundException(User.class.getSimpleName(), userId);
         }
-
     }
 
     public void userExists(String userId){
@@ -72,7 +72,6 @@ public class UserService {
         if(!userRepository.existsByUserId(userId)){
 //            throw new RuntimeException("User not found: id " + userId);
             throw new EntityNotFoundException(User.class.getSimpleName(), userId);
-
         }
     }
 

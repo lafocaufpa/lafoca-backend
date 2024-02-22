@@ -19,5 +19,5 @@ public class Permission {
     private String name;
 
     @Column(nullable = false)
-    private String description;;
+    private String description;
 }
