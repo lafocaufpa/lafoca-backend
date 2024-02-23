@@ -182,4 +182,20 @@ public class UserController {
 
         return ResponseEntity.ok(groupsDto);
     }
+
+    @PutMapping("/{userId}/groups/{groupId}")
+    public ResponseEntity<Void> associateGroup(@PathVariable String userId, @PathVariable Long groupId) {
+
+        userService.addGroup(userId, groupId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{userId}/groups/{groupId}")
+    public ResponseEntity<Void> DisassociateGroup(@PathVariable String userId, @PathVariable Long groupId) {
+
+        userService.removeGroup(userId, groupId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

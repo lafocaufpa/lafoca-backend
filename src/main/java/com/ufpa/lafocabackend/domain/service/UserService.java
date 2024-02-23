@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
+import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
 import com.ufpa.lafocabackend.repository.UserRepository;
@@ -21,10 +22,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final GroupService groupService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupService groupService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.groupService = groupService;
     }
 
     @Transactional
@@ -92,5 +95,20 @@ public class UserService {
             throw new PasswordDoesNotMachException();
 
         user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
+    }
+
+    @Transactional
+    public void addGroup(String userId, Long groupId) {
+        final User user = read(userId);
+        final Group group = groupService.read(groupId);
+        user.addGroup(group);
+    }
+
+    @Transactional
+    public void removeGroup (String userId, Long groupId) {
+        final User user = read(userId);
+        final Group group = groupService.read(groupId);
+
+        user.removeGroup(group);
     }
 }
