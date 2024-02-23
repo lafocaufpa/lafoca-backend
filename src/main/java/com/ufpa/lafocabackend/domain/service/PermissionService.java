@@ -3,7 +3,7 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Permission;
-import com.ufpa.lafocabackend.domain.model.PermissionRepository;
+import com.ufpa.lafocabackend.repository.PermissionRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -56,7 +56,6 @@ public class PermissionService {
     private void exist(Long permissionId){
 
         if(!permissionRepository.existsById(permissionId)){
-//            throw new RuntimeException("User not found: id " + userId);
             throw new EntityNotFoundException(Permission.class.getSimpleName(), permissionId);
 
         }
