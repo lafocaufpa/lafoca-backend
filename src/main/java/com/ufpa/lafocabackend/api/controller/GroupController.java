@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.service.GroupService;
@@ -24,6 +25,7 @@ public class GroupController {
         this.groupService = groupService;
     }
 
+    @CheckSecurityPermissionMethods.L1
     @PostMapping
     public ResponseEntity<GroupDto> add (@RequestBody GroupDto groupDto) {
 
@@ -34,6 +36,7 @@ public class GroupController {
         return ResponseEntity.ok(groupSaved);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @GetMapping("/{groupId}")
     public ResponseEntity<GroupDto> read (@PathVariable Long groupId){
 
@@ -42,6 +45,7 @@ public class GroupController {
         return ResponseEntity.ok(groupDto);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @GetMapping
     public ResponseEntity<Collection<GroupDto>> list (){
 
@@ -56,6 +60,7 @@ public class GroupController {
         return ResponseEntity.ok(map);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @PutMapping("/{groupId}")
     public ResponseEntity<GroupDto> update (@PathVariable Long groupId, @RequestBody GroupDto groupDto){
 
@@ -68,6 +73,7 @@ public class GroupController {
         return ResponseEntity.ok(groupDtoUpdated);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @DeleteMapping("/{groupId}")
     public ResponseEntity<Void> delete (@PathVariable Long groupId){
 

@@ -15,6 +15,11 @@ public @interface CheckSecurityPermissionMethods {
     @Target(ElementType.METHOD)
     public @interface L1 {}
 
+    @PreAuthorize("hasAnyAuthority('ADMIN_LEVEL_1', 'ADMIN_LEVEL_2') ")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface L1orL2 {}
+
     @interface User {
 
         @PreAuthorize("hasAnyAuthority('ADMIN_LEVEL_1') ")

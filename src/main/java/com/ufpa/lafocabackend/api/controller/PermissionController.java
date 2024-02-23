@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.PermissionService;
@@ -25,6 +26,7 @@ public class PermissionController {
         this.modelMapper = modelMapper;
     }
 
+    @CheckSecurityPermissionMethods.L1
     @PostMapping
     public ResponseEntity<PermissionDto> add (@RequestBody PermissionDto permissionDto) {
 
@@ -35,6 +37,7 @@ public class PermissionController {
         return ResponseEntity.ok(permissionSaved);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @GetMapping("/{permissionId}")
     public ResponseEntity<PermissionDto> read (@PathVariable Long permissionId ){
 
@@ -43,6 +46,7 @@ public class PermissionController {
         return ResponseEntity.ok(permissionDto);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @GetMapping
     public ResponseEntity<Collection<PermissionDto>> list (){
 
@@ -57,6 +61,7 @@ public class PermissionController {
         return ResponseEntity.ok(map);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @PutMapping("/{permissionId}")
     public ResponseEntity<PermissionDto> update (@PathVariable Long permissionId, @RequestBody PermissionDto permissionDto){
         final Permission permission = permissionService.read(permissionId);
@@ -68,6 +73,7 @@ public class PermissionController {
         return ResponseEntity.ok(permissionDtoUpdate);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @DeleteMapping("/{permissionId}")
     public ResponseEntity<Void> delete (@PathVariable Long permissionId){
 

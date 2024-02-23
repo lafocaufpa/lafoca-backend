@@ -1,7 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.security.LafocaSecurity;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
@@ -31,13 +30,11 @@ public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final UserPhotoService userPhotoService;
-    private final LafocaSecurity lafocaSecurity;
 
-    public UserController(UserService userService, ModelMapper modelMapper, UserPhotoService userPhotoService, LafocaSecurity lafocaSecurity) {
+    public UserController(UserService userService, ModelMapper modelMapper, UserPhotoService userPhotoService) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.userPhotoService = userPhotoService;
-        this.lafocaSecurity = lafocaSecurity;
     }
 
     @CheckSecurityPermissionMethods.User.L1L2
@@ -134,7 +131,7 @@ public class UserController {
         final User user = userService.read(userId);
         final UserPhoto photo = user.getUserPhoto();
 
-        if(photo == null) {
+        if (photo == null) {
             return ResponseEntity.notFound().build();
         }
 
