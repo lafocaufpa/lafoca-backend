@@ -48,6 +48,7 @@ public class UserController {
     public ResponseEntity<UserDto> add(@RequestBody UserDtoInput userDtoInput) {
 
         final User user = modelMapper.map(userDtoInput, User.class);
+
         final UserDto userDto = modelMapper.map(userService.save(user), UserDto.class);
 
         return ResponseEntity.ok(userDto);

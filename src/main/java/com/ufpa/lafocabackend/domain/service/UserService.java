@@ -45,6 +45,9 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        final Group group = groupService.standardMemberLafoca();
+        user.addGroup(group);
+
         return userRepository.save(user);
     }
 

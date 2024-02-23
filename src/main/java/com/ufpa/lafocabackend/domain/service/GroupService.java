@@ -18,6 +18,8 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final PermissionService permissionService;
 
+    private final String STANDARD_USER = "MEMBRO";
+
     public GroupService(GroupRepository groupRepository, PermissionService permissionService) {
         this.groupRepository = groupRepository;
         this.permissionService = permissionService;
@@ -37,6 +39,14 @@ public class GroupService {
         exist(groupId);
 
         return groupRepository.findById(groupId).get();
+    }
+
+    public Group standardMemberLafoca() {
+
+        return groupRepository.findGroupByName(STANDARD_USER)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(Group.class.getSimpleName(), STANDARD_USER));
+
     }
 
     public Group update (Group group) {
