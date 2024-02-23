@@ -1,8 +1,10 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.UserPhoto;
+import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
@@ -11,6 +13,7 @@ import com.ufpa.lafocabackend.domain.service.PhotoStorageService.RecoveredPhoto;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,8 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -161,4 +167,19 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurityPermissionMethods.L1
+    @GetMapping("/{userId}/groups")
+    public ResponseEntity<Collection<GroupDto>> listGroups(@PathVariable String userId){
+
+        final User user = userService.read(userId);
+
+        final Set<Group> groups = user.getGroups();
+
+        final Type type = new TypeToken<Set<GroupDto>>() {
+        }.getType();
+
+        final Set<GroupDto> groupsDto = modelMapper.map(groups, type);
+
+        return ResponseEntity.ok(groupsDto);
+    }
 }
