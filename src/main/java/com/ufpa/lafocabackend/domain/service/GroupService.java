@@ -3,10 +3,12 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Group;
+import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.repository.GroupRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,9 +16,11 @@ import java.util.List;
 public class GroupService {
     
     private final GroupRepository groupRepository;
+    private final PermissionService permissionService;
 
-    public GroupService(GroupRepository groupRepository) {
+    public GroupService(GroupRepository groupRepository, PermissionService permissionService) {
         this.groupRepository = groupRepository;
+        this.permissionService = permissionService;
     }
 
     public Group save (Group group) {
@@ -58,5 +62,23 @@ public class GroupService {
             throw new EntityNotFoundException(Group.class.getSimpleName(), groupId);
 
         }
+    }
+
+    @Transactional
+    public void addPermission(Long groupId, Long permissionId) {
+        final Group group = read(groupId);
+        final Permission permission = permissionService.read(permissionId);
+
+        group.associatePermission(permission);
+        groupRepository.save(group);
+    }
+
+    @Transactional
+    public void removePermission(Long groupId, Long permissionId) {
+        final Group group = read(groupId);
+        final Permission permission = permissionService.read(permissionId);
+
+        group.disassociatePermission(permission);
+        groupRepository.save(group);
     }
 }

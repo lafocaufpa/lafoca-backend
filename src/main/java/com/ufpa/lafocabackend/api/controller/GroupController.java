@@ -2,7 +2,9 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Group;
+import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
+import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.GroupService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/groups")
@@ -81,4 +84,78 @@ public class GroupController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @CheckSecurityPermissionMethods.L1
+    @GetMapping("/{groupId}/permissions")
+    public ResponseEntity<Collection<PermissionDto>> listPermissions(@PathVariable Long groupId){
+
+        final Group group = groupService.read(groupId);
+
+        final Set<Permission> permissions = group.getPermissions();
+
+        final Type type = new TypeToken<Set<PermissionDto>>() {
+
+        }.getType();
+
+        final Set<PermissionDto> permissionsDto = modelMapper.map(permissions, type);
+
+        return ResponseEntity.ok(permissionsDto);
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @PutMapping("/{groupId}/permissions/{permissionId}")
+    public ResponseEntity<Void> associatePermission(@PathVariable Long groupId,
+                                                  @PathVariable Long permissionId){
+        groupService.addPermission(groupId, permissionId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @DeleteMapping("/{groupId}/permissions/{permissionId}")
+    public ResponseEntity<Void> disassociatePermission(@PathVariable Long groupId,
+                                                     @PathVariable Long permissionId){
+        groupService.removePermission(groupId, permissionId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
