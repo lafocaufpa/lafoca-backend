@@ -15,6 +15,7 @@ public class ModelMapperConfig {
     @Bean
     public ModelMapper modelMapper () {
         final ModelMapper modelMapper = new ModelMapper();
+
         modelMapper.addMappings(new PropertyMap<PermissionDto, Permission>() {
             @Override
             protected void configure() {
@@ -28,6 +29,7 @@ public class ModelMapperConfig {
                 skip(destination.getGroupId());
             }
         });
+
 
         return modelMapper;
     }
