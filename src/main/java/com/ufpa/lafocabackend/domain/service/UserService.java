@@ -40,7 +40,7 @@ public class UserService {
 
         /*Se um user vindo do banco com o mesmo email for diferente do user vindo da requisição, cai no if */
         if(existingUser.isPresent() && !existingUser.get().equals(user)){
-            throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), user.getEmail());
+            throw new EntityAlreadyRegisteredException(getClass().getSimpleName(), user.getEmail());
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -67,22 +67,22 @@ public class UserService {
             userRepository.deleteById(userId);
             userRepository.flush();
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(User.class.getSimpleName(), userId);
+            throw new EntityInUseException(getClass().getSimpleName(), userId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(User.class.getSimpleName(), userId);
+            throw new EntityNotFoundException(getClass().getSimpleName(), userId);
         }
     }
 
     public void userExists(String userId){
 
         if(!userRepository.existsByUserId(userId)){
-            throw new EntityNotFoundException(User.class.getSimpleName(), userId);
+            throw new EntityNotFoundException(getClass().getSimpleName(), userId);
         }
     }
 
     private User getOrFail(String userId) {
         return userRepository.findById(userId)
-                .orElseThrow( () -> new EntityNotFoundException(User.class.getSimpleName(), userId));
+                .orElseThrow( () -> new EntityNotFoundException(getClass().getSimpleName(), userId));
     }
 
     public User read(String userId) {

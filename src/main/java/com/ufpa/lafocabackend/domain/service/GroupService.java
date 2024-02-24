@@ -46,7 +46,7 @@ public class GroupService {
 
         return groupRepository.findGroupByName(STANDARD_USER)
                 .orElseThrow(() ->
-                        new EntityNotFoundException(Group.class.getSimpleName(), STANDARD_USER));
+                        new EntityNotFoundException(getClass().getSimpleName(), STANDARD_USER));
 
     }
 
@@ -60,16 +60,16 @@ public class GroupService {
         try {
             groupRepository.deleteById(groupId);
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(Group.class.getSimpleName(), groupId);
+            throw new EntityInUseException(getClass().getSimpleName(), groupId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(Group.class.getSimpleName(), groupId);
+            throw new EntityNotFoundException(getClass().getSimpleName(), groupId);
         }
 
     }
 
     private Group getOrFail(Long groupId) {
         return groupRepository.findById(groupId)
-                .orElseThrow( () -> new EntityNotFoundException(Group.class.getSimpleName(), groupId));
+                .orElseThrow( () -> new EntityNotFoundException(getClass().getSimpleName(), groupId));
     }
 
     @Transactional
