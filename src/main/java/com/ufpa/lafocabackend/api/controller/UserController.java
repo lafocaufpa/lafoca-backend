@@ -9,7 +9,7 @@ import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
-import com.ufpa.lafocabackend.domain.service.PhotoStorageService.RecoveredPhoto;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService.RecoveredPhoto;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -97,7 +97,6 @@ public class UserController {
     @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     public ResponseEntity<Void> updatePassword(@RequestBody userInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
-        userService.userExists(userId);
         userService.changePassword(passwordDTO, userId);
         return ResponseEntity.noContent().build();
     }

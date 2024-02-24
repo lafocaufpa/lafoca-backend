@@ -10,7 +10,7 @@ import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
 import com.ufpa.lafocabackend.domain.service.NewsPhotoService;
 import com.ufpa.lafocabackend.domain.service.NewsService;
-import com.ufpa.lafocabackend.domain.service.PhotoStorageService;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;

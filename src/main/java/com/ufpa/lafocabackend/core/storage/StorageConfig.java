@@ -4,7 +4,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.ufpa.lafocabackend.domain.service.PhotoStorageService;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.infrastructure.service.LocalPhotoStorageService;
 import com.ufpa.lafocabackend.infrastructure.service.S3FotoStorageService;
 import org.springframework.context.annotation.Bean;

@@ -39,9 +39,7 @@ public class GroupService {
     }
 
     public Group read (Long groupId) {
-        exist(groupId);
-
-        return groupRepository.findById(groupId).get();
+        return getOrFail(groupId);
     }
 
     public Group standardMemberLafoca() {
@@ -69,12 +67,9 @@ public class GroupService {
 
     }
 
-    private void exist(Long groupId){
-
-        if(!groupRepository.existsById(groupId)){
-            throw new EntityNotFoundException(Group.class.getSimpleName(), groupId);
-
-        }
+    private Group getOrFail(Long groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow( () -> new EntityNotFoundException(Group.class.getSimpleName(), groupId));
     }
 
     @Transactional

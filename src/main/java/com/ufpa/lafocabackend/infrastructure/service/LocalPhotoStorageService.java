@@ -1,7 +1,6 @@
 package com.ufpa.lafocabackend.infrastructure.service;
 
 import com.ufpa.lafocabackend.core.storage.StorageProperties;
-import com.ufpa.lafocabackend.domain.service.PhotoStorageService;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;

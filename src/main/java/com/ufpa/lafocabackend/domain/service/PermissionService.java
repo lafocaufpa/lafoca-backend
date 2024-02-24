@@ -31,9 +31,8 @@ public class PermissionService {
     }
 
     public Permission read (Long permissionId) {
-        exist(permissionId);
 
-        return permissionRepository.findById(permissionId).get();
+        return getOrFail(permissionId);
     }
 
     public Permission update (Permission permission) {
@@ -53,11 +52,9 @@ public class PermissionService {
 
     }
 
-    private void exist(Long permissionId){
-
-        if(!permissionRepository.existsById(permissionId)){
-            throw new EntityNotFoundException(Permission.class.getSimpleName(), permissionId);
-
-        }
+    private Permission getOrFail(Long permissionId) {
+        return permissionRepository.findById(permissionId)
+                .orElseThrow( () -> new EntityNotFoundException(Permission.class.getSimpleName(), permissionId));
     }
+
 }

@@ -76,17 +76,16 @@ public class UserService {
     public void userExists(String userId){
 
         if(!userRepository.existsByUserId(userId)){
-//            throw new RuntimeException("User not found: id " + userId);
             throw new EntityNotFoundException(User.class.getSimpleName(), userId);
         }
     }
 
     private User getOrFail(String userId) {
-        return userRepository.findById(userId).get();
+        return userRepository.findById(userId)
+                .orElseThrow( () -> new EntityNotFoundException(User.class.getSimpleName(), userId));
     }
 
     public User read(String userId) {
-        userExists(userId);
         return getOrFail(userId);
     }
 
