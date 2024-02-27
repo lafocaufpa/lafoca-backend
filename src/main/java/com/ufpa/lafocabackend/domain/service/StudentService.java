@@ -3,6 +3,8 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Student;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
+import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
 import com.ufpa.lafocabackend.repository.StudentRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,10 +18,12 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
     private final UserPhotoService userPhotoService;
+    private final PhotoStorageService photoStorageService;
 
-    public StudentService(StudentRepository studentRepository, UserPhotoService userPhotoService) {
+    public StudentService(StudentRepository studentRepository, UserPhotoService userPhotoService, PhotoStorageService photoStorageService) {
         this.studentRepository = studentRepository;
         this.userPhotoService = userPhotoService;
+        this.photoStorageService = photoStorageService;
     }
 
     public Student save (Student student) {
@@ -60,7 +64,13 @@ public class StudentService {
 
     public void deletePhoto(Long studentId) {
 
-        userPhotoService.
+        final String photoId = studentRepository.getUserPhotoIdByStudentId(studentId);
+        studentRepository.removePhotoReference(studentId);
+        final String photoFileName = studentRepository.findFileNameByUserPhotoId(photoId);
+        studentRepository.deletePhotoByUserId(photoId);
 
+        StorageUtils storageUtils = StorageUtils.builder().fileName(photoFileName).build();
+
+        photoStorageService.deletar(storageUtils);
     }
 }
