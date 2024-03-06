@@ -23,7 +23,6 @@ public class StudentDto {
     @JsonIgnore
     private String urlPhoto;
 
-    // Getters and setters
 
     @JsonProperty("dateRegister")
     public OffsetDateTime getDateRegister() {

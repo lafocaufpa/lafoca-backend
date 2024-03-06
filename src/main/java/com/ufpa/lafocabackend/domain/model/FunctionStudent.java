@@ -21,7 +21,4 @@ public class FunctionStudent {
     @Column(nullable = false)
     private String description;
 
-    @OneToOne
-    @JoinColumn(nullable = false)
-    private Student student;
 }

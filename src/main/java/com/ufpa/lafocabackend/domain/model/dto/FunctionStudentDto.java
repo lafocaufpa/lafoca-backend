@@ -5,9 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GroupDto {
+public class FunctionStudentDto {
 
     private Long id;
+
     private String name;
+
+    private String description;
 
 }

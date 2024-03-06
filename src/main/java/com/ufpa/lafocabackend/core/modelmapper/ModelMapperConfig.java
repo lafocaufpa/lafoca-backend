@@ -1,7 +1,9 @@
 package com.ufpa.lafocabackend.core.modelmapper;
 
+import com.ufpa.lafocabackend.domain.model.FunctionStudent;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.Permission;
+import com.ufpa.lafocabackend.domain.model.dto.FunctionStudentDto;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
 import org.modelmapper.ModelMapper;
@@ -27,6 +29,13 @@ public class ModelMapperConfig {
             @Override
             protected void configure() {
                 skip(destination.getGroupId());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<FunctionStudentDto, FunctionStudent>() {
+            @Override
+            protected void configure() {
+                skip(destination.getFunctionStudentId());
             }
         });
 

@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,4 +33,8 @@ public class Student {
     @OneToOne
     @JoinColumn(name = "photo_id")
     private UserPhoto photo;
+
+    @OneToOne
+    @JoinColumn(name = "functionStudentId")
+    private FunctionStudent functionStudent;
 }
