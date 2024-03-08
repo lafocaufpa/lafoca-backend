@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/function-student")
+@RequestMapping("/functions-student")
 public class FunctionStudentController {
 
     private final FunctionStudentService functionStudentService;

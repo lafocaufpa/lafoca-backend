@@ -13,7 +13,6 @@ import java.util.List;
 @Service
 public class FunctionStudentService {
 
-
     private final FunctionStudentRepository functionStudentRepository;
 
     public FunctionStudentService(FunctionStudentRepository functionStudentRepository) {

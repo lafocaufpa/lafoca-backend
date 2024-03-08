@@ -1,10 +1,15 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.domain.model.FunctionStudent;
+import com.ufpa.lafocabackend.domain.model.Skills;
 import com.ufpa.lafocabackend.domain.model.Student;
 import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.StudentDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
+import com.ufpa.lafocabackend.domain.service.FunctionStudentService;
+import com.ufpa.lafocabackend.domain.service.SkillsService;
 import com.ufpa.lafocabackend.domain.service.StudentService;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
@@ -32,18 +37,28 @@ public class StudentController {
     private final StudentService studentService;
     private final ModelMapper modelMapper;
     private final UserPhotoService userPhotoService;
+    private final FunctionStudentService functionStudentService;
+    private final SkillsService skillsService;
 
-    public StudentController(StudentService studentService, ModelMapper modelMapper, UserPhotoService userPhotoService) {
+    public StudentController(StudentService studentService, ModelMapper modelMapper, UserPhotoService userPhotoService, FunctionStudentService functionStudentService, SkillsService skillsService) {
         this.studentService = studentService;
         this.modelMapper = modelMapper;
         this.userPhotoService = userPhotoService;
+        this.functionStudentService = functionStudentService;
+        this.skillsService = skillsService;
     }
 
     @CheckSecurityPermissionMethods.L1
     @PostMapping
-    public ResponseEntity<StudentDto> add (@RequestBody StudentDto studentDto) {
+    public ResponseEntity<StudentDto> add (@RequestBody StudentInputDto studentInputDto) {
 
-        final Student student = modelMapper.map(studentDto, Student.class);
+        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
+        final Skills skill = skillsService.read(studentInputDto.getSkillId());
+
+        final Student student = modelMapper.map(studentInputDto, Student.class);
+
+        student.addSkill(skill);
+        student.setFunctionStudent(functionStudent);
 
         final StudentDto studentSaved = modelMapper.map(studentService.save(student), StudentDto.class);
 
@@ -76,12 +91,13 @@ public class StudentController {
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{studentId}")
-    public ResponseEntity<StudentDto> update (@PathVariable Long studentId, @RequestBody StudentDto studentDto){
+    public ResponseEntity<StudentDto> update (@PathVariable Long studentId, @RequestBody StudentInputDto studentInputDto){
 
         final Student student = studentService.read(studentId);
+        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
 
-        modelMapper.map(studentDto, student);
-
+        modelMapper.map(studentInputDto, student);
+        student.setFunctionStudent(functionStudent);
         final Student studentUpdated = studentService.update(student);
         final StudentDto studentDtoUpdated = modelMapper.map(studentUpdated, StudentDto.class);
         return ResponseEntity.ok(studentDtoUpdated);
@@ -163,4 +179,12 @@ public class StudentController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurityPermissionMethods.L1
+    @PutMapping("/{studentId}/functions-student/{functionStudentId}")
+    public ResponseEntity<Void> asociateFunction (@PathVariable Long studentId, @PathVariable Long functionStudentId) {
+
+        studentService.associateFunction(functionStudentId, studentId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
