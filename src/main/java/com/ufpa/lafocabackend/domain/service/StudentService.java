@@ -3,6 +3,7 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.FunctionStudent;
+import com.ufpa.lafocabackend.domain.model.Skill;
 import com.ufpa.lafocabackend.domain.model.Student;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
@@ -21,11 +22,13 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final PhotoStorageService photoStorageService;
     private final FunctionStudentService functionStudentService;
+    private final SkillService skillService;
 
-    public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService) {
+    public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService) {
         this.studentRepository = studentRepository;
         this.photoStorageService = photoStorageService;
         this.functionStudentService = functionStudentService;
+        this.skillService = skillService;
     }
 
     public Student save (Student student) {
@@ -83,8 +86,17 @@ public class StudentService {
         student.setFunctionStudent(functionStudent);
         save(student);
     }
+    @Transactional
+    public void associateSkill (Long studentId, Long skillId) {
+        final Student student = read(studentId);
+        final Skill skill = skillService.read(skillId);
+        student.addSkill(skill);
+    }
 
-    public void dissociateFunction(Long functionStudentId, Long studentId) {
-
+    @Transactional
+    public void disassociateSkill(Long studentId, Long skillId) {
+        final Student student = read(studentId);
+        final Skill skill = skillService.read(skillId);
+        student.removeSkill(skill);
     }
 }

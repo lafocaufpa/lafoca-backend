@@ -2,14 +2,14 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.FunctionStudent;
-import com.ufpa.lafocabackend.domain.model.Skills;
+import com.ufpa.lafocabackend.domain.model.Skill;
 import com.ufpa.lafocabackend.domain.model.Student;
 import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.StudentDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
 import com.ufpa.lafocabackend.domain.service.FunctionStudentService;
-import com.ufpa.lafocabackend.domain.service.SkillsService;
+import com.ufpa.lafocabackend.domain.service.SkillService;
 import com.ufpa.lafocabackend.domain.service.StudentService;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
@@ -38,14 +38,14 @@ public class StudentController {
     private final ModelMapper modelMapper;
     private final UserPhotoService userPhotoService;
     private final FunctionStudentService functionStudentService;
-    private final SkillsService skillsService;
+    private final SkillService skillService;
 
-    public StudentController(StudentService studentService, ModelMapper modelMapper, UserPhotoService userPhotoService, FunctionStudentService functionStudentService, SkillsService skillsService) {
+    public StudentController(StudentService studentService, ModelMapper modelMapper, UserPhotoService userPhotoService, FunctionStudentService functionStudentService, SkillService skillService) {
         this.studentService = studentService;
         this.modelMapper = modelMapper;
         this.userPhotoService = userPhotoService;
         this.functionStudentService = functionStudentService;
-        this.skillsService = skillsService;
+        this.skillService = skillService;
     }
 
     @CheckSecurityPermissionMethods.L1
@@ -53,7 +53,7 @@ public class StudentController {
     public ResponseEntity<StudentDto> add (@RequestBody StudentInputDto studentInputDto) {
 
         final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
-        final Skills skill = skillsService.read(studentInputDto.getSkillId());
+        final Skill skill = skillService.read(studentInputDto.getSkillId());
 
         final Student student = modelMapper.map(studentInputDto, Student.class);
 
@@ -178,11 +178,28 @@ public class StudentController {
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{studentId}/functions-student/{functionStudentId}")
-    public ResponseEntity<Void> asociateFunction (@PathVariable Long studentId, @PathVariable Long functionStudentId) {
+    public ResponseEntity<Void> associateFunction (@PathVariable Long studentId, @PathVariable Long functionStudentId) {
 
         studentService.associateFunction(functionStudentId, studentId);
 
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurityPermissionMethods.L1
+    @PutMapping("/{studentId}/skills/{skillId}")
+    public ResponseEntity<Void> associateSkill (@PathVariable Long studentId, @PathVariable Long skillId) {
+
+        studentService.associateSkill(studentId, skillId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @DeleteMapping("/{studentId}/skills/{skillId}")
+    public ResponseEntity<Void> disassociateSkill (@PathVariable Long studentId, @PathVariable Long skillId) {
+
+        studentService.disassociateSkill(studentId, skillId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

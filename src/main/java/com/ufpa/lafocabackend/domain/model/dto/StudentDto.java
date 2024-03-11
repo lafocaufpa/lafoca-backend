@@ -1,6 +1,6 @@
 package com.ufpa.lafocabackend.domain.model.dto;
 
-import com.ufpa.lafocabackend.domain.model.Skills;
+import com.ufpa.lafocabackend.domain.model.Skill;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +20,6 @@ public class StudentDto {
     private OffsetDateTime dateRegister;
     private String urlPhoto;
     private FunctionStudentDto functionStudent;
-    private List<Skills> skills;
+    private List<Skill> skills;
 
 }

@@ -2,8 +2,8 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
-import com.ufpa.lafocabackend.domain.model.Skills;
-import com.ufpa.lafocabackend.repository.SkillsRepository;
+import com.ufpa.lafocabackend.domain.model.Skill;
+import com.ufpa.lafocabackend.repository.SkillRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -11,37 +11,37 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class SkillsService {
+public class SkillService {
 
-    private final SkillsRepository skillsRepository;
+    private final SkillRepository skillRepository;
 
-    public SkillsService(SkillsRepository skillsRepository) {
-        this.skillsRepository = skillsRepository;
+    public SkillService(SkillRepository skillRepository) {
+        this.skillRepository = skillRepository;
     }
 
-    public Skills save (Skills skills) {
+    public Skill save (Skill skill) {
 
-        return skillsRepository.save(skills);
+        return skillRepository.save(skill);
     }
 
-    public List<Skills> list (){
+    public List<Skill> list (){
 
-        return skillsRepository.findAll();
+        return skillRepository.findAll();
     }
 
-    public Skills read (Long skillsId) {
+    public Skill read (Long skillsId) {
         return getOrFail(skillsId);
     }
 
-    public Skills update (Skills skills) {
+    public Skill update (Skill skill) {
 
-        return save(skills);
+        return save(skill);
     }
 
     public void delete (Long skillsId) {
 
         try {
-            skillsRepository.deleteById(skillsId);
+            skillRepository.deleteById(skillsId);
         } catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(getClass().getSimpleName(), skillsId);
         } catch (EmptyResultDataAccessException e) {
@@ -50,8 +50,8 @@ public class SkillsService {
 
     }
 
-    private Skills getOrFail(Long skillsId) {
-        return skillsRepository.findById(skillsId)
+    private Skill getOrFail(Long skillsId) {
+        return skillRepository.findById(skillsId)
                 .orElseThrow( () -> new EntityNotFoundException(getClass().getSimpleName(), skillsId));
     }
 }

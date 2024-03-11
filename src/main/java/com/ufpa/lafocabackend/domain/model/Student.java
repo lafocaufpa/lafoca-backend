@@ -38,7 +38,7 @@ public class Student {
     @JoinTable(name = "students_skills",
             joinColumns = @JoinColumn(name = "id_students"),
             inverseJoinColumns = @JoinColumn(name = "id_skill"))
-    private List<Skills> skills = new ArrayList<>();
+    private List<Skill> skills = new ArrayList<>();
 
     @CreationTimestamp
     @Column(columnDefinition = "datetime", nullable = false)
@@ -52,11 +52,11 @@ public class Student {
     @JoinColumn(name = "functionStudentId", nullable = false)
     private FunctionStudent functionStudent;
 
-    public boolean addSkill(Skills skill) {
+    public boolean addSkill(Skill skill) {
         return skills.add(skill);
     }
 
-    public boolean removeSkill(Skills skill) {
+    public boolean removeSkill(Skill skill) {
         return skills.remove(skill);
     }
 }
