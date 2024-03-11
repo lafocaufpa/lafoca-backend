@@ -49,7 +49,7 @@ public class Student {
     private UserPhoto photo;
 
     @OneToOne
-    @JoinColumn(name = "functionStudentId")
+    @JoinColumn(name = "functionStudentId", nullable = false)
     private FunctionStudent functionStudent;
 
     public boolean addSkill(Skills skill) {

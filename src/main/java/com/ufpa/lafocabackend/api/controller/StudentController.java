@@ -65,7 +65,6 @@ public class StudentController {
         return ResponseEntity.ok(studentSaved);
     }
 
-    @CheckSecurityPermissionMethods.L1
     @GetMapping("/{studentId}")
     public ResponseEntity<StudentDto> read (@PathVariable Long studentId){
 
@@ -74,7 +73,6 @@ public class StudentController {
         return ResponseEntity.ok(studentDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
     @GetMapping
     public ResponseEntity<Collection<StudentDto>> list (){
 
@@ -141,7 +139,6 @@ public class StudentController {
         return ResponseEntity.ok(photoDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
     @GetMapping(value = "/{studentId}/photo")
     public ResponseEntity<?> getPhoto(@PathVariable Long studentId) {
 
@@ -187,4 +184,5 @@ public class StudentController {
 
         return ResponseEntity.noContent().build();
     }
+
 }

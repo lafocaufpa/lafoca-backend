@@ -80,8 +80,11 @@ public class StudentService {
 
         final FunctionStudent functionStudent = functionStudentService.read(functionStudentId);
         final Student student = read(studentId);
-
         student.setFunctionStudent(functionStudent);
         save(student);
+    }
+
+    public void dissociateFunction(Long functionStudentId, Long studentId) {
+
     }
 }
