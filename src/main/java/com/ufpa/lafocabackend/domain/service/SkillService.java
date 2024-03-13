@@ -29,8 +29,8 @@ public class SkillService {
         return skillRepository.findAll();
     }
 
-    public Skill read (Long skillsId) {
-        return getOrFail(skillsId);
+    public Skill read (Long skillId) {
+        return getOrFail(skillId);
     }
 
     public Skill update (Skill skill) {

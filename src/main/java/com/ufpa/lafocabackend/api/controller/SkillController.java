@@ -12,13 +12,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/skills")
-public class SkillsController {
+public class SkillController {
 
 
     private final SkillService skillService;
     private final ModelMapper modelMapper;
 
-    public SkillsController(SkillService skillService, ModelMapper modelMapper) {
+    public SkillController(SkillService skillService, ModelMapper modelMapper) {
         this.skillService = skillService;
         this.modelMapper = modelMapper;
     }
@@ -50,23 +50,23 @@ public class SkillsController {
     }
 
     @CheckSecurityPermissionMethods.L1
-    @PutMapping("/{skillsId}")
-    public ResponseEntity<Skill> update (@PathVariable Long skillsId, @RequestBody Skill newSkill){
+    @PutMapping("/{skillId}")
+    public ResponseEntity<Skill> update (@PathVariable Long skillId, @RequestBody Skill newSkill){
 
-        final Skill currentSkill = skillService.read(skillsId);
+        final Skill currentSkill = skillService.read(skillId);
 
         modelMapper.map(newSkill, currentSkill);
-        currentSkill.setSkillId(skillsId);
+        currentSkill.setSkillId(skillId);
 
         final Skill skillUpdated = skillService.update(currentSkill);
         return ResponseEntity.ok(skillUpdated);
     }
 
     @CheckSecurityPermissionMethods.L1
-    @DeleteMapping("/{skillsId}")
-    public ResponseEntity<Void> delete (@PathVariable Long skillsId){
+    @DeleteMapping("/{skillId}")
+    public ResponseEntity<Void> delete (@PathVariable Long skillId){
 
-        skillService.delete(skillsId);
+        skillService.delete(skillId);
 
         return ResponseEntity.noContent().build();
     }

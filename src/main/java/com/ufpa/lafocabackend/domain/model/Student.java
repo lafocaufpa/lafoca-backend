@@ -1,7 +1,8 @@
 package com.ufpa.lafocabackend.domain.model;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -10,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Student {
 
@@ -34,9 +36,9 @@ public class Student {
     @Column(nullable = false)
     private String linkPortifolio;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "students_skills",
-            joinColumns = @JoinColumn(name = "id_students"),
+            joinColumns = @JoinColumn(name = "id_student"),
             inverseJoinColumns = @JoinColumn(name = "id_skill"))
     private List<Skill> skills = new ArrayList<>();
 
@@ -49,8 +51,12 @@ public class Student {
     private UserPhoto photo;
 
     @OneToOne
-    @JoinColumn(name = "functionStudentId", nullable = false)
+    @JoinColumn(name = "function_student_id", nullable = false)
     private FunctionStudent functionStudent;
+
+    @OneToOne(mappedBy = "student")
+    @JoinColumn(name = "tcc_id")
+    private Tcc tcc;
 
     public boolean addSkill(Skill skill) {
         return skills.add(skill);

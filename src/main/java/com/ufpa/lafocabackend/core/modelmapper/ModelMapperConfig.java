@@ -1,9 +1,6 @@
 package com.ufpa.lafocabackend.core.modelmapper;
 
-import com.ufpa.lafocabackend.domain.model.FunctionStudent;
-import com.ufpa.lafocabackend.domain.model.Group;
-import com.ufpa.lafocabackend.domain.model.Permission;
-import com.ufpa.lafocabackend.domain.model.Student;
+import com.ufpa.lafocabackend.domain.model.*;
 import com.ufpa.lafocabackend.domain.model.dto.FunctionStudentDto;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
@@ -45,6 +42,10 @@ public class ModelMapperConfig {
             @Override
             protected void configure() {
                 skip(destination.getStudentId());
+                skip(destination.getTcc().getTccId());
+                skip(destination.getTcc().getStudent());
+                skip(destination.getFunctionStudent());
+                skip(destination.getSkills());
             }
         });
 

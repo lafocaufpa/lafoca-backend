@@ -5,14 +5,19 @@ import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.FunctionStudent;
 import com.ufpa.lafocabackend.domain.model.Skill;
 import com.ufpa.lafocabackend.domain.model.Student;
+import com.ufpa.lafocabackend.domain.model.Tcc;
+import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
 import com.ufpa.lafocabackend.repository.StudentRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,15 +28,67 @@ public class StudentService {
     private final PhotoStorageService photoStorageService;
     private final FunctionStudentService functionStudentService;
     private final SkillService skillService;
+    private final ModelMapper modelMapper;
+    private final TccService tccService;
 
-    public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService) {
+    public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService) {
         this.studentRepository = studentRepository;
         this.photoStorageService = photoStorageService;
         this.functionStudentService = functionStudentService;
         this.skillService = skillService;
+        this.modelMapper = modelMapper;
+        this.tccService = tccService;
     }
 
-    public Student save (Student student) {
+    @Transactional
+    public Student save (StudentInputDto studentInputDto) {
+        Student student = modelMapper.map(studentInputDto, Student.class);
+
+        //is an entity update
+        if(studentInputDto.getId() != null){
+            student = read(studentInputDto.getId());
+            modelMapper.map(studentInputDto, student);
+        }
+
+        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
+        List<Skill> skills = new ArrayList<>();
+        for(Long skillId: studentInputDto.getSkillsId()){
+            final Skill skill = skillService.read(skillId);
+            skills.add(skill);
+        }
+
+        student.setSkills(skills);
+        student.setFunctionStudent(functionStudent);
+
+        final Student studentSaved = studentRepository.save(student);
+
+        if(studentInputDto.getTcc() != null) {
+            final TccDto tccDto = studentInputDto.getTcc();
+            final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
+            tcc.setStudent(studentSaved);
+            final Tcc tccSaved = tccService.save(tcc);
+            studentSaved.setTcc(tccSaved);
+        }
+
+        return studentSaved;
+    }
+
+    @Transactional
+    public Student update (Long studentId, StudentInputDto studentInputDto) {
+        final Student student = read(studentId);
+
+        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
+
+        List<Skill> skills = new ArrayList<>();
+        for(Long skillId: studentInputDto.getSkillsId()){
+            final Skill skill = skillService.read(skillId);
+            skills.add(skill);
+        }
+
+        modelMapper.map(studentInputDto, student);
+        student.setStudentId(studentId);
+        student.setFunctionStudent(functionStudent);
+        student.setSkills(skills);
 
         return studentRepository.save(student);
     }
@@ -43,11 +100,6 @@ public class StudentService {
 
     public Student read (Long studentId) {
         return getOrFail(studentId);
-    }
-
-    public Student update (Student student) {
-
-        return save(student);
     }
 
     public void delete (Long studentId) {
@@ -84,7 +136,7 @@ public class StudentService {
         final FunctionStudent functionStudent = functionStudentService.read(functionStudentId);
         final Student student = read(studentId);
         student.setFunctionStudent(functionStudent);
-        save(student);
+        studentRepository.save(student);
     }
     @Transactional
     public void associateSkill (Long studentId, Long skillId) {
@@ -98,5 +150,9 @@ public class StudentService {
         final Student student = read(studentId);
         final Skill skill = skillService.read(skillId);
         student.removeSkill(skill);
+    }
+
+    public Student save(Student student) {
+        return studentRepository.save(student);
     }
 }

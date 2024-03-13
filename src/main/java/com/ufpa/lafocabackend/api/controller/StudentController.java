@@ -1,15 +1,12 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.domain.model.FunctionStudent;
-import com.ufpa.lafocabackend.domain.model.Skill;
 import com.ufpa.lafocabackend.domain.model.Student;
 import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.StudentDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
 import com.ufpa.lafocabackend.domain.service.FunctionStudentService;
-import com.ufpa.lafocabackend.domain.service.SkillService;
 import com.ufpa.lafocabackend.domain.service.StudentService;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
@@ -33,34 +30,23 @@ import java.util.Objects;
 @RequestMapping("/students")
 public class StudentController {
 
-
     private final StudentService studentService;
     private final ModelMapper modelMapper;
     private final UserPhotoService userPhotoService;
     private final FunctionStudentService functionStudentService;
-    private final SkillService skillService;
 
-    public StudentController(StudentService studentService, ModelMapper modelMapper, UserPhotoService userPhotoService, FunctionStudentService functionStudentService, SkillService skillService) {
+    public StudentController(StudentService studentService, ModelMapper modelMapper, UserPhotoService userPhotoService, FunctionStudentService functionStudentService) {
         this.studentService = studentService;
         this.modelMapper = modelMapper;
         this.userPhotoService = userPhotoService;
         this.functionStudentService = functionStudentService;
-        this.skillService = skillService;
     }
 
     @CheckSecurityPermissionMethods.L1
     @PostMapping
     public ResponseEntity<StudentDto> add (@RequestBody StudentInputDto studentInputDto) {
 
-        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
-        final Skill skill = skillService.read(studentInputDto.getSkillId());
-
-        final Student student = modelMapper.map(studentInputDto, Student.class);
-
-        student.addSkill(skill);
-        student.setFunctionStudent(functionStudent);
-
-        final StudentDto studentSaved = modelMapper.map(studentService.save(student), StudentDto.class);
+        final StudentDto studentSaved = modelMapper.map(studentService.save(studentInputDto), StudentDto.class);
 
         return ResponseEntity.ok(studentSaved);
     }
@@ -91,12 +77,12 @@ public class StudentController {
     @PutMapping("/{studentId}")
     public ResponseEntity<StudentDto> update (@PathVariable Long studentId, @RequestBody StudentInputDto studentInputDto){
 
-        final Student student = studentService.read(studentId);
-        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
+//        final Student student = studentService.read(studentId);
+//        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
 
-        modelMapper.map(studentInputDto, student);
-        student.setFunctionStudent(functionStudent);
-        final Student studentUpdated = studentService.update(student);
+//        modelMapper.map(studentInputDto, student);
+//        student.setFunctionStudent(functionStudent);
+        final Student studentUpdated = studentService.update(studentId, studentInputDto);
         final StudentDto studentDtoUpdated = modelMapper.map(studentUpdated, StudentDto.class);
         return ResponseEntity.ok(studentDtoUpdated);
     }

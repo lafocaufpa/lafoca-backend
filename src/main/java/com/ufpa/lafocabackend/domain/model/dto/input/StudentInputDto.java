@@ -7,11 +7,13 @@ import lombok.Setter;
 @Setter
 public class StudentInputDto {
 
+    private Long id;
     private String name;
     private String description;
     private String email;
     private String biography;
     private String linkPortifolio;
     private Long functionStudentId;
-    private Long SkillId;
+    private Long[] SkillsId;
+    private TccDto tcc;
 }
