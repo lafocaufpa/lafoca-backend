@@ -7,8 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TccDto {
-
-    private Long id;
+    private Long tccId;
     private String name;
     private String url;
     private String date;
@@ -18,7 +17,6 @@ public class TccDto {
     public Long getStudentId() {
         return studentId;
     }
-
     @JsonProperty("student_id")
     public void setStudentId(Long studentId) {
         this.studentId = studentId;

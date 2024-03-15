@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class StudentDto {
 
-    private Long id;
+    private Long studentId;
     private String name;
     private String description;
     private String email;

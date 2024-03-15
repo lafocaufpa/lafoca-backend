@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class FunctionStudentDto {
 
-    private Long id;
+    private Long functionStudentId;
 
     private String name;
 

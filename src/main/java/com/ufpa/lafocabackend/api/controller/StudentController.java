@@ -6,7 +6,6 @@ import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.StudentDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
-import com.ufpa.lafocabackend.domain.service.FunctionStudentService;
 import com.ufpa.lafocabackend.domain.service.StudentService;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
@@ -33,13 +32,11 @@ public class StudentController {
     private final StudentService studentService;
     private final ModelMapper modelMapper;
     private final UserPhotoService userPhotoService;
-    private final FunctionStudentService functionStudentService;
 
-    public StudentController(StudentService studentService, ModelMapper modelMapper, UserPhotoService userPhotoService, FunctionStudentService functionStudentService) {
+    public StudentController(StudentService studentService, ModelMapper modelMapper, UserPhotoService userPhotoService) {
         this.studentService = studentService;
         this.modelMapper = modelMapper;
         this.userPhotoService = userPhotoService;
-        this.functionStudentService = functionStudentService;
     }
 
     @CheckSecurityPermissionMethods.L1

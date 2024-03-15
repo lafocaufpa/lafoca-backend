@@ -45,10 +45,10 @@ public class StudentService {
         Student student = modelMapper.map(studentInputDto, Student.class);
 
         //is an entity update
-        if(studentInputDto.getId() != null){
-            student = read(studentInputDto.getId());
-            modelMapper.map(studentInputDto, student);
-        }
+//        if(studentInputDto.getId() != null){
+//            student = read(studentInputDto.getId());
+//            modelMapper.map(studentInputDto, student);
+//        }
 
         final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
         List<Skill> skills = new ArrayList<>();

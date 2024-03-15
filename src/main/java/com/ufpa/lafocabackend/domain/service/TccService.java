@@ -49,7 +49,6 @@ public class TccService {
         }
 
     }
-
     private Tcc getOrFail(Long tccId) {
         return tccRepository.findById(tccId)
                 .orElseThrow( () -> new EntityNotFoundException(Tcc.class.getSimpleName(), tccId));
