@@ -2,10 +2,7 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
-import com.ufpa.lafocabackend.domain.model.FunctionStudent;
-import com.ufpa.lafocabackend.domain.model.Skill;
-import com.ufpa.lafocabackend.domain.model.Student;
-import com.ufpa.lafocabackend.domain.model.Tcc;
+import com.ufpa.lafocabackend.domain.model.*;
 import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
@@ -30,28 +27,25 @@ public class StudentService {
     private final SkillService skillService;
     private final ModelMapper modelMapper;
     private final TccService tccService;
+    private final ArticleService articleService;
 
-    public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService) {
+    public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService) {
         this.studentRepository = studentRepository;
         this.photoStorageService = photoStorageService;
         this.functionStudentService = functionStudentService;
         this.skillService = skillService;
         this.modelMapper = modelMapper;
         this.tccService = tccService;
+        this.articleService = articleService;
     }
 
     @Transactional
     public Student save (StudentInputDto studentInputDto) {
         Student student = modelMapper.map(studentInputDto, Student.class);
 
-        //is an entity update
-//        if(studentInputDto.getId() != null){
-//            student = read(studentInputDto.getId());
-//            modelMapper.map(studentInputDto, student);
-//        }
-
         final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
         List<Skill> skills = new ArrayList<>();
+
         for(Long skillId: studentInputDto.getSkillsId()){
             final Skill skill = skillService.read(skillId);
             skills.add(skill);
@@ -70,25 +64,44 @@ public class StudentService {
             studentSaved.setTcc(tccSaved);
         }
 
+        if(studentInputDto.getArticles() != null){
+            final ArrayList<Article> articles = new ArrayList<>();
+            for(Long articleId: studentInputDto.getArticles()){
+                final Article article = articleService.read(articleId);
+                articles.add(article);
+            }
+            studentSaved.setArticles(articles);
+        }
+
         return studentSaved;
     }
 
     @Transactional
     public Student update (Long studentId, StudentInputDto studentInputDto) {
         final Student student = read(studentId);
+        modelMapper.map(studentInputDto, student);
 
         final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
+        student.setFunctionStudent(functionStudent);
 
         List<Skill> skills = new ArrayList<>();
         for(Long skillId: studentInputDto.getSkillsId()){
             final Skill skill = skillService.read(skillId);
             skills.add(skill);
+
+        }
+        student.setSkills(skills);
+
+        if(studentInputDto.getArticles() != null){
+            final ArrayList<Article> articles = new ArrayList<>();
+            for(Long articleId: studentInputDto.getArticles()){
+                final Article article = articleService.read(articleId);
+                articles.add(article);
+            }
+            student.setArticles(articles);
         }
 
-        modelMapper.map(studentInputDto, student);
         student.setStudentId(studentId);
-        student.setFunctionStudent(functionStudent);
-        student.setSkills(skills);
 
         return studentRepository.save(student);
     }

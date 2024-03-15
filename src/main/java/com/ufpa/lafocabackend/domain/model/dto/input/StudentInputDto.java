@@ -16,4 +16,5 @@ public class StudentInputDto {
     private Long functionStudentId;
     private Long[] SkillsId;
     private TccDto tcc;
+    private Long[] articles;
 }

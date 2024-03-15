@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("/skills")
 public class SkillController {
 
-
     private final SkillService skillService;
     private final ModelMapper modelMapper;
 

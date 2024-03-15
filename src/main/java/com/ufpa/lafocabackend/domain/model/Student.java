@@ -58,6 +58,12 @@ public class Student {
     @JoinColumn(name = "tcc_id")
     private Tcc tcc;
 
+    @ManyToMany
+    @JoinTable(name = "student_articles",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "article_id"))
+    private List<Article> articles = new ArrayList<>();
+
     public boolean addSkill(Skill skill) {
         return skills.add(skill);
     }

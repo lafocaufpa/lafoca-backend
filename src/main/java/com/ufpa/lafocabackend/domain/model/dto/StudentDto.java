@@ -23,4 +23,5 @@ public class StudentDto {
     private FunctionStudentDto functionStudent;
     private List<Skill> skills;
     private TccDto tcc;
+    private List<ArticleDto> articles;
 }
