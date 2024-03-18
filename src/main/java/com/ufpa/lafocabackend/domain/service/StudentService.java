@@ -14,7 +14,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -28,8 +28,9 @@ public class StudentService {
     private final ModelMapper modelMapper;
     private final TccService tccService;
     private final ArticleService articleService;
+    private final ProjectService projectService;
 
-    public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService) {
+    public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService) {
         this.studentRepository = studentRepository;
         this.photoStorageService = photoStorageService;
         this.functionStudentService = functionStudentService;
@@ -37,26 +38,39 @@ public class StudentService {
         this.modelMapper = modelMapper;
         this.tccService = tccService;
         this.articleService = articleService;
+        this.projectService = projectService;
     }
 
     @Transactional
-    public Student save (StudentInputDto studentInputDto) {
+    public Student save(StudentInputDto studentInputDto) {
         Student student = modelMapper.map(studentInputDto, Student.class);
 
-        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
-        List<Skill> skills = new ArrayList<>();
 
-        for(Long skillId: studentInputDto.getSkillsId()){
-            final Skill skill = skillService.read(skillId);
-            skills.add(skill);
+        if(studentInputDto.getFunctionStudentId() != null) {
+            student.setFunctionStudent(functionStudentService.read(studentInputDto.getFunctionStudentId()));
         }
 
-        student.setSkills(skills);
-        student.setFunctionStudent(functionStudent);
+        if (studentInputDto.getSkillsId() != null) {
+            for (Long skillId : studentInputDto.getSkillsId()) {
+                student.addSkill(skillService.read(skillId));
+            }
+        }
+
+        if (studentInputDto.getProjects() != null) {
+            for (Long projectId : studentInputDto.getProjects()) {
+                student.addProject(projectService.read(projectId));
+            }
+        }
+
+        if (studentInputDto.getArticles() != null) {
+            for (Long articleId : studentInputDto.getArticles()) {
+                student.addArticles(articleService.read(articleId));
+            }
+        }
 
         final Student studentSaved = studentRepository.save(student);
 
-        if(studentInputDto.getTcc() != null) {
+        if (studentInputDto.getTcc() != null) {
             final TccDto tccDto = studentInputDto.getTcc();
             final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
             tcc.setStudent(studentSaved);
@@ -64,58 +78,52 @@ public class StudentService {
             studentSaved.setTcc(tccSaved);
         }
 
-        if(studentInputDto.getArticles() != null){
-            final ArrayList<Article> articles = new ArrayList<>();
-            for(Long articleId: studentInputDto.getArticles()){
-                final Article article = articleService.read(articleId);
-                articles.add(article);
-            }
-            studentSaved.setArticles(articles);
-        }
-
         return studentSaved;
     }
 
     @Transactional
-    public Student update (Long studentId, StudentInputDto studentInputDto) {
-        final Student student = read(studentId);
+    public Student update(Long studentId, StudentInputDto studentInputDto) {
+        Student student = read(studentId);
         modelMapper.map(studentInputDto, student);
 
-        final FunctionStudent functionStudent = functionStudentService.read(studentInputDto.getFunctionStudentId());
-        student.setFunctionStudent(functionStudent);
+        student.setFunctionStudent(functionStudentService.read(studentInputDto.getFunctionStudentId()));
 
-        List<Skill> skills = new ArrayList<>();
-        for(Long skillId: studentInputDto.getSkillsId()){
+        for (Long skillId : studentInputDto.getSkillsId()) {
             final Skill skill = skillService.read(skillId);
-            skills.add(skill);
-
+            student.addSkill(skill);
         }
-        student.setSkills(skills);
 
-        if(studentInputDto.getArticles() != null){
-            final ArrayList<Article> articles = new ArrayList<>();
-            for(Long articleId: studentInputDto.getArticles()){
+        if (studentInputDto.getArticles() != null) {
+            var articles = new HashSet<Article>();
+            for (Long articleId : studentInputDto.getArticles()) {
                 final Article article = articleService.read(articleId);
                 articles.add(article);
             }
             student.setArticles(articles);
         }
 
-        student.setStudentId(studentId);
+        if(studentInputDto.getProjects() != null) {
+            var projects = new HashSet<Project>();
+            for(Long projetcId : studentInputDto.getProjects()) {
+                final Project project = projectService.read(projetcId);
+                projects.add(project);
+            }
+            student.setProjects(projects);
+        }
 
         return studentRepository.save(student);
     }
 
-    public List<Student> list (){
+    public List<Student> list() {
 
         return studentRepository.findAll();
     }
 
-    public Student read (Long studentId) {
+    public Student read(Long studentId) {
         return getOrFail(studentId);
     }
 
-    public void delete (Long studentId) {
+    public void delete(Long studentId) {
 
         try {
             studentRepository.deleteById(studentId);
@@ -129,7 +137,7 @@ public class StudentService {
 
     private Student getOrFail(Long studentId) {
         return studentRepository.findById(studentId)
-                .orElseThrow( () -> new EntityNotFoundException(getClass().getSimpleName(), studentId));
+                .orElseThrow(() -> new EntityNotFoundException(getClass().getSimpleName(), studentId));
     }
 
     public void deletePhoto(Long studentId) {
@@ -143,6 +151,7 @@ public class StudentService {
 
         photoStorageService.deletar(storageUtils);
     }
+
     @Transactional
     public void associateFunction(Long functionStudentId, Long studentId) {
 
@@ -151,8 +160,9 @@ public class StudentService {
         student.setFunctionStudent(functionStudent);
         studentRepository.save(student);
     }
+
     @Transactional
-    public void associateSkill (Long studentId, Long skillId) {
+    public void associateSkill(Long studentId, Long skillId) {
         final Student student = read(studentId);
         final Skill skill = skillService.read(skillId);
         student.addSkill(skill);

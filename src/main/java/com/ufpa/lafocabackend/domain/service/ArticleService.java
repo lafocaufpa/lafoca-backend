@@ -47,14 +47,14 @@ public class ArticleService {
         return articleRepository.save(currentArticle);
     }
 
-    public void delete (Long skillsId) {
+    public void delete (Long articleId) {
 
         try {
-            articleRepository.deleteById(skillsId);
+            articleRepository.deleteById(articleId);
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(Article.class.getSimpleName(), skillsId);
+            throw new EntityInUseException(Article.class.getSimpleName(), articleId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(Article.class.getSimpleName(), skillsId);
+            throw new EntityNotFoundException(Article.class.getSimpleName(), articleId);
         }
 
     }

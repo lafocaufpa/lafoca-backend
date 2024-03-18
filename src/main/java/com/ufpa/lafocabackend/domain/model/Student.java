@@ -7,8 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -40,7 +40,7 @@ public class Student {
     @JoinTable(name = "students_skills",
             joinColumns = @JoinColumn(name = "id_student"),
             inverseJoinColumns = @JoinColumn(name = "id_skill"))
-    private List<Skill> skills = new ArrayList<>();
+    private Set<Skill> skills = new HashSet<>();
 
     @CreationTimestamp
     @Column(columnDefinition = "datetime", nullable = false)
@@ -62,7 +62,13 @@ public class Student {
     @JoinTable(name = "student_articles",
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "article_id"))
-    private List<Article> articles = new ArrayList<>();
+    private Set<Article> articles = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "students_projects",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id"))
+    private Set<Project> projects = new HashSet<>();
 
     public boolean addSkill(Skill skill) {
         return skills.add(skill);
@@ -71,4 +77,14 @@ public class Student {
     public boolean removeSkill(Skill skill) {
         return skills.remove(skill);
     }
+
+    public boolean addProject(Project project) {
+        return projects.add(project);
+    }
+
+    public boolean addArticles(Article article) {
+
+        return articles.add(article);
+    }
+
 }

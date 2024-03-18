@@ -24,4 +24,5 @@ public class StudentDto {
     private List<Skill> skills;
     private TccDto tcc;
     private List<ArticleDto> articles;
+    private List<ProjectDto> projects;
 }

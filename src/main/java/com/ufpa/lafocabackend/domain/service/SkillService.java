@@ -47,7 +47,6 @@ public class SkillService {
         } catch (EmptyResultDataAccessException e) {
             throw new EntityNotFoundException(getClass().getSimpleName(), skillsId);
         }
-
     }
 
     private Skill getOrFail(Long skillsId) {

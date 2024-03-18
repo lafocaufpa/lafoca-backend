@@ -27,8 +27,7 @@ public class Project {
     @Column(nullable = false)
     private String status;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private String year;
 
 }

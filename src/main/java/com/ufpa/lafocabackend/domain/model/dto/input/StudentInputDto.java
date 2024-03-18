@@ -17,4 +17,5 @@ public class StudentInputDto {
     private Long[] SkillsId;
     private TccDto tcc;
     private Long[] articles;
+    private Long[] projects;
 }

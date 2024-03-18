@@ -46,9 +46,10 @@ public class ModelMapperConfig {
                 skip(destination.getTcc().getStudent());
                 skip(destination.getFunctionStudent());
                 skip(destination.getSkills());
+                skip(destination.getProjects());
+                skip(destination.getArticles());
             }
         });
-
 
         return modelMapper;
     }
