@@ -11,11 +11,12 @@ import com.ufpa.lafocabackend.repository.StudentRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 
 @Service
 public class StudentService {
@@ -114,9 +115,9 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public List<Student> list() {
+    public Page<Student> list(Pageable pageable) {
 
-        return studentRepository.findAll();
+        return studentRepository.findAll(pageable);
     }
 
     public Student read(Long studentId) {

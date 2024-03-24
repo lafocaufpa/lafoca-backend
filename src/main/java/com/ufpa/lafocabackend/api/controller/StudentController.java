@@ -12,6 +12,10 @@ import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,18 +60,22 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<StudentDto>> list (){
+    public ResponseEntity<Page<StudentDto>> list (@PageableDefault(size = 7) Pageable pageable){
 
-        final List<Student> list = studentService.list();
+        final Page<Student> list = studentService.list(pageable);
 
         Type listType = new TypeToken<List<StudentDto>>() {
 
         }.getType();
 
-        final List<StudentDto> map = modelMapper.map(list, listType);
+        final List<StudentDto> map = modelMapper.map(list.getContent(), listType);
 
-        return ResponseEntity.ok(map);
+        Page<StudentDto> studentDtoPage = new PageImpl<>(map, pageable, list.getTotalElements());
+
+        return ResponseEntity.ok(studentDtoPage);
     }
+
+//    @GetMapping("/")
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{studentId}")
