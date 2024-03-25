@@ -1,9 +1,8 @@
 package com.ufpa.lafocabackend.core.jackson;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.SerializerProvider;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.data.domain.Page;
 
@@ -16,18 +15,20 @@ import java.io.IOException;
  */
 @JsonComponent
 public class PageJsonSerializer extends JsonSerializer<Page<?>> {
-    @Override
-    public void serialize(Page<?> objects, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+    
 
+    @Override
+    public void serialize(Page<?> objects, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
 
         jsonGenerator.writeObjectField("content", objects.getContent());
         jsonGenerator.writeNumberField("size", objects.getSize());
         jsonGenerator.writeNumberField("totalElements", objects.getTotalElements());
         jsonGenerator.writeNumberField("totalPages", objects.getTotalPages());
-        jsonGenerator.writeNumberField("number", objects.getNumber());
+        jsonGenerator.writeNumberField("currentPage", objects.getNumber());
+        jsonGenerator.writeBooleanField("firstPage", objects.isFirst());
+        jsonGenerator.writeBooleanField("lastPage", objects.isLast());
 
         jsonGenerator.writeEndObject();
-
     }
 }
