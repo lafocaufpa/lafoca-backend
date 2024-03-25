@@ -6,6 +6,7 @@ import com.ufpa.lafocabackend.domain.model.UserPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.StudentDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.StudentSummaryDto;
 import com.ufpa.lafocabackend.domain.service.StudentService;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
@@ -75,7 +76,13 @@ public class StudentController {
         return ResponseEntity.ok(studentDtoPage);
     }
 
-//    @GetMapping("/")
+    @GetMapping("/summarized")
+    public ResponseEntity<List<StudentSummaryDto>> listStudentsSummarized () {
+        List<StudentSummaryDto> studentSummaryDtos = studentService.listSummaryStudents();
+
+        return ResponseEntity.ok(studentSummaryDtos);
+
+    }
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{studentId}")

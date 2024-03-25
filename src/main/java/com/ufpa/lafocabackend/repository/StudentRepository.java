@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.repository;
 
 import com.ufpa.lafocabackend.domain.model.Student;
+import com.ufpa.lafocabackend.domain.model.dto.output.StudentSummaryDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
@@ -27,4 +29,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("SELECT up.fileName FROM UserPhoto up WHERE up.userPhotoId = :userPhotoId")
     String findFileNameByUserPhotoId(String userPhotoId);
+
+//    @Query("SELECT s.studentId, s.name, s.functionStudent.name, s.photo.url FROM Student s")
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.StudentSummaryDto(u.studentId, u.name, u.functionStudent.name, u.photo.url) FROM Student u")
+    List<StudentSummaryDto> getStudentSummary ();
+
 }

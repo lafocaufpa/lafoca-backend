@@ -5,6 +5,7 @@ import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.*;
 import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.StudentSummaryDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
 import com.ufpa.lafocabackend.repository.StudentRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 public class StudentService {
@@ -118,6 +120,10 @@ public class StudentService {
     public Page<Student> list(Pageable pageable) {
 
         return studentRepository.findAll(pageable);
+    }
+
+    public List<StudentSummaryDto> listSummaryStudents () {
+        return studentRepository.getStudentSummary();
     }
 
     public Student read(Long studentId) {
