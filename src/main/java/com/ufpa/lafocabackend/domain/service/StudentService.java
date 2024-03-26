@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.domain.events.addedStudentEvent;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.*;
@@ -10,6 +11,8 @@ import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
 import com.ufpa.lafocabackend.repository.StudentRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -23,7 +26,6 @@ import java.util.List;
 @Service
 public class StudentService {
 
-
     private final StudentRepository studentRepository;
     private final PhotoStorageService photoStorageService;
     private final FunctionStudentService functionStudentService;
@@ -32,6 +34,9 @@ public class StudentService {
     private final TccService tccService;
     private final ArticleService articleService;
     private final ProjectService projectService;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public StudentService(StudentRepository studentRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService) {
         this.studentRepository = studentRepository;
@@ -81,6 +86,7 @@ public class StudentService {
             studentSaved.setTcc(tccSaved);
         }
 
+        applicationEventPublisher.publishEvent(new addedStudentEvent(studentSaved));
         return studentSaved;
     }
 

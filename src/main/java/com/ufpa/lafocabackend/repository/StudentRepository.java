@@ -30,7 +30,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT up.fileName FROM UserPhoto up WHERE up.userPhotoId = :userPhotoId")
     String findFileNameByUserPhotoId(String userPhotoId);
 
-//    @Query("SELECT s.studentId, s.name, s.functionStudent.name, s.photo.url FROM Student s")
     @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.StudentSummaryDto(u.studentId, u.name, u.functionStudent.name, u.photo.url) FROM Student u")
     List<StudentSummaryDto> getStudentSummary ();
 

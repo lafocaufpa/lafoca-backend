@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -13,8 +14,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Student {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+public class Student extends AbstractAggregateRoot<Student> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
