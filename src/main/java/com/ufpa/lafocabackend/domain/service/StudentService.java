@@ -53,7 +53,6 @@ public class StudentService {
     public Student save(StudentInputDto studentInputDto) {
         Student student = modelMapper.map(studentInputDto, Student.class);
 
-
         if(studentInputDto.getFunctionStudentId() != null) {
             student.setFunctionStudent(functionStudentService.read(studentInputDto.getFunctionStudentId()));
         }
@@ -76,17 +75,15 @@ public class StudentService {
             }
         }
 
-        final Student studentSaved = studentRepository.save(student);
-
         if (studentInputDto.getTcc() != null) {
             final TccDto tccDto = studentInputDto.getTcc();
             final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
-            tcc.setStudent(studentSaved);
+            tcc.setStudent(student);
             final Tcc tccSaved = tccService.save(tcc);
-            studentSaved.setTcc(tccSaved);
+            student.setTcc(tccSaved);
         }
-
-        applicationEventPublisher.publishEvent(new addedStudentEvent(studentSaved));
+        final Student studentSaved = studentRepository.save(student);
+        applicationEventPublisher.publishEvent(new addedStudentEvent(student));
         return studentSaved;
     }
 

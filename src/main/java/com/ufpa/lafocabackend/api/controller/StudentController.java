@@ -43,7 +43,7 @@ public class StudentController {
         this.userPhotoService = userPhotoService;
     }
 
-    @CheckSecurityPermissionMethods.L1
+//    @CheckSecurityPermissionMethods.L1
     @PostMapping
     public ResponseEntity<StudentDto> add (@RequestBody StudentInputDto studentInputDto) {
 

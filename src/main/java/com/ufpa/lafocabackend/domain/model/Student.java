@@ -55,7 +55,7 @@ public class Student extends AbstractAggregateRoot<Student> {
     @JoinColumn(name = "function_student_id", nullable = false)
     private FunctionStudent functionStudent;
 
-    @OneToOne(mappedBy = "student")
+    @OneToOne
     @JoinColumn(name = "tcc_id")
     private Tcc tcc;
 
