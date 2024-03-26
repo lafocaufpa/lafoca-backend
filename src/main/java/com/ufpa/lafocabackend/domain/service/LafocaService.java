@@ -56,6 +56,17 @@ public class LafocaService {
         return modelMapper.map(lafoca, LafocaDto.class);
     }
 
+    public LafocaDto printCounts() {
+        final LafocaRepository.CountResult counts = lafocaRepository.getCounts();
+
+        return LafocaDto.builder()
+                .totalArticles(counts.getTotalArticles())
+                .totalProjects(counts.getTotalProjects())
+                .totalTcc(counts.getTotalTccs())
+                .totalStudents(counts.getTotalStudents())
+                .build();
+    }
+
     public void delete(Long lafocaId) {
 
         try {

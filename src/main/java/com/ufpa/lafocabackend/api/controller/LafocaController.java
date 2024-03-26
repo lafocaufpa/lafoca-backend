@@ -27,4 +27,10 @@ public class LafocaController {
         return ResponseEntity.ok(lafoca);
     }
 
+    @GetMapping
+    public ResponseEntity<LafocaDto> read() {
+        final LafocaDto lafocaDto = lafocaService.printCounts();
+        return ResponseEntity.ok(lafocaDto);
+    }
+
 }

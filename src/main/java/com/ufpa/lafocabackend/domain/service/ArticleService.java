@@ -42,7 +42,7 @@ public class ArticleService {
         final Article currentArticle = read(articleId);
 
         modelMapper.map(newArticle, currentArticle);
-        currentArticle.setId(articleId);
+        currentArticle.setArticleId(articleId);
 
         return articleRepository.save(currentArticle);
     }
