@@ -25,7 +25,7 @@ public class Project {
     private String description;
 
     @Column(nullable = false)
-    private String status;
+    private Boolean completed;
 
     @Column(nullable = false)
     private String year;

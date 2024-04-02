@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto(p.projectId, p.type, p.tittle, p.description, p.status, p.year) FROM Project p")
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto(p.projectId, p.type, p.tittle, p.description, p.completed, p.year) FROM Project p")
     Page<ProjectSummaryDto> getProjectSummary(Pageable pageable);
 }

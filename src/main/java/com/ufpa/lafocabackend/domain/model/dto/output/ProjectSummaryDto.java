@@ -13,6 +13,6 @@ public class ProjectSummaryDto {
     private String type;
     private String tittle;
     private String description;
-    private String status;
+    private Boolean completed;
     private String year;
 }

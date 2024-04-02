@@ -10,6 +10,7 @@ import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
 import com.ufpa.lafocabackend.repository.MemberRepository;
+import com.ufpa.lafocabackend.repository.TccRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class MemberService {
@@ -33,11 +35,12 @@ public class MemberService {
     private final TccService tccService;
     private final ArticleService articleService;
     private final ProjectService projectService;
+    private final TccRepository tccRepository;
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public MemberService(MemberRepository memberRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService) {
+    public MemberService(MemberRepository memberRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository) {
         this.memberRepository = memberRepository;
         this.photoStorageService = photoStorageService;
         this.functionStudentService = functionStudentService;
@@ -46,13 +49,14 @@ public class MemberService {
         this.tccService = tccService;
         this.articleService = articleService;
         this.projectService = projectService;
+        this.tccRepository = tccRepository;
     }
 
     @Transactional
     public Member save(MemberInputDto memberInputDto) {
         Member member = modelMapper.map(memberInputDto, Member.class);
 
-        if(memberInputDto.getFunctionStudentId() != null) {
+        if (memberInputDto.getFunctionStudentId() != null) {
             member.setFunctionStudent(functionStudentService.read(memberInputDto.getFunctionStudentId()));
         }
 
@@ -80,8 +84,9 @@ public class MemberService {
             final Tcc tccSaved = tccService.save(tcc);
             member.setTcc(tccSaved);
         }
+
         final Member memberSaved = memberRepository.save(member);
-        applicationEventPublisher.publishEvent(new addedMemberEvent(member));
+        applicationEventPublisher.publishEvent(new addedMemberEvent(memberSaved));
         return memberSaved;
     }
 
@@ -90,29 +95,45 @@ public class MemberService {
         Member member = read(memberId);
         modelMapper.map(memberInputDto, member);
 
-        member.setFunctionStudent(functionStudentService.read(memberInputDto.getFunctionStudentId()));
+        if (memberInputDto.getFunctionStudentId() != null) {
+            member.setFunctionStudent(functionStudentService.read(memberInputDto.getFunctionStudentId()));
+        }
 
-        for (Long skillId : memberInputDto.getSkillsId()) {
-            final Skill skill = skillService.read(skillId);
-            member.addSkill(skill);
+        if (memberInputDto.getSkillsId() != null) {
+            Set<Skill> skills = new HashSet<>();
+            for (Long skillId : memberInputDto.getSkillsId()) {
+                skills.add(skillService.read(skillId));
+            }
+            member.setSkills(skills);
+        }
+
+        if (memberInputDto.getProjects() != null) {
+            Set<Project> projects = new HashSet<>();
+            for (Long projectId : memberInputDto.getProjects()) {
+                projects.add(projectService.read(projectId));
+            }
+            member.setProjects(projects);
         }
 
         if (memberInputDto.getArticles() != null) {
-            var articles = new HashSet<Article>();
+            Set<Article> articles = new HashSet<>();
             for (Long articleId : memberInputDto.getArticles()) {
-                final Article article = articleService.read(articleId);
-                articles.add(article);
+                articles.add(articleService.read(articleId));
             }
             member.setArticles(articles);
         }
 
-        if(memberInputDto.getProjects() != null) {
-            var projects = new HashSet<Project>();
-            for(Long projetcId : memberInputDto.getProjects()) {
-                final Project project = projectService.read(projetcId);
-                projects.add(project);
+        if (memberInputDto.getTcc() != null) {
+
+            final TccDto tccDto = memberInputDto.getTcc();
+            final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
+            final Tcc tccSaved = tccService.save(tcc);
+            member.setTcc(tccSaved);
+        } else {
+            if (member.getTcc() != null) {
+                tccRepository.deleteById(member.getTcc().getTccId());
+                member.setTcc(null);
             }
-            member.setProjects(projects);
         }
 
         return memberRepository.save(member);
