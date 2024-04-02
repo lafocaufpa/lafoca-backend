@@ -3,7 +3,6 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Tcc;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
-import com.ufpa.lafocabackend.domain.service.MemberService;
 import com.ufpa.lafocabackend.domain.service.TccService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -18,15 +17,12 @@ import java.util.List;
 @RequestMapping("/tccs")
 public class TccController {
 
-
     private final TccService tccService;
     private final ModelMapper modelMapper;
-    private final MemberService memberService;
 
-    public TccController(TccService tccService, ModelMapper modelMapper, MemberService memberService) {
+    public TccController(TccService tccService, ModelMapper modelMapper) {
         this.tccService = tccService;
         this.modelMapper = modelMapper;
-        this.memberService = memberService;
     }
 
     @CheckSecurityPermissionMethods.L1

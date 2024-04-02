@@ -17,7 +17,7 @@ public interface LafocaRepository extends JpaRepository<Lafoca, Long> {
     CountResult getCounts();
 
 
-    public interface CountResult {
+    interface CountResult {
         Integer getTotalMembers();
         Integer getTotalProjects();
         Integer getTotalTccs();
