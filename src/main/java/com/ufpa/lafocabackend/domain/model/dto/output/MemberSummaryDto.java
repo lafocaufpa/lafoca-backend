@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class StudentSummaryDto {
+public class MemberSummaryDto {
 
     private Long id;
     private String name;

@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -14,13 +13,13 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class Student extends AbstractAggregateRoot<Student> {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long studentId;
+    private Long memberId;
 
     @Column(nullable = false)
     private String name;
@@ -38,9 +37,9 @@ public class Student extends AbstractAggregateRoot<Student> {
     private String linkPortifolio;
 
     @ManyToMany
-    @JoinTable(name = "students_skills",
-            joinColumns = @JoinColumn(name = "id_student"),
-            inverseJoinColumns = @JoinColumn(name = "id_skill"))
+    @JoinTable(name = "member_skill",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private Set<Skill> skills = new HashSet<>();
 
     @CreationTimestamp
@@ -60,14 +59,14 @@ public class Student extends AbstractAggregateRoot<Student> {
     private Tcc tcc;
 
     @ManyToMany
-    @JoinTable(name = "student_articles",
-            joinColumns = @JoinColumn(name = "student_id"),
+    @JoinTable(name = "member_article",
+            joinColumns = @JoinColumn(name = "member_id"),
             inverseJoinColumns = @JoinColumn(name = "article_id"))
     private Set<Article> articles = new HashSet<>();
 
     @ManyToMany
-    @JoinTable(name = "students_projects",
-            joinColumns = @JoinColumn(name = "student_id"),
+    @JoinTable(name = "member_project",
+            joinColumns = @JoinColumn(name = "member_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private Set<Project> projects = new HashSet<>();
 

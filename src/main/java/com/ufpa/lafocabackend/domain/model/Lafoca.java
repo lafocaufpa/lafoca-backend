@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 public class Lafoca {
 
     @Id
-    private Long id;
+    private Long LafocaId;
     private int numberOfMembers;
     private int numberOfDefendedTCCs;
     private int numberOfPublishedArticles;

@@ -3,7 +3,7 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Tcc;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
-import com.ufpa.lafocabackend.domain.service.StudentService;
+import com.ufpa.lafocabackend.domain.service.MemberService;
 import com.ufpa.lafocabackend.domain.service.TccService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -21,12 +21,12 @@ public class TccController {
 
     private final TccService tccService;
     private final ModelMapper modelMapper;
-    private final StudentService studentService;
+    private final MemberService memberService;
 
-    public TccController(TccService tccService, ModelMapper modelMapper, StudentService studentService) {
+    public TccController(TccService tccService, ModelMapper modelMapper, MemberService memberService) {
         this.tccService = tccService;
         this.modelMapper = modelMapper;
-        this.studentService = studentService;
+        this.memberService = memberService;
     }
 
     @CheckSecurityPermissionMethods.L1
@@ -71,7 +71,6 @@ public class TccController {
     public ResponseEntity<TccDto> update (@PathVariable Long tccId, @RequestBody TccDto newTcc){
 
         final Tcc currentTcc = tccService.read(tccId);
-        studentService.read(newTcc.getStudentId());
         modelMapper.map(newTcc, currentTcc);
         currentTcc.setTccId(tccId);
 

@@ -3,9 +3,14 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.ProjectDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
 import com.ufpa.lafocabackend.domain.service.ProjectService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +60,14 @@ public class ProjectController {
         final List<ProjectDto> map = modelMapper.map(list, listType);
 
         return ResponseEntity.ok(map);
+    }
+
+    @GetMapping("/summarized")
+    public ResponseEntity<Page<ProjectSummaryDto>> listProjectsSummarized (@PageableDefault(size = 7) Pageable pageable) {
+
+        final Page<ProjectSummaryDto> projectsSummarizedDtos = projectService.listSummaryProjects(pageable);
+        Page<ProjectSummaryDto> projectsSummarizedPage = new PageImpl<>(projectsSummarizedDtos.getContent(), pageable, projectsSummarizedDtos.getTotalElements());
+        return ResponseEntity.ok(projectsSummarizedPage);
     }
 
     @CheckSecurityPermissionMethods.L1

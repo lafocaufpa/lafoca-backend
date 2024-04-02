@@ -4,7 +4,7 @@ import com.ufpa.lafocabackend.domain.model.*;
 import com.ufpa.lafocabackend.domain.model.dto.FunctionStudentDto;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
-import com.ufpa.lafocabackend.domain.model.dto.input.StudentInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ public class ModelMapperConfig {
         modelMapper.addMappings(new PropertyMap<PermissionDto, Permission>() {
             @Override
             protected void configure() {
-                skip(destination.getId());
+                skip(destination.getPermissionId());
             }
         });
 
@@ -38,12 +38,11 @@ public class ModelMapperConfig {
             }
         });
 
-        modelMapper.addMappings(new PropertyMap<StudentInputDto, Student>() {
+        modelMapper.addMappings(new PropertyMap<MemberInputDto, Member>() {
             @Override
             protected void configure() {
-                skip(destination.getStudentId());
+                skip(destination.getMemberId());
                 skip(destination.getTcc().getTccId());
-                skip(destination.getTcc().getStudent());
                 skip(destination.getFunctionStudent());
                 skip(destination.getSkills());
                 skip(destination.getProjects());

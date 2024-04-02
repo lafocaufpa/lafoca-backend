@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/info")
 public class LafocaController {
@@ -19,13 +17,13 @@ public class LafocaController {
         this.lafocaService = lafocaService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<LafocaDto>> list() {
-
-        final List<LafocaDto> lafoca = lafocaService.list();
-
-        return ResponseEntity.ok(lafoca);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<LafocaDto>> list() {
+//
+//        final List<LafocaDto> lafoca = lafocaService.list();
+//
+//        return ResponseEntity.ok(lafoca);
+//    }
 
     @GetMapping
     public ResponseEntity<LafocaDto> read() {

@@ -63,7 +63,7 @@ public class LafocaService {
                 .totalArticles(counts.getTotalArticles())
                 .totalProjects(counts.getTotalProjects())
                 .totalTcc(counts.getTotalTccs())
-                .totalStudents(counts.getTotalStudents())
+                .totalMembers(counts.getTotalMembers())
                 .build();
     }
 

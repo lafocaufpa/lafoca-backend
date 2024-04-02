@@ -18,7 +18,4 @@ public class Tcc {
     private String date;
     private String url;
 
-    @OneToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
 }

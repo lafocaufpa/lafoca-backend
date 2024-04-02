@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface LafocaRepository extends JpaRepository<Lafoca, Long> {
 
     @Query(value = "SELECT " +
-            "(SELECT COUNT(student_id) FROM student) AS totalStudents, " +
+            "(SELECT COUNT(member_id) FROM member) AS totalMembers, " +
             "(SELECT COUNT(project_id) FROM project) AS totalProjects, " +
             "(SELECT COUNT(tcc_id) FROM tcc) AS totalTccs, " +
             "(SELECT COUNT(article_id) FROM article) AS totalArticles",
@@ -18,7 +18,7 @@ public interface LafocaRepository extends JpaRepository<Lafoca, Long> {
 
 
     public interface CountResult {
-        Integer getTotalStudents();
+        Integer getTotalMembers();
         Integer getTotalProjects();
         Integer getTotalTccs();
         Integer getTotalArticles();

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StudentOutputDto {
+public class MemberOutputDto {
     private String name;
     private String url;
     private String function;

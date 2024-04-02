@@ -1,17 +1,17 @@
 package com.ufpa.lafocabackend.domain.events;
 
-import com.ufpa.lafocabackend.domain.model.Student;
+import com.ufpa.lafocabackend.domain.model.Member;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
 
 @Getter
 @Setter
-public class addedStudentEvent extends ApplicationEvent {
+public class addedMemberEvent extends ApplicationEvent {
 
-    private Student student;
+    private Member member;
 
-    public addedStudentEvent(Object source) {
+    public addedMemberEvent(Object source) {
         super(source);
     }
 }

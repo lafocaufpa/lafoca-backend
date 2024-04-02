@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class LafocaDto {
 
-    private int totalStudents;
+    private int totalMembers;
     private int totalProjects;
     private int totalTcc;
     private int totalArticles;

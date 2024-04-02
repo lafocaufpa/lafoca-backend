@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.domain.model.dto;
 
-import com.ufpa.lafocabackend.domain.model.Skill;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +9,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class StudentDto {
+public class MemberDto {
 
-    private Long studentId;
+    private Long memberId;
     private String name;
     private String description;
     private String email;
@@ -21,7 +20,7 @@ public class StudentDto {
     private OffsetDateTime dateRegister;
     private String urlPhoto;
     private FunctionStudentDto functionStudent;
-    private List<Skill> skills;
+    private List<SkillDto> skills;
     private TccDto tcc;
     private List<ArticleDto> articles;
     private List<ProjectDto> projects;

@@ -21,6 +21,6 @@ public class Skill {
 
     @ManyToMany(mappedBy = "skills")
     @JsonIgnore
-    private List<Student> students;
+    private List<Member> members;
 
 }

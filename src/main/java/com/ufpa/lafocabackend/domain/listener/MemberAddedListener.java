@@ -1,14 +1,14 @@
 package com.ufpa.lafocabackend.domain.listener;
 
-import com.ufpa.lafocabackend.domain.events.addedStudentEvent;
+import com.ufpa.lafocabackend.domain.events.addedMemberEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class studentAddedListener {
+public class MemberAddedListener {
 
     @EventListener
-    public void whenAddingMember(addedStudentEvent event) {
+    public void whenAddingMember(addedMemberEvent event) {
         System.out.println("Evento disparado");
     }
 }
