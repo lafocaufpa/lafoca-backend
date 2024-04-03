@@ -17,18 +17,9 @@ public class LafocaController {
         this.lafocaService = lafocaService;
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<LafocaDto>> list() {
-//
-//        final List<LafocaDto> lafoca = lafocaService.list();
-//
-//        return ResponseEntity.ok(lafoca);
-//    }
-
     @GetMapping
     public ResponseEntity<LafocaDto> read() {
         final LafocaDto lafocaDto = lafocaService.printCounts();
         return ResponseEntity.ok(lafocaDto);
     }
-
 }

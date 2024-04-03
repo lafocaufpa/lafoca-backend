@@ -3,39 +3,52 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Skill;
+import com.ufpa.lafocabackend.domain.model.dto.SkillDto;
 import com.ufpa.lafocabackend.repository.SkillRepository;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 @Service
 public class SkillService {
 
     private final SkillRepository skillRepository;
+    private final ModelMapper modelMapper;
 
-    public SkillService(SkillRepository skillRepository) {
+    public SkillService(SkillRepository skillRepository, ModelMapper modelMapper) {
         this.skillRepository = skillRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public Skill save (Skill skill) {
-
-        return skillRepository.save(skill);
+    public SkillDto save (SkillDto skillDto) {
+        final Skill skill = modelMapper.map(skillDto, Skill.class);
+        return modelMapper.map(skillRepository.save(skill), SkillDto.class);
     }
 
-    public List<Skill> list (){
+    public List<SkillDto> list (){
 
-        return skillRepository.findAll();
+        final Type type = new TypeToken<List<SkillDto>>() {
+
+        }.getType();
+
+        return modelMapper.map(skillRepository.findAll(), type);
     }
 
-    public Skill read (Long skillId) {
-        return getOrFail(skillId);
+    public SkillDto read (Long skillId) {
+        return modelMapper.map(getOrFail(skillId), SkillDto.class) ;
     }
 
-    public Skill update (Skill skill) {
+    public SkillDto update (Long skillId, SkillDto newSkillDto) {
 
-        return save(skill);
+        final Skill currentSkill = getOrFail(skillId);
+        modelMapper.map(newSkillDto, currentSkill);
+        currentSkill.setSkillId(skillId);
+        return modelMapper.map(skillRepository.save(currentSkill), SkillDto.class);
     }
 
     public void delete (Long skillsId) {
@@ -43,14 +56,14 @@ public class SkillService {
         try {
             skillRepository.deleteById(skillsId);
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(getClass().getSimpleName(), skillsId);
+            throw new EntityInUseException(Skill.class.getSimpleName(), skillsId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(getClass().getSimpleName(), skillsId);
+            throw new EntityNotFoundException(Skill.class.getSimpleName(), skillsId);
         }
     }
 
-    private Skill getOrFail(Long skillsId) {
+    public Skill getOrFail(Long skillsId) {
         return skillRepository.findById(skillsId)
-                .orElseThrow( () -> new EntityNotFoundException(getClass().getSimpleName(), skillsId));
+                .orElseThrow( () -> new EntityNotFoundException(Skill.class.getSimpleName(), skillsId));
     }
 }

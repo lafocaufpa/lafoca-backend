@@ -1,14 +1,13 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.domain.model.Skill;
+import com.ufpa.lafocabackend.domain.model.dto.SkillDto;
 import com.ufpa.lafocabackend.domain.service.SkillService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/skills")
@@ -24,41 +23,33 @@ public class SkillController {
 
     @CheckSecurityPermissionMethods.L1
     @PostMapping
-    public ResponseEntity<Skill> add (@RequestBody Skill skill) {
+    public ResponseEntity<SkillDto> add (@RequestBody SkillDto skillDto) {
 
-        final Skill skillSaved = skillService.save(skill);
+        final SkillDto skillSaved = skillService.save(skillDto);
 
         return ResponseEntity.ok(skillSaved);
     }
 
     @CheckSecurityPermissionMethods.L1
     @GetMapping("/{skillId}")
-    public ResponseEntity<Skill> read (@PathVariable Long skillId){
+    public ResponseEntity<SkillDto> read (@PathVariable Long skillId){
 
-        final Skill skill = skillService.read(skillId);
-        return ResponseEntity.ok(skill);
+        return ResponseEntity.ok(skillService.read(skillId));
     }
 
     @CheckSecurityPermissionMethods.L1
     @GetMapping
-    public ResponseEntity<Collection<Skill>> list (){
+    public ResponseEntity<Collection<SkillDto>> list (){
 
-        final List<Skill> list = skillService.list();
-
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(skillService.list());
     }
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{skillId}")
-    public ResponseEntity<Skill> update (@PathVariable Long skillId, @RequestBody Skill newSkill){
+    public ResponseEntity<SkillDto> update (@PathVariable Long skillId, @RequestBody SkillDto newSkill){
 
-        final Skill currentSkill = skillService.read(skillId);
 
-        modelMapper.map(newSkill, currentSkill);
-        currentSkill.setSkillId(skillId);
-
-        final Skill skillUpdated = skillService.update(currentSkill);
-        return ResponseEntity.ok(skillUpdated);
+        return ResponseEntity.ok(skillService.update(skillId, newSkill));
     }
 
     @CheckSecurityPermissionMethods.L1
