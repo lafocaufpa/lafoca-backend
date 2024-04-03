@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.text.Normalizer;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,8 @@ public class Member {
 
     @Column(nullable = false)
     private String name;
+
+    private String slug;
 
     @Column(nullable = false)
     private String description;
@@ -70,6 +73,20 @@ public class Member {
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private Set<Project> projects = new HashSet<>();
 
+    @PrePersist
+    @PreUpdate
+    public void generateSlug() {
+        this.slug = createSlug(this.name);
+    }
+
+    private String createSlug(String name) {
+        return Normalizer.normalize(name, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "")
+                .toLowerCase()
+                .replaceAll("\\s+", "-")
+                .replaceAll("[^a-z0-9-]", "")
+                .replaceAll("-{2,}", "-");
+    }
     public boolean addSkill(Skill skill) {
         return skills.add(skill);
     }

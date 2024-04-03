@@ -13,6 +13,7 @@ public class MemberDto {
 
     private Long memberId;
     private String name;
+    private String slug;
     private String description;
     private String email;
     private String biography;

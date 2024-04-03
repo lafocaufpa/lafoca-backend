@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class MemberOutputDto {
     private String name;
+    private String slug;
     private String url;
     private String function;
 }

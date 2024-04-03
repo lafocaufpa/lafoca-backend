@@ -153,6 +153,15 @@ public class MemberService {
         return getOrFail(memberId);
     }
 
+    public Member getMemberByName(String slug) {
+        return memberRepository.findMemberBySlug(slug);
+    }
+
+    @Transactional
+    public void generateSlugAll() {
+        memberRepository.findAll().forEach(Member::generateSlug);
+    }
+
     public void delete(Long memberId) {
 
         try {

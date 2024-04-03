@@ -31,7 +31,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT up.fileName FROM UserPhoto up WHERE up.userPhotoId = :userPhotoId")
     String findFileNameByUserPhotoId(String userPhotoId);
 
-    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.name, m.functionStudent.name, m.photo.url) FROM Member m ORDER BY RAND()")
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.name, m.slug, m.functionStudent.name, m.photo.url) FROM Member m ORDER BY RAND()")
     Page<MemberSummaryDto> getMemberSummary(Pageable pageable);
+
+    Member findMemberBySlug(String slug);
 
 }

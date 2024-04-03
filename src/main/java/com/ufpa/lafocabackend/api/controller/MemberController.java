@@ -52,12 +52,26 @@ public class MemberController {
         return ResponseEntity.ok(memberSaved);
     }
 
-    @GetMapping("/{memberId}")
+    @GetMapping("/id/{memberId}")
     public ResponseEntity<MemberDto> read (@PathVariable Long memberId){
 
         final Member member = memberService.read(memberId);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
         return ResponseEntity.ok(memberDto);
+    }
+
+    @GetMapping("/search/{slug}")
+    public ResponseEntity<MemberDto> getByName (@PathVariable String slug){
+
+        final Member member = memberService.getMemberByName(slug);
+        final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
+        return ResponseEntity.ok(memberDto);
+    }
+
+    @PostMapping("/generate-slug-all")
+    public ResponseEntity<Void> generateSlugAll () {
+            memberService.generateSlugAll();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
