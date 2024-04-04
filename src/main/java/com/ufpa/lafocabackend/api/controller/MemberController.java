@@ -68,6 +68,7 @@ public class MemberController {
         return ResponseEntity.ok(memberDto);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @PostMapping("/generate-slug-all")
     public ResponseEntity<Void> generateSlugAll () {
             memberService.generateSlugAll();
