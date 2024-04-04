@@ -1,6 +1,5 @@
-package com.ufpa.lafocabackend.domain.service;
+package com.ufpa.lafocabackend.infrastructure.service;
 
-import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -25,10 +25,9 @@ public class Project {
     private String description;
 
     @Column(nullable = false)
-    private String status;
+    private Boolean completed;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private String year;
 
 }

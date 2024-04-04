@@ -13,11 +13,11 @@ public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id;
+    private Long PermissionId;
 
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
-    private String description;;
+    private String description;
 }

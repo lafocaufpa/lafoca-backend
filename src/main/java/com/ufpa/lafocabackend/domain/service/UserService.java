@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
+import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
 import com.ufpa.lafocabackend.repository.UserRepository;
@@ -21,10 +22,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final GroupService groupService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupService groupService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.groupService = groupService;
     }
 
     @Transactional
@@ -37,10 +40,14 @@ public class UserService {
 
         /*Se um user vindo do banco com o mesmo email for diferente do user vindo da requisição, cai no if */
         if(existingUser.isPresent() && !existingUser.get().equals(user)){
-            throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), user.getEmail());
+            throw new EntityAlreadyRegisteredException(getClass().getSimpleName(), user.getEmail());
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        final Group group = groupService.standardMemberLafoca();
+        user.addGroup(group);
+
         return userRepository.save(user);
     }
 
@@ -60,28 +67,25 @@ public class UserService {
             userRepository.deleteById(userId);
             userRepository.flush();
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(User.class.getSimpleName(), userId);
+            throw new EntityInUseException(getClass().getSimpleName(), userId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(User.class.getSimpleName(), userId);
+            throw new EntityNotFoundException(getClass().getSimpleName(), userId);
         }
-
     }
 
     public void userExists(String userId){
 
         if(!userRepository.existsByUserId(userId)){
-//            throw new RuntimeException("User not found: id " + userId);
-            throw new EntityNotFoundException(User.class.getSimpleName(), userId);
-
+            throw new EntityNotFoundException(getClass().getSimpleName(), userId);
         }
     }
 
     private User getOrFail(String userId) {
-        return userRepository.findById(userId).get();
+        return userRepository.findById(userId)
+                .orElseThrow( () -> new EntityNotFoundException(getClass().getSimpleName(), userId));
     }
 
     public User read(String userId) {
-        userExists(userId);
         return getOrFail(userId);
     }
 
@@ -93,5 +97,20 @@ public class UserService {
             throw new PasswordDoesNotMachException();
 
         user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
+    }
+
+    @Transactional
+    public void addGroup(String userId, Long groupId) {
+        final User user = read(userId);
+        final Group group = groupService.read(groupId);
+        user.addGroup(group);
+    }
+
+    @Transactional
+    public void removeGroup (String userId, Long groupId) {
+        final User user = read(userId);
+        final Group group = groupService.read(groupId);
+
+        user.removeGroup(group);
     }
 }

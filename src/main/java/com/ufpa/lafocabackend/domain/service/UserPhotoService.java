@@ -1,7 +1,8 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.model.UserPhoto;
-import com.ufpa.lafocabackend.domain.service.PhotoStorageService.RecoveredPhoto;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService.RecoveredPhoto;
 import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
 import com.ufpa.lafocabackend.repository.UserPhotoRepository;
 import org.springframework.stereotype.Service;

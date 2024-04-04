@@ -1,17 +1,19 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.security.LafocaSecurity;
+import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.UserPhoto;
+import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
-import com.ufpa.lafocabackend.domain.service.PhotoStorageService.RecoveredPhoto;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService.RecoveredPhoto;
 import com.ufpa.lafocabackend.domain.service.UserPhotoService;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,8 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -31,20 +36,19 @@ public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final UserPhotoService userPhotoService;
-    private final LafocaSecurity lafocaSecurity;
 
-    public UserController(UserService userService, ModelMapper modelMapper, UserPhotoService userPhotoService, LafocaSecurity lafocaSecurity) {
+    public UserController(UserService userService, ModelMapper modelMapper, UserPhotoService userPhotoService) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.userPhotoService = userPhotoService;
-        this.lafocaSecurity = lafocaSecurity;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.User.L1L2
     @PostMapping
     public ResponseEntity<UserDto> add(@RequestBody UserDtoInput userDtoInput) {
 
         final User user = modelMapper.map(userDtoInput, User.class);
+
         final UserDto userDto = modelMapper.map(userService.save(user), UserDto.class);
 
         return ResponseEntity.ok(userDto);
@@ -93,12 +97,12 @@ public class UserController {
     @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     public ResponseEntity<Void> updatePassword(@RequestBody userInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
-        userService.userExists(userId);
         userService.changePassword(passwordDTO, userId);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(value = "{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    @PostMapping(value = "/{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
 
         final User user = userService.read(userId);
@@ -126,13 +130,14 @@ public class UserController {
         return ResponseEntity.ok(photoDto);
     }
 
-    @GetMapping(value = "{userId}/photo")
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    @GetMapping(value = "/{userId}/photo")
     public ResponseEntity<?> getPhoto(@PathVariable String userId) {
 
         final User user = userService.read(userId);
         final UserPhoto photo = user.getUserPhoto();
 
-        if(photo == null) {
+        if (photo == null) {
             return ResponseEntity.notFound().build();
         }
 
@@ -152,7 +157,8 @@ public class UserController {
 
     }
 
-    @DeleteMapping(value = "{userId}/photo")
+    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    @DeleteMapping(value = "/{userId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String userId) {
 
         userService.userExists(userId);
@@ -161,4 +167,35 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurityPermissionMethods.L1
+    @GetMapping("/{userId}/groups")
+    public ResponseEntity<Collection<GroupDto>> listGroups(@PathVariable String userId){
+
+        final User user = userService.read(userId);
+
+        final Set<Group> groups = user.getGroups();
+
+        final Type type = new TypeToken<Set<GroupDto>>() {
+        }.getType();
+
+        final Set<GroupDto> groupsDto = modelMapper.map(groups, type);
+
+        return ResponseEntity.ok(groupsDto);
+    }
+
+    @PutMapping("/{userId}/groups/{groupId}")
+    public ResponseEntity<Void> associateGroup(@PathVariable String userId, @PathVariable Long groupId) {
+
+        userService.addGroup(userId, groupId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{userId}/groups/{groupId}")
+    public ResponseEntity<Void> DisassociateGroup(@PathVariable String userId, @PathVariable Long groupId) {
+
+        userService.removeGroup(userId, groupId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

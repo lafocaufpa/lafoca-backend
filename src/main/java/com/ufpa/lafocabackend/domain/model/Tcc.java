@@ -8,17 +8,14 @@ import javax.persistence.*;
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class FunctionStudent {
+public class Tcc {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long functionStudentId;
-
-    @Column(nullable = false)
+    private Long tccId;
     private String name;
-
-    @Column(nullable = false)
-    private String description;
+    private String date;
+    private String url;
 
 }

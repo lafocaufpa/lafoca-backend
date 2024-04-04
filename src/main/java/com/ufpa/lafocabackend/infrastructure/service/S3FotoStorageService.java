@@ -6,7 +6,6 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ufpa.lafocabackend.core.storage.StorageProperties;
-import com.ufpa.lafocabackend.domain.service.PhotoStorageService;
 
 import java.io.InputStream;
 

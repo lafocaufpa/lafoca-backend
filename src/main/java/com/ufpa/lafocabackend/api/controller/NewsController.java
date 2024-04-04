@@ -8,7 +8,10 @@ import com.ufpa.lafocabackend.domain.model.dto.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.NewsOutput;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
-import com.ufpa.lafocabackend.domain.service.*;
+import com.ufpa.lafocabackend.domain.service.NewsPhotoService;
+import com.ufpa.lafocabackend.domain.service.NewsService;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
+import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.core.io.InputStreamResource;
@@ -16,7 +19,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -88,7 +90,6 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{newsSlug}")
     public ResponseEntity<Void> delete (@PathVariable String newsSlug){
 
