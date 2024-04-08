@@ -1,144 +1,147 @@
 package com.ufpa.lafocabackend.core.security.authorizationserver;
 
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.CompositeTokenGranter;
-import org.springframework.security.oauth2.provider.TokenGranter;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2TokenFormat;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
 
-import javax.sql.DataSource;
-import java.security.KeyPair;
-import java.security.interfaces.RSAPublicKey;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
-@EnableAuthorizationServer
-public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+public class AuthorizationServerConfig {
 
-
-    private final AuthenticationManager authenticationManager;
-    private final UserDetailsService userDetailsService;
-    private final JwtKeyStoreProperties jwtKeyStoreProperties;
-
-    private final DataSource dataSource;
-
-    public AuthorizationServerConfig(AuthenticationManager authenticationManager, @Qualifier("jpaUserDetailsService") UserDetailsService userDetailsService, JwtKeyStoreProperties jwtKeyStoreProperties, DataSource dataSource) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.jwtKeyStoreProperties = jwtKeyStoreProperties;
-        this.dataSource = dataSource;
-    }
-
-    /*
-        client se autentica no A.S com o clientId e secret
-     */
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.jdbc(dataSource);
-
-//        clients.inMemory()
-//                .withClient("lafoca-frontend")
-//                .secret(passwordEncoder.encode("web123"))
-//                .authorizedGrantTypes("password", "refresh_token")
-//                .scopes("write", "read")
-//                .accessTokenValiditySeconds(6 * 60 * 60)//6h, 1h tem 60m, 1m tem 60s
-//                .refreshTokenValiditySeconds(60 * 24 * 60 * 60) // 60d, 1d tem 24h, 1h tem 60m, 1m tem 60s
-//                .and()
-//                .withClient("check-token")//apenas para Resource Server fazer o check token
-//                .secret(passwordEncoder.encode("check-token"))
-//                .and()
-//                .withClient("faturamento")
-//                .secret(passwordEncoder.encode("web123"))
-//                .authorizedGrantTypes("client_credentials")
-//                .scopes("read")
-//                .and()
-//                .withClient("lafoca-site")
-//                .secret(passwordEncoder.encode("web123"))
-//                .authorizedGrantTypes("authorization_code")
-//                .scopes("write", "read")
-//                .redirectUris("http://lafoca.com")
-//                .and()
-//                .withClient("lafoca-admin")
-//                .authorizedGrantTypes("implicit")
-//                .scopes("read", "write")
-//                .redirectUris("http://lafoca.com");
-    }
-
-    /*
-        Somente o fluxo password flow necessita, o bean é criado manualmente
-     */
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-
-        final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new JwtCustomClaimsTokenEnhancer(), jwtAccessTokenConverter()));
-        endpoints.authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService)
-                .reuseRefreshTokens(false)
-                .tokenGranter(tokenGranter(endpoints))
-                .accessTokenConverter(jwtAccessTokenConverter())
-                .tokenEnhancer(tokenEnhancerChain);
-    }
-
-    @Override
-        public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-//        security.checkTokenAccess("isAuthenticated()");
-        security.checkTokenAccess("permitAll()")
-                .tokenKeyAccess("permitAll()")
-                .allowFormAuthenticationForClients();
-    }
-
-    private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
-        var pkceAuthorizationCodeTokenGranter = new PkceAuthorizationCodeTokenGranter(endpoints.getTokenServices(),
-                endpoints.getAuthorizationCodeServices(), endpoints.getClientDetailsService(),
-                endpoints.getOAuth2RequestFactory());
-
-        var granters = Arrays.asList(
-                pkceAuthorizationCodeTokenGranter, endpoints.getTokenGranter());
-
-        return new CompositeTokenGranter(granters);
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        return http.formLogin(Customizer.withDefaults()).build();
     }
 
     @Bean
-    public JWKSet jwkSet () {
-        RSAKey.Builder builder = new RSAKey.Builder((RSAPublicKey) getKeyPair().getPublic())
-                .keyUse(KeyUse.SIGNATURE)
-                .algorithm(JWSAlgorithm.RS256)
-                .keyID("lafoca-key-id");
-        return new JWKSet(builder.build());
+    public ProviderSettings providerSettings(LafocaSecurityProperties properties) {
+        return ProviderSettings.builder()
+                .issuer(properties.getProviderUrl())
+                .build();
     }
 
     @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter() {
-        final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        //        jwtAccessTokenConverter.setSigningKey("mac-ufpa-lafoca-secret-key-authorization-server");
-        jwtAccessTokenConverter.setKeyPair(getKeyPair());
+    public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder) {
 
-        return jwtAccessTokenConverter;
+        RegisteredClient lafocabackend = RegisteredClient
+                .withId("1")
+                .clientId("lafoca-backend")
+                .clientSecret(passwordEncoder.encode("backend123"))
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .scope("READ")
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+                        .accessTokenTimeToLive(Duration.ofMinutes(30))
+                        .build())
+                .build();
+
+        RegisteredClient lafocaweb = RegisteredClient
+                .withId("2")
+                .clientId("lafoca-web")
+                .clientSecret(passwordEncoder.encode("lafoca123"))
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .scope("READ")
+                .scope("WRITE")
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+                        .accessTokenTimeToLive(Duration.ofMinutes(15))
+                        .reuseRefreshTokens(false)
+                        .refreshTokenTimeToLive(Duration.ofDays(1))
+                        .build())
+                .redirectUri("http://127.0.0.1:8080/authorized")
+                .clientSettings(ClientSettings.builder()
+                        .requireAuthorizationConsent(true)
+                        .build())
+                .build();
+
+        return new InMemoryRegisteredClientRepository(Arrays.asList(lafocabackend, lafocaweb));
     }
 
-    private KeyPair getKeyPair() {
+    @Bean
+    public OAuth2AuthorizationService oAuth2AuthorizationService(JdbcOperations jdbcOperations,
+                                                                 RegisteredClientRepository registeredClientRepository) {
+
+        return new JdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
+
+    }
+
+    @Bean
+    public JWKSource<SecurityContext> securityContextJWKSource(JwtKeyStoreProperties jwtKeyStoreProperties) throws Exception {
+
+        final char[] keyStorePass = jwtKeyStoreProperties.getPassword().toCharArray();
+        final String keypairAlias = jwtKeyStoreProperties.getKeypairAlias();
+
         final Resource jksLocation = jwtKeyStoreProperties.getJksLocation();
-        String keyStorePass = jwtKeyStoreProperties.getPassword();
-        String keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
+        final InputStream inputStream = jksLocation.getInputStream();
+        final KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(inputStream, keyStorePass);
 
-        final KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(jksLocation, keyStorePass.toCharArray());
-        final KeyPair keyPair = keyStoreKeyFactory.getKeyPair(keyPairAlias);
-        return keyPair;
+        final RSAKey rsaKey = RSAKey.load(keyStore, keypairAlias, keyStorePass);
+
+        return new ImmutableJWKSet<>(new JWKSet(rsaKey));
+    }
+
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtEncodingContextOAuth2TokenCustomizer(UserRepository userRepository) {
+        return context -> {
+            final Authentication authentication = context.getPrincipal();
+
+            //authorization code
+            if (authentication.getPrincipal() instanceof User) {
+//                userRepository.findByEmail(user.getUsername()).orElseThrow();
+                final User userAuth = (User) authentication.getPrincipal();
+
+                com.ufpa.lafocabackend.domain.model.User user = userRepository.findByEmail(userAuth.getUsername()).orElseThrow();
+
+                Set<String> authorities = new HashSet<>();
+                for (GrantedAuthority authority : userAuth.getAuthorities()) {
+                    authorities.add(authority.getAuthority());
+                }
+
+                context.getClaims().claim("user_id", user.getUserId());
+                context.getClaims().claim("authorities", authorities);
+            }
+        };
     }
 }
