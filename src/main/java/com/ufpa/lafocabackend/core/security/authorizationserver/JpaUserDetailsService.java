@@ -33,6 +33,8 @@ public class JpaUserDetailsService implements UserDetailsService {
     }
 
     private Collection<GrantedAuthority> getAuthorities (User user){
+
+
         return user.getGroups().stream()
                 .flatMap(group -> group.getPermissions().stream())
                 .map(permission -> new SimpleGrantedAuthority(permission.getName().toUpperCase()))
