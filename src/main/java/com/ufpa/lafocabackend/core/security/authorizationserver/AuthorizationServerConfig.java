@@ -24,7 +24,7 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
@@ -37,7 +37,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,23 +58,11 @@ public class AuthorizationServerConfig {
     }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder) {
+    public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder, JdbcOperations jdbcOperations) {
 
-        RegisteredClient lafocabackend = RegisteredClient
-                .withId("1")
-                .clientId("lafoca-backend")
-                .clientSecret(passwordEncoder.encode("backend123"))
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .scope("READ")
-                .tokenSettings(TokenSettings.builder()
-                        .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
-                        .accessTokenTimeToLive(Duration.ofMinutes(30))
-                        .build())
-                .build();
 
         RegisteredClient lafocaweb = RegisteredClient
-                .withId("2")
+                .withId("1")
                 .clientId("lafoca-web")
                 .clientSecret(passwordEncoder.encode("lafoca123"))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -95,7 +82,9 @@ public class AuthorizationServerConfig {
                         .build())
                 .build();
 
-        return new InMemoryRegisteredClientRepository(Arrays.asList(lafocabackend, lafocaweb));
+        final JdbcRegisteredClientRepository clientRepository = new JdbcRegisteredClientRepository(jdbcOperations);
+        clientRepository.save(lafocaweb);
+        return clientRepository;
     }
 
     @Bean
@@ -128,9 +117,7 @@ public class AuthorizationServerConfig {
             final Authentication authentication = context.getPrincipal();
 
             //authorization code
-            if (authentication.getPrincipal() instanceof User) {
-//                userRepository.findByEmail(user.getUsername()).orElseThrow();
-                final User userAuth = (User) authentication.getPrincipal();
+            if (authentication.getPrincipal() instanceof User userAuth) {
 
                 com.ufpa.lafocabackend.domain.model.User user = userRepository.findByEmail(userAuth.getUsername()).orElseThrow();
 
