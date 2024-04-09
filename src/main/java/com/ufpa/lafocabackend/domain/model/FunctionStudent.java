@@ -3,7 +3,7 @@ package com.ufpa.lafocabackend.domain.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Data

@@ -3,8 +3,8 @@ package com.ufpa.lafocabackend.domain.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @Entity
 @Data

@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.text.Normalizer;
 import java.time.OffsetDateTime;
 

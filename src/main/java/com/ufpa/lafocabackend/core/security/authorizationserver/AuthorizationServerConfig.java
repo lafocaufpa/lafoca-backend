@@ -14,22 +14,22 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
-import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
@@ -51,15 +51,14 @@ public class AuthorizationServerConfig {
     }
 
     @Bean
-    public ProviderSettings providerSettings(LafocaSecurityProperties properties) {
-        return ProviderSettings.builder()
+    public AuthorizationServerSettings providerSettings(LafocaSecurityProperties properties) {
+        return AuthorizationServerSettings.builder()
                 .issuer(properties.getProviderUrl())
                 .build();
     }
 
     @Bean
     public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder, JdbcOperations jdbcOperations) {
-
 
         RegisteredClient lafocaweb = RegisteredClient
                 .withId("1")
@@ -78,13 +77,14 @@ public class AuthorizationServerConfig {
                         .build())
                 .redirectUri("http://127.0.0.1:8080/authorized")
                 .clientSettings(ClientSettings.builder()
-                        .requireAuthorizationConsent(true)
+                        .requireAuthorizationConsent(false)
                         .build())
                 .build();
 
         final JdbcRegisteredClientRepository clientRepository = new JdbcRegisteredClientRepository(jdbcOperations);
         clientRepository.save(lafocaweb);
         return clientRepository;
+
     }
 
     @Bean

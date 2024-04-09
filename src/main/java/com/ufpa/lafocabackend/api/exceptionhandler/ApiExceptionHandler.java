@@ -1,12 +1,12 @@
 package com.ufpa.lafocabackend.api.exceptionhandler;
 
-import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
+import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
-import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -66,12 +66,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
     }
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
-    private Problem.ProblemBuilder createProblemType (HttpStatus status, ProblemType problemType, String detail){
+        private Problem.ProblemBuilder createProblemType (HttpStatusCode status, ProblemType problemType, String detail){
 
         return Problem.builder()
                 .status(status.value())

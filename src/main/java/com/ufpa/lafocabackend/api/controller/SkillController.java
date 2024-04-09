@@ -14,11 +14,9 @@ import java.util.Collection;
 public class SkillController {
 
     private final SkillService skillService;
-    private final ModelMapper modelMapper;
 
     public SkillController(SkillService skillService, ModelMapper modelMapper) {
         this.skillService = skillService;
-        this.modelMapper = modelMapper;
     }
 
     @CheckSecurityPermissionMethods.L1
