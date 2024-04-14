@@ -1,17 +1,35 @@
 package com.ufpa.lafocabackend.core.security;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -23,11 +41,18 @@ public class ResourceServerConfig {
 
     @Bean
     public SecurityFilterChain ResourceServerSecurityFilterChain (HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.formLogin(Customizer.withDefaults())
-                .csrf().disable()
-                .cors()
-                .and()
-                .oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
+
+        httpSecurity
+                .authorizeHttpRequests(
+                        auth -> auth.requestMatchers(HttpMethod.POST, "/login").permitAll()
+                                .requestMatchers( "/members/**").permitAll()
+                                .requestMatchers( "/projects/**").permitAll()
+                                .requestMatchers("/info/**").permitAll()
+                                .anyRequest().authenticated()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .oauth2ResourceServer( oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                .sessionManagement(session -> session.sessionCreationPolicy((SessionCreationPolicy.STATELESS)));
 
         return httpSecurity.build();
     }
@@ -63,4 +88,36 @@ public class ResourceServerConfig {
 
         return converter;
     }
+
+    @Bean
+    public JwtEncoder jwtEncoder(JwtKeyStoreProperties jwtKeyStoreProperties) throws Exception {
+
+        final char[] keyStorePass = jwtKeyStoreProperties.getPassword().toCharArray();
+        final String keypairAlias = jwtKeyStoreProperties.getKeypairAlias();
+
+        final Resource jksLocation = jwtKeyStoreProperties.getJksLocation();
+        final InputStream inputStream = jksLocation.getInputStream();
+        final KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(inputStream, keyStorePass);
+
+        final RSAKey rsaKey = RSAKey.load(keyStore, keypairAlias, keyStorePass);
+        ImmutableJWKSet<SecurityContext> jwkSet = new ImmutableJWKSet<>(new JWKSet(rsaKey));
+
+        return new NimbusJwtEncoder(jwkSet);
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder (JwtKeyStoreProperties jwtKeyStoreProperties) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, JOSEException {
+        final char[] keyStorePass = jwtKeyStoreProperties.getPassword().toCharArray();
+        final String keypairAlias = jwtKeyStoreProperties.getKeypairAlias();
+
+        final Resource jksLocation = jwtKeyStoreProperties.getJksLocation();
+        final InputStream inputStream = jksLocation.getInputStream();
+        final KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(inputStream, keyStorePass);
+
+        final RSAKey rsaKey = RSAKey.load(keyStore, keypairAlias, keyStorePass);
+        return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+    }
+
 }

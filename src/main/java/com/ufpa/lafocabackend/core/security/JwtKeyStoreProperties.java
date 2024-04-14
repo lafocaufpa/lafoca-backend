@@ -1,4 +1,4 @@
-package com.ufpa.lafocabackend.core.security.authorizationserver;
+package com.ufpa.lafocabackend.core.security;
 
 import lombok.Getter;
 import lombok.Setter;

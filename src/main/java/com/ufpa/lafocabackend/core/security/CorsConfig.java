@@ -1,4 +1,4 @@
-package com.ufpa.lafocabackend.core.security.authorizationserver;
+package com.ufpa.lafocabackend.core.security;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +37,6 @@ public class CorsConfig {
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>();
         bean.setFilter(new CorsFilter(source));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-
         return bean;
     }
 
