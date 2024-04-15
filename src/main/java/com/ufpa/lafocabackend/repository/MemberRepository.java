@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import jakarta.transaction.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public interface MemberRepository extends JpaRepository<Member, String> {
 
@@ -34,6 +36,6 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.name, m.slug, m.functionMember.name, m.photo.url) FROM Member m ORDER BY RAND()")
     Page<MemberSummaryDto> getMemberSummary(Pageable pageable);
 
-    Member findMemberBySlug(String slug);
+    Optional<Member> findMemberBySlug(String slug);
 
 }

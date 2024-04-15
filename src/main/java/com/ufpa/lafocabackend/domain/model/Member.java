@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.*;
+
 import java.text.Normalizer;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ public class Member {
     @Column(nullable = false, length = 500)
     private String biography;
 
-    @Column(nullable = false)
+    @Column()
     private String linkPortifolio;
 
     @ManyToMany
@@ -76,16 +77,22 @@ public class Member {
     @PrePersist
     @PreUpdate
     public void generateSlug() {
+
         this.slug = createSlug(this.name);
+
     }
 
     private String createSlug(String name) {
-        return Normalizer.normalize(name, Normalizer.Form.NFD)
+        String slug = Normalizer.normalize(name, Normalizer.Form.NFD)
                 .replaceAll("[^\\p{ASCII}]", "")
                 .toLowerCase()
                 .replaceAll("\\s+", "-")
                 .replaceAll("[^a-z0-9-]", "")
                 .replaceAll("-{2,}", "-");
+        String suffix = memberId.substring(0, memberId.indexOf("-"));
+
+        return slug + "-" + suffix;
+
     }
 
     public boolean addSkill(Skill skill) {

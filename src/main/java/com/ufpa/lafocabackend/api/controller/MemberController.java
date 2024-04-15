@@ -123,9 +123,9 @@ public class MemberController {
 
         final Member member = memberService.read(memberId);
 
-        String originalFilename = member.getMemberId()
+        String originalFilename = member.getName()
                 + "_"
-                + member.getName()
+                + member.getMemberId()
                 + Objects.requireNonNull
                         (photo.getOriginalFilename())
                 .substring(photo.getOriginalFilename().lastIndexOf("."));

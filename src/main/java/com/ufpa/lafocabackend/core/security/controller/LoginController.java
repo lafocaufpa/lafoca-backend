@@ -44,7 +44,7 @@ public class LoginController {
         }
 
         var now = Instant.now();
-        var expiresIn = 300L;
+        long expiresIn = 90_000L;
 
         Collection<GrantedAuthority> authorities = getAuthorities(user.get());
         Set<String> roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());

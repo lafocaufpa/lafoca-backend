@@ -154,7 +154,8 @@ public class MemberService {
     }
 
     public Member getMemberByName(String slug) {
-        return memberRepository.findMemberBySlug(slug);
+        return memberRepository.findMemberBySlug(slug).
+                orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), slug));
     }
 
     @Transactional
