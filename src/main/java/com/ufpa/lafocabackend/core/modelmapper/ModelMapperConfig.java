@@ -1,7 +1,7 @@
 package com.ufpa.lafocabackend.core.modelmapper;
 
 import com.ufpa.lafocabackend.domain.model.*;
-import com.ufpa.lafocabackend.domain.model.dto.FunctionStudentDto;
+import com.ufpa.lafocabackend.domain.model.dto.FunctionMemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
@@ -31,10 +31,10 @@ public class ModelMapperConfig {
             }
         });
 
-        modelMapper.addMappings(new PropertyMap<FunctionStudentDto, FunctionStudent>() {
+        modelMapper.addMappings(new PropertyMap<FunctionMemberDto, FunctionMember>() {
             @Override
             protected void configure() {
-                skip(destination.getFunctionStudentId());
+                skip(destination.getFunctionMemberId());
             }
         });
 
@@ -43,7 +43,7 @@ public class ModelMapperConfig {
             protected void configure() {
                 skip(destination.getMemberId());
                 skip(destination.getTcc().getTccId());
-                skip(destination.getFunctionStudent());
+                skip(destination.getFunctionMember());
                 skip(destination.getSkills());
                 skip(destination.getProjects());
                 skip(destination.getArticles());

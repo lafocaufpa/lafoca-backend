@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, String> {
 
     @Transactional
     @Modifying
@@ -23,15 +23,15 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Transactional
     @Modifying
     @Query("UPDATE Member m SET m.photo = null WHERE m.memberId = :memberId")
-    void removePhotoReference(@Param("memberId") Long memberId);
+    void removePhotoReference(@Param("memberId") String memberId);
 
     @Query("SELECT m.photo.userPhotoId FROM Member m WHERE m.memberId = :memberId")
-    String getUserPhotoIdByMemberId(Long memberId);
+    String getUserPhotoIdByMemberId(String memberId);
 
     @Query("SELECT up.fileName FROM UserPhoto up WHERE up.userPhotoId = :userPhotoId")
     String findFileNameByUserPhotoId(String userPhotoId);
 
-    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.name, m.slug, m.functionStudent.name, m.photo.url) FROM Member m ORDER BY RAND()")
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.name, m.slug, m.functionMember.name, m.photo.url) FROM Member m ORDER BY RAND()")
     Page<MemberSummaryDto> getMemberSummary(Pageable pageable);
 
     Member findMemberBySlug(String slug);

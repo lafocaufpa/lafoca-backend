@@ -53,7 +53,7 @@ public class MemberController {
     }
 
     @GetMapping("/id/{memberId}")
-    public ResponseEntity<MemberDto> read (@PathVariable Long memberId){
+    public ResponseEntity<MemberDto> read (@PathVariable String memberId){
 
         final Member member = memberService.read(memberId);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
@@ -101,7 +101,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{memberId}")
-    public ResponseEntity<MemberDto> update (@PathVariable Long memberId, @RequestBody MemberInputDto memberInputDto){
+    public ResponseEntity<MemberDto> update (@PathVariable String memberId, @RequestBody MemberInputDto memberInputDto){
 
         final Member memberUpdated = memberService.update(memberId, memberInputDto);
         final MemberDto memberDtoUpdated = modelMapper.map(memberUpdated, MemberDto.class);
@@ -110,7 +110,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<Void> delete (@PathVariable Long memberId){
+    public ResponseEntity<Void> delete (@PathVariable String memberId){
 
         memberService.delete(memberId);
 
@@ -119,7 +119,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @PostMapping(value = "/{memberId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable Long memberId) throws IOException {
+    public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String memberId) throws IOException {
 
         final Member member = memberService.read(memberId);
 
@@ -147,7 +147,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/{memberId}/photo")
-    public ResponseEntity<?> getPhoto(@PathVariable Long memberId) {
+    public ResponseEntity<?> getPhoto(@PathVariable String memberId) {
 
         final Member member = memberService.read(memberId);
         final UserPhoto photo = member.getPhoto();
@@ -174,7 +174,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @DeleteMapping(value = "/{memberId}/photo")
-    public ResponseEntity<Void> deletePhoto(@PathVariable Long memberId) {
+    public ResponseEntity<Void> deletePhoto(@PathVariable String memberId) {
 
         memberService.read(memberId);
         userPhotoService.delete(String.valueOf(memberId));
@@ -184,17 +184,17 @@ public class MemberController {
     }
 
     @CheckSecurityPermissionMethods.L1
-    @PutMapping("/{memberId}/functions-student/{functionStudentId}")
-    public ResponseEntity<Void> associateFunction (@PathVariable Long memberId, @PathVariable Long functionStudentId) {
+    @PutMapping("/{memberId}/functions-member/{functionMemberId}")
+    public ResponseEntity<Void> associateFunction (@PathVariable String memberId, @PathVariable Long functionMemberId) {
 
-        memberService.associateFunction(functionStudentId, memberId);
+        memberService.associateFunction(functionMemberId, memberId);
 
         return ResponseEntity.noContent().build();
     }
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{memberId}/skills/{skillId}")
-    public ResponseEntity<Void> associateSkill (@PathVariable Long memberId, @PathVariable Long skillId) {
+    public ResponseEntity<Void> associateSkill (@PathVariable String memberId, @PathVariable Long skillId) {
 
         memberService.associateSkill(memberId, skillId);
 
@@ -203,7 +203,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @DeleteMapping("/{memberId}/skills/{skillId}")
-    public ResponseEntity<Void> disassociateSkill (@PathVariable Long memberId, @PathVariable Long skillId) {
+    public ResponseEntity<Void> disassociateSkill (@PathVariable String memberId, @PathVariable Long skillId) {
 
         memberService.disassociateSkill(memberId, skillId);
 

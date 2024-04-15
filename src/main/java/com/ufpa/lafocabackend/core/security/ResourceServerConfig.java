@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity()
 @EnableWebSecurity
 public class ResourceServerConfig {
 
@@ -63,7 +63,6 @@ public class ResourceServerConfig {
      * O Resource Server precisa saber lidar com as custom claims do Auth, para isso
      * é necessário converte-las em um tipo que o mesmo consiga identificar e garantir o acesso
      * aos endpoints e métodos protegidos.
-     * @return
      */
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();

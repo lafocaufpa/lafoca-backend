@@ -62,34 +62,6 @@ public class LoginController {
         return ResponseEntity.ok(new LoginResponse(jwtValue));
     }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<LoginResponse> refreshToken(@RequestBody LoginRequest loginRequest) {
-
-        var user = userRepository.findByEmail(loginRequest.username());
-
-        if(user.isEmpty() || user.get().isLoginCorrect(loginRequest, passwordEncoder)){
-            throw new BadCredentialsException("Invalid username or password!");
-        }
-
-        var now = Instant.now();
-        var expiresIn = 300L;
-
-        Collection<GrantedAuthority> authorities = getAuthorities(user.get());
-        Set<String> roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-
-        var claims = JwtClaimsSet.builder()
-                .issuer("lafoca-backend")
-                .subject(user.get().getEmail())
-                .claim("full_name", user.get().getName())
-                .claim("user_id", user.get().getUserId())
-                .claim("authorities", roles)
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiresIn))
-                .build();
-        var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        return ResponseEntity.ok(new LoginResponse(jwtValue));
-    }
-
     private Collection<GrantedAuthority> getAuthorities (User user){
         return user.getGroups().stream()
                 .flatMap(group -> group.getPermissions().stream())

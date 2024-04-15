@@ -8,12 +8,12 @@ import jakarta.persistence.*;
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class FunctionStudent {
+public class FunctionMember {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @EqualsAndHashCode.Include
-    private Long functionStudentId;
+    private Long functionMemberId;
 
     @Column(nullable = false)
     private String name;

@@ -29,7 +29,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PhotoStorageService photoStorageService;
-    private final FunctionStudentService functionStudentService;
+    private final FunctionMemberService functionMemberService;
     private final SkillService skillService;
     private final ModelMapper modelMapper;
     private final TccService tccService;
@@ -40,10 +40,10 @@ public class MemberService {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public MemberService(MemberRepository memberRepository, PhotoStorageService photoStorageService, FunctionStudentService functionStudentService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository) {
+    public MemberService(MemberRepository memberRepository, PhotoStorageService photoStorageService, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository) {
         this.memberRepository = memberRepository;
         this.photoStorageService = photoStorageService;
-        this.functionStudentService = functionStudentService;
+        this.functionMemberService = functionMemberService;
         this.skillService = skillService;
         this.modelMapper = modelMapper;
         this.tccService = tccService;
@@ -56,8 +56,8 @@ public class MemberService {
     public Member save(MemberInputDto memberInputDto) {
         Member member = modelMapper.map(memberInputDto, Member.class);
 
-        if (memberInputDto.getFunctionStudentId() != null) {
-            member.setFunctionStudent(functionStudentService.read(memberInputDto.getFunctionStudentId()));
+        if (memberInputDto.getFunctionMemberId() != null) {
+            member.setFunctionMember(functionMemberService.read(memberInputDto.getFunctionMemberId()));
         }
 
         if (memberInputDto.getSkillsId() != null) {
@@ -91,12 +91,12 @@ public class MemberService {
     }
 
     @Transactional
-    public Member update(Long memberId, MemberInputDto memberInputDto) {
+    public Member update(String memberId, MemberInputDto memberInputDto) {
         Member member = read(memberId);
         modelMapper.map(memberInputDto, member);
 
-        if (memberInputDto.getFunctionStudentId() != null) {
-            member.setFunctionStudent(functionStudentService.read(memberInputDto.getFunctionStudentId()));
+        if (memberInputDto.getFunctionMemberId() != null) {
+            member.setFunctionMember(functionMemberService.read(memberInputDto.getFunctionMemberId()));
         }
 
         if (memberInputDto.getSkillsId() != null) {
@@ -149,7 +149,7 @@ public class MemberService {
         return memberRepository.getMemberSummary(pageable);
     }
 
-    public Member read(Long memberId) {
+    public Member read(String memberId) {
         return getOrFail(memberId);
     }
 
@@ -162,7 +162,7 @@ public class MemberService {
         memberRepository.findAll().forEach(Member::generateSlug);
     }
 
-    public void delete(Long memberId) {
+    public void delete(String memberId) {
 
         try {
             memberRepository.deleteById(memberId);
@@ -174,12 +174,12 @@ public class MemberService {
 
     }
 
-    private Member getOrFail(Long memberId) {
+    private Member getOrFail(String memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException(getClass().getSimpleName(), memberId));
     }
 
-    public void deletePhoto(Long memberId) {
+    public void deletePhoto(String memberId) {
 
         final String photoId = memberRepository.getUserPhotoIdByMemberId(memberId);
         memberRepository.removePhotoReference(memberId);
@@ -192,23 +192,23 @@ public class MemberService {
     }
 
     @Transactional
-    public void associateFunction(Long functionStudentId, Long memberId) {
+    public void associateFunction(Long functionMemberId, String memberId) {
 
-        final FunctionStudent functionStudent = functionStudentService.read(functionStudentId);
+        final FunctionMember functionMember = functionMemberService.read(functionMemberId);
         final Member member = read(memberId);
-        member.setFunctionStudent(functionStudent);
+        member.setFunctionMember(functionMember);
         memberRepository.save(member);
     }
 
     @Transactional
-    public void associateSkill(Long memberId, Long skillId) {
+    public void associateSkill(String memberId, Long skillId) {
         final Member member = read(memberId);
         final Skill skill = skillService.getOrFail(skillId);
         member.addSkill(skill);
     }
 
     @Transactional
-    public void disassociateSkill(Long memberId, Long skillId) {
+    public void disassociateSkill(String memberId, Long skillId) {
         final Member member = read(memberId);
         final Skill skill = skillService.getOrFail(skillId);
         member.removeSkill(skill);

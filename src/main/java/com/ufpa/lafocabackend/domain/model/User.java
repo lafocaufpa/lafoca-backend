@@ -36,7 +36,7 @@ public class User {
     private OffsetDateTime dateRegister;
 
     @ManyToMany
-    @JoinTable(name = "userGroup",
+    @JoinTable(name = "user_group",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> groups = new HashSet<>();

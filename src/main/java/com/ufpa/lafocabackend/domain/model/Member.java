@@ -18,9 +18,9 @@ import java.util.Set;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
-    private Long memberId;
+    private String memberId;
 
     @Column(nullable = false)
     private String name;
@@ -33,7 +33,7 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String biography;
 
     @Column(nullable = false)
@@ -54,8 +54,8 @@ public class Member {
     private UserPhoto photo;
 
     @OneToOne
-    @JoinColumn(name = "function_student_id", nullable = false)
-    private FunctionStudent functionStudent;
+    @JoinColumn(name = "function_member_id")
+    private FunctionMember functionMember;
 
     @OneToOne
     @JoinColumn(name = "tcc_id")
@@ -87,6 +87,7 @@ public class Member {
                 .replaceAll("[^a-z0-9-]", "")
                 .replaceAll("-{2,}", "-");
     }
+
     public boolean addSkill(Skill skill) {
         return skills.add(skill);
     }

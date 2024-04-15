@@ -7,13 +7,13 @@ import lombok.Setter;
 @Setter
 public class MemberInputDto {
 
-    private Long id;
+    private String id;
     private String name;
     private String description;
     private String email;
     private String biography;
     private String linkPortifolio;
-    private Long functionStudentId;
+    private Long functionMemberId;
     private Long[] SkillsId;
     private TccDto tcc;
     private Long[] articles;

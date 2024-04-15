@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FunctionStudentDto {
+public class FunctionMemberDto {
 
-    private Long functionStudentId;
+    private Long functionMemberId;
 
     private String name;
 

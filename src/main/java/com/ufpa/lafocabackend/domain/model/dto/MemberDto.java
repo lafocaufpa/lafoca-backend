@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 public class MemberDto {
 
-    private Long memberId;
+    private String memberId;
     private String name;
     private String slug;
     private String description;
@@ -20,7 +20,7 @@ public class MemberDto {
     private String linkPortifolio;
     private OffsetDateTime dateRegister;
     private String urlPhoto;
-    private FunctionStudentDto functionStudent;
+    private FunctionMemberDto functionMember;
     private List<SkillDto> skills;
     private TccDto tcc;
     private List<ArticleDto> articles;
