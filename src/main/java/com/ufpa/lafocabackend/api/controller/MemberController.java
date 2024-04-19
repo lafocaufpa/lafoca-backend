@@ -2,23 +2,18 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Member;
-import com.ufpa.lafocabackend.domain.model.MemberPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.MemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
+import com.ufpa.lafocabackend.domain.service.MemberPhotoService;
 import com.ufpa.lafocabackend.domain.service.MemberService;
-import com.ufpa.lafocabackend.domain.service.PhotoService;
-import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,20 +23,18 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
-
 @RestController
 @RequestMapping("/members")
 public class MemberController {
 
     private final MemberService memberService;
     private final ModelMapper modelMapper;
-    private final PhotoService photoService;
+    private final MemberPhotoService memberPhotoService;
 
-    public MemberController(MemberService memberService, ModelMapper modelMapper, PhotoService photoService) {
+    public MemberController(MemberService memberService, ModelMapper modelMapper, MemberPhotoService memberPhotoService) {
         this.memberService = memberService;
         this.modelMapper = modelMapper;
-        this.photoService = photoService;
+        this.memberPhotoService = memberPhotoService;
     }
 
     @CheckSecurityPermissionMethods.L1
@@ -67,13 +60,6 @@ public class MemberController {
         final Member member = memberService.getMemberByName(slug);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
         return ResponseEntity.ok(memberDto);
-    }
-
-    @CheckSecurityPermissionMethods.L1
-    @PostMapping("/generate-slug-all")
-    public ResponseEntity<Void> generateSlugAll() {
-        memberService.generateSlugAll();
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
@@ -122,59 +108,14 @@ public class MemberController {
     @PostMapping(value = "/{memberId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String memberId) throws IOException {
 
-        final Member member = memberService.read(memberId);
-
-        String originalFilename = createPhotoFilename(member.getSlug(), photo.getOriginalFilename());
-
-        MemberPhoto p = new MemberPhoto();
-        p.setPhotoId(member.getMemberId());
-        p.setFileName(originalFilename);
-        p.setSize(photo.getSize());
-        p.setContentType(photo.getContentType());
-
-        p = photoService.save(p, photo.getInputStream());
-
-        member.setMemberPhoto(p);
-        memberService.save(member);
-
-        final PhotoDto photoDto = modelMapper.map(p, PhotoDto.class);
-
-        return ResponseEntity.ok(photoDto);
-    }
-
-    @GetMapping(value = "/{memberId}/photo")
-    public ResponseEntity<?> getPhoto(@PathVariable String memberId) {
-
-        final Member member = memberService.read(memberId);
-        final MemberPhoto memberPhoto = member.getMemberPhoto();
-
-        if (memberPhoto == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if (memberPhoto.getUrl() != null) {
-            return ResponseEntity
-                    .status(HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, memberPhoto.getUrl()).build();
-        } else {
-
-            final PhotoStorageService.RecoveredPhoto recoveredPhoto = photoService.get(memberPhoto.getFileName());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, memberPhoto.getContentType());
-
-            return ResponseEntity.ok().headers(headers).body(new InputStreamResource(recoveredPhoto.getInputStream()));
-        }
-
+        return ResponseEntity.ok(memberPhotoService.save(memberId, photo));
     }
 
     @CheckSecurityPermissionMethods.L1
     @DeleteMapping(value = "/{memberId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String memberId) {
 
-        memberService.read(memberId);
-        photoService.delete(String.valueOf(memberId));
-        memberService.deletePhoto(memberId);
+        memberPhotoService.delete(memberId);
 
         return ResponseEntity.noContent().build();
     }

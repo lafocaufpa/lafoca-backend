@@ -59,9 +59,9 @@ public class S3FotoStorageService implements PhotoStorageService {
 
         final String bucket = storageProperties.getS3().getBucket();
 
-        final String diretorioS3 = getDiretorio(storagePhotoUtils.getType());
+        final String diretorio = getDiretorio(storagePhotoUtils.getType());
 
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, getCaminhoArquivo(diretorioS3, storagePhotoUtils.getFileName()));
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, getCaminhoArquivo(diretorio, storagePhotoUtils.getFileName()));
         try {
             amazonS3.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
@@ -73,15 +73,16 @@ public class S3FotoStorageService implements PhotoStorageService {
         return String.format("%s/%s", diretorioS3, fileName);
     }
 
-    private String getDiretorio (TypeEntityPhoto typeEntity){
+    private String getDiretorio (TypeEntityPhoto typeEntity) {
 
-        if(typeEntity == TypeEntityPhoto.User) {
+        if (typeEntity == TypeEntityPhoto.User) {
             return storageProperties.getS3().getDiretorio_users();
         } else if (typeEntity == TypeEntityPhoto.News) {
             return storageProperties.getS3().getDiretorio_news();
+        } else if (typeEntity == TypeEntityPhoto.Member) {
+            return storageProperties.getS3().getDiretorio_members();
         } else {
             return null;
         }
     }
-
 }

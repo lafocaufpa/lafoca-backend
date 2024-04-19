@@ -1,10 +1,9 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.model.NewsPhoto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
-import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService.RecoveredPhoto;
-import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.repository.NewsPhotoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,11 +40,6 @@ public class NewsPhotoService {
         photoSaved.setUrl(url);
 
         return photoSaved;
-    }
-
-    public RecoveredPhoto get(String fileName) {
-
-        return photoStorageService.recuperar(fileName);
     }
 
     @Transactional

@@ -37,6 +37,7 @@ public class StorageProperties {
         private String diretorio_news;
         private String diretorio_users;
         private String diretorio_projects;
+        private String diretorio_members;
     }
 
 }

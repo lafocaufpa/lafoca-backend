@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
@@ -21,7 +22,6 @@ import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
     private String memberId;
 
@@ -76,12 +76,17 @@ public class Member {
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private Set<Project> projects = new HashSet<>();
 
-    @PostPersist
-    @PostUpdate
+    @PreUpdate
     public void generateSlug() {
-
         this.slug = createSlug(this.name, this.memberId);
     }
+
+    @PrePersist
+    private void generateUUID() {
+        this.memberId = UUID.randomUUID().toString();
+        generateSlug();
+    }
+
 
     public boolean addSkill(Skill skill) {
         return skills.add(skill);

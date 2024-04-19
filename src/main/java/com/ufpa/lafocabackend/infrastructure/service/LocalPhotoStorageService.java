@@ -76,10 +76,6 @@ public class LocalPhotoStorageService implements PhotoStorageService {
 
             deletarPasta(path);
 
-//            path = path.resolve(fileName);
-
-            //src/main/resources/upload/photos/2/2_joao.jpg
-//            Files.delete(path);
         } catch (IOException e) {
             throw new RuntimeException("Não foi possível deletar a foto: " + e);
         }

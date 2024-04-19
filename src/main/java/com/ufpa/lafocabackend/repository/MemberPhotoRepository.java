@@ -8,18 +8,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MemberUserPhotoRepository extends JpaRepository<MemberPhoto, String> {
+public interface MemberPhotoRepository extends JpaRepository<MemberPhoto, String> {
 
     @Transactional
     @Modifying
     @Query("DELETE FROM MemberPhoto up WHERE up.photoId = :photoId")
-    void deletePhotoByMemberId(String photoId);
+    void deleteMemberPhotoByMemberId(String photoId);
 
     /**
-     * Remove a referência da chave estrangeira (foreign key) de um registro de usuário (User ou Member)
+     * Remove a referência da chave estrangeira (foreign key) de um registro de um Member
      * para permitir que o registro relacionado na outra tabela (MemberPhoto) seja excluído.
      *
-     * @param memberId O ID do usuário (User ou Member) cuja referência da foto (photo) deve ser removida.
+     * @param memberId O ID do Member cuja referência da foto (photo) deve ser removida.
      *           Isso permitirá que o registro da foto (photo) associado seja excluído sem afetar o usuário.
      */
     @Transactional
@@ -31,10 +31,10 @@ public interface MemberUserPhotoRepository extends JpaRepository<MemberPhoto, St
     /**
      * Retorna o filename da foto baseado no id. Necessário para ser deletado da nuvem
      *
-     * @param photoId O id da foto de um usuário (User ou Member).
+     * @param photoId O id da foto de um Member.
      * @return O filename da foto.
      */
     @Transactional
     @Query("SELECT mp.fileName FROM MemberPhoto mp WHERE mp.photoId = :photoId")
-    String findFileNameByPhotoId(String photoId);
+    String findMemberPhotoFileNameByPhotoId(String photoId);
 }

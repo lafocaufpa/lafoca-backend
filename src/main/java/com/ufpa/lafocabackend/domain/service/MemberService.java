@@ -158,11 +158,6 @@ public class MemberService {
                 orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), slug));
     }
 
-    @Transactional
-    public void generateSlugAll() {
-        memberRepository.findAll().forEach(Member::generateSlug);
-    }
-
     public void delete(String memberId) {
 
         try {
