@@ -13,7 +13,7 @@ public class NewsPhoto {
 
     @Id
     @EqualsAndHashCode.Include
-    private Long newsPhotoId;
+    private String newsPhotoId;
     private Long size;
     private String contentType;
     private String url;

@@ -1,16 +1,18 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import jakarta.persistence.*;
-
-import java.text.Normalizer;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
 @Entity
 @Getter
@@ -37,7 +39,6 @@ public class Member {
     @Column(nullable = false, length = 500)
     private String biography;
 
-    @Column()
     private String linkPortifolio;
 
     @ManyToMany
@@ -50,9 +51,10 @@ public class Member {
     @Column(columnDefinition = "datetime", nullable = false)
     private OffsetDateTime dateRegister;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "photo_id")
-    private UserPhoto photo;
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    private MemberPhoto memberPhoto;
 
     @OneToOne
     @JoinColumn(name = "function_member_id")
@@ -74,25 +76,11 @@ public class Member {
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private Set<Project> projects = new HashSet<>();
 
-    @PrePersist
-    @PreUpdate
+    @PostPersist
+    @PostUpdate
     public void generateSlug() {
 
-        this.slug = createSlug(this.name);
-
-    }
-
-    private String createSlug(String name) {
-        String slug = Normalizer.normalize(name, Normalizer.Form.NFD)
-                .replaceAll("[^\\p{ASCII}]", "")
-                .toLowerCase()
-                .replaceAll("\\s+", "-")
-                .replaceAll("[^a-z0-9-]", "")
-                .replaceAll("-{2,}", "-");
-        String suffix = memberId.substring(0, memberId.indexOf("-"));
-
-        return slug + "-" + suffix;
-
+        this.slug = createSlug(this.name, this.memberId);
     }
 
     public boolean addSkill(Skill skill) {

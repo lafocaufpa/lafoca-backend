@@ -1,5 +1,7 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
+import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
@@ -7,15 +9,20 @@ import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
 
 @Service
 public class UserService {
@@ -23,11 +30,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final GroupService groupService;
+    private final PhotoStorageService photoStorageService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupService groupService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupService groupService, PhotoStorageService photoStorageService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
+        this.photoStorageService = photoStorageService;
     }
 
     @Transactional
@@ -65,18 +74,10 @@ public class UserService {
 
         try {
             userRepository.deleteById(userId);
-            userRepository.flush();
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(getClass().getSimpleName(), userId);
+            throw new EntityInUseException(User.class.getSimpleName(), userId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(getClass().getSimpleName(), userId);
-        }
-    }
-
-    public void userExists(String userId){
-
-        if(!userRepository.existsByUserId(userId)){
-            throw new EntityNotFoundException(getClass().getSimpleName(), userId);
+            throw new EntityNotFoundException(User.class.getSimpleName(), userId);
         }
     }
 
@@ -112,5 +113,41 @@ public class UserService {
         final Group group = groupService.read(groupId);
 
         user.removeGroup(group);
+    }
+
+    @Transactional
+    public String addPhoto(MultipartFile photo, String userId) throws IOException {
+
+        final User user = read(userId);
+
+        String originalFilename = createPhotoFilename(user.getSlug(), photo.getOriginalFilename());
+
+        StoragePhotoUtils photoUtils = StoragePhotoUtils.builder()
+                .fileName(originalFilename)
+                .contentType(photo.getContentType())
+                .contentLength(photo.getSize())
+                .type(TypeEntityPhoto.User)
+                .inputStream(photo.getInputStream())
+                .build();
+
+        String url = photoStorageService.armazenar(photoUtils);
+        user.setUrlPhoto(url);
+
+        return url;
+    }
+
+    @Transactional
+    public void removePhoto(String userId) {
+        User user = read(userId);
+
+        if(user.getUrlPhoto() != null){
+
+            photoStorageService
+                    .deletar(StoragePhotoUtils.builder()
+                            .fileName(createPhotoFilename(user.getSlug(), user.getUrlPhoto()))
+                            .type(TypeEntityPhoto.User)
+                            .build());
+            user.removePhoto();
+        }
     }
 }

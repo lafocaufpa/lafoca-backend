@@ -1,13 +1,15 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.model.NewsPhoto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService.RecoveredPhoto;
-import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
+import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.repository.NewsPhotoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 @Service
@@ -23,14 +25,14 @@ public class NewsPhotoService {
     }
 
     @Transactional
-    public NewsPhoto save(NewsPhoto photo, InputStream inputStream) {
+    public NewsPhoto save(NewsPhoto photo, InputStream inputStream) throws IOException {
 
         final NewsPhoto photoSaved = newsPhotoRepository.save(photo);
 
-        StorageUtils newPhoto = StorageUtils.builder()
+        StoragePhotoUtils newPhoto = StoragePhotoUtils.builder()
                 .fileName(photo.getFileName())
                 .contentType(photo.getContentType())
-                .type(StorageUtils.FileType.TypeNews)
+                .type(TypeEntityPhoto.News)
                 .inputStream(inputStream)
                 .build();
 
@@ -47,13 +49,13 @@ public class NewsPhotoService {
     }
 
     @Transactional
-    public void delete(Long newsId) {
+    public void delete(String newsId) {
 
         final String fileName = newsPhotoRepository.findFileName(newsId);
 
         newsPhotoRepository.removePhotoReference(newsId);
         newsPhotoRepository.deleteById(newsId);
-        photoStorageService.deletar(StorageUtils.builder().type(StorageUtils.FileType.TypeNews).fileName(fileName).build());
+        photoStorageService.deletar(StoragePhotoUtils.builder().type(TypeEntityPhoto.News).fileName(fileName).build());
     }
 
 }

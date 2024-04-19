@@ -1,9 +1,8 @@
 package com.ufpa.lafocabackend.api.controller;
 
-import com.ufpa.lafocabackend.core.security.LafocaSecurity;
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.NewsPhoto;
-import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.NewsOutput;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
@@ -11,7 +10,6 @@ import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
 import com.ufpa.lafocabackend.domain.service.NewsPhotoService;
 import com.ufpa.lafocabackend.domain.service.NewsService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
-import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.core.io.InputStreamResource;
@@ -33,15 +31,11 @@ public class NewsController {
 
     private final NewsService newsService;
     private final ModelMapper modelMapper;
-    private final UserService userService;
-    private final LafocaSecurity lafocaSecurity;
     private final NewsPhotoService newsPhotoService;
 
-    public NewsController(NewsService newsService, ModelMapper modelMapper, UserService userService, LafocaSecurity lafocaSecurity, NewsPhotoService newsPhotoService) {
+    public NewsController(NewsService newsService, ModelMapper modelMapper, NewsPhotoService newsPhotoService) {
         this.newsService = newsService;
         this.modelMapper = modelMapper;
-        this.userService = userService;
-        this.lafocaSecurity = lafocaSecurity;
         this.newsPhotoService = newsPhotoService;
     }
 
@@ -49,11 +43,6 @@ public class NewsController {
     public ResponseEntity<NewsDto> add (@RequestBody NewsInputDto newsInputDto) {
 
         final News news = modelMapper.map(newsInputDto, News.class);
-        news.createSlug();
-        news.createDescription();
-
-        final User user = userService.read(lafocaSecurity.getUserId());
-        news.setUser(user);
 
         final NewsDto newsDto = modelMapper.map(newsService.save(news), NewsDto.class);
         return ResponseEntity.ok(newsDto);
@@ -106,7 +95,7 @@ public class NewsController {
         final News news = newsService.read(newsSlug);
 
         NewsPhoto newsPhoto = new NewsPhoto();
-        final String originalFileName = news.getSlug() + "_" + (photo.getOriginalFilename()).substring(photo.getOriginalFilename().lastIndexOf("."));
+        final String originalFileName = LafocaUtils.createPhotoFilename(news.getNewsId(), photo.getOriginalFilename());
 
         newsPhoto.setNewsPhotoId(news.getNewsId());
         newsPhoto.setFileName(originalFileName);

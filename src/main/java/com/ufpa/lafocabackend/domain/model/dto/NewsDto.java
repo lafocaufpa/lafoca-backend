@@ -20,6 +20,4 @@ public class NewsDto {
     private String tags;
 
     private String content;
-
-    private UserDto user;
 }

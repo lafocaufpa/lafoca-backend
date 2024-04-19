@@ -8,7 +8,7 @@ import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
-import com.ufpa.lafocabackend.infrastructure.service.StorageUtils;
+import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.repository.MemberRepository;
 import com.ufpa.lafocabackend.repository.TccRepository;
 import org.modelmapper.ModelMapper;
@@ -168,9 +168,9 @@ public class MemberService {
         try {
             memberRepository.deleteById(memberId);
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(getClass().getSimpleName(), memberId);
+            throw new EntityInUseException(Member.class.getSimpleName(), memberId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(getClass().getSimpleName(), memberId);
+            throw new EntityNotFoundException(Member.class.getSimpleName(), memberId);
         }
 
     }
@@ -187,9 +187,9 @@ public class MemberService {
         final String photoFileName = memberRepository.findFileNameByUserPhotoId(photoId);
         memberRepository.deletePhotoByUserId(photoId);
 
-        StorageUtils storageUtils = StorageUtils.builder().fileName(photoFileName).build();
+        StoragePhotoUtils storagePhotoUtils = StoragePhotoUtils.builder().fileName(photoFileName).build();
 
-        photoStorageService.deletar(storageUtils);
+        photoStorageService.deletar(storagePhotoUtils);
     }
 
     @Transactional

@@ -18,6 +18,7 @@ public class Project {
     @Column(nullable = false)
     private String type;
 
+
     @Column(nullable = false)
     private String tittle;
     

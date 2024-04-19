@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.infrastructure.service;
 
 import com.ufpa.lafocabackend.core.storage.StorageProperties;
+import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class LocalPhotoStorageService implements PhotoStorageService {
     }
 
     @Override
-    public String armazenar(StorageUtils newPhoto) {
+    public String armazenar(StoragePhotoUtils newPhoto) {
 
         Path path = getFilePath(newPhoto.getFileName().split("_")[0], newPhoto.getFileName());
 
@@ -65,10 +66,10 @@ public class LocalPhotoStorageService implements PhotoStorageService {
     }
 
     @Override
-    public void deletar(StorageUtils storageUtils) {
+    public void deletar(StoragePhotoUtils storagePhotoUtils) {
         try {
             final Path diretorioFotos = storageProperties.getLocal().getDiretorioFotos();
-            final String[] idBeforeUnderscore = storageUtils.getFileName().split("_");
+            final String[] idBeforeUnderscore = storagePhotoUtils.getFileName().split("_");
             String idPath = idBeforeUnderscore[0];
 
             Path path = diretorioFotos.resolve(idPath);

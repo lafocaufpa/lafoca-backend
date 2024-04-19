@@ -6,6 +6,8 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ufpa.lafocabackend.core.storage.StorageProperties;
+import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
+import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 
 import java.io.InputStream;
 
@@ -21,27 +23,29 @@ public class S3FotoStorageService implements PhotoStorageService {
     }
 
     @Override
-    public String armazenar(StorageUtils newPhoto) {
+    public String armazenar(StoragePhotoUtils newPhoto){
 
-        String diretorio = null;
+        String diretorio = getDiretorio(newPhoto.getType());
 
-        if(newPhoto.getType().equals(StorageUtils.FileType.TypeUser)){
-        diretorio = getCaminhoArquivo(storageProperties.getS3().getDiretorio_users(), newPhoto.getFileName());
-        } else if (newPhoto.getType().equals(StorageUtils.FileType.TypeNews)){
-            diretorio = getCaminhoArquivo(storageProperties.getS3().getDiretorio_news(), newPhoto.getFileName());
-        }
+        String caminho = getCaminhoArquivo(diretorio, newPhoto.getFileName());
 
         final String bucket = storageProperties.getS3().getBucket();
+        final PutObjectRequest putObjectRequest = getPutObjectRequest(newPhoto, bucket, caminho);
+        amazonS3.putObject(putObjectRequest);
+
+        return amazonS3.getUrl(bucket, caminho).toString();
+    }
+
+    private static PutObjectRequest getPutObjectRequest(StoragePhotoUtils newPhoto, String bucket, String diretorio) {
         final InputStream inputStream = newPhoto.getInputStream();
         final ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(newPhoto.getContentType());
+        objectMetadata.setContentLength(newPhoto.getContentLength());
         final CannedAccessControlList publicRead = CannedAccessControlList.PublicRead;
 
         final PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, diretorio, inputStream, objectMetadata);
         putObjectRequest.withCannedAcl(publicRead);
-        amazonS3.putObject(putObjectRequest);
-
-        return amazonS3.getUrl(bucket, diretorio).toString();
+        return putObjectRequest;
     }
 
     @Override
@@ -51,13 +55,13 @@ public class S3FotoStorageService implements PhotoStorageService {
     }
 
     @Override
-    public void deletar(StorageUtils storageUtils) {
+    public void deletar(StoragePhotoUtils storagePhotoUtils) {
 
         final String bucket = storageProperties.getS3().getBucket();
 
-        final String diretorioS3 = getDiretorio(storageUtils.getType());
+        final String diretorioS3 = getDiretorio(storagePhotoUtils.getType());
 
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, getCaminhoArquivo(diretorioS3, storageUtils.getFileName()));
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, getCaminhoArquivo(diretorioS3, storagePhotoUtils.getFileName()));
         try {
             amazonS3.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
@@ -69,11 +73,15 @@ public class S3FotoStorageService implements PhotoStorageService {
         return String.format("%s/%s", diretorioS3, fileName);
     }
 
-    private String getDiretorio (StorageUtils.FileType typeEntity){
+    private String getDiretorio (TypeEntityPhoto typeEntity){
 
-        return (typeEntity == StorageUtils.FileType.TypeUser)
-                ? storageProperties.getS3().getDiretorio_users()
-                : storageProperties.getS3().getDiretorio_news();
+        if(typeEntity == TypeEntityPhoto.User) {
+            return storageProperties.getS3().getDiretorio_users();
+        } else if (typeEntity == TypeEntityPhoto.News) {
+            return storageProperties.getS3().getDiretorio_news();
+        } else {
+            return null;
+        }
     }
 
 }

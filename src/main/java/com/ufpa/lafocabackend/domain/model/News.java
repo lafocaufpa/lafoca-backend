@@ -1,12 +1,12 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 
-import jakarta.persistence.*;
-import java.text.Normalizer;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -15,9 +15,9 @@ import java.time.OffsetDateTime;
 public class News {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
-    private Long newsId;
+    private String newsId;
 
     @Column(nullable = false)
     private String tittle;
@@ -37,24 +37,20 @@ public class News {
     @Column(nullable = false)
     private String content;
 
-    @OneToOne
-    private User user;
-
-    @OneToOne
-    @JoinColumn
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "photo_id")
     private NewsPhoto newsPhoto;
 
+    @PostPersist
+    @PostUpdate
     public void createSlug() {
 
-        if (this.tittle != null){
-            this.slug = (this.tittle.replaceAll("\\s", "-")).toLowerCase();
-            this.slug = Normalizer.normalize(this.slug, Normalizer.Form.NFD)
-                    .replaceAll("[^\\p{ASCII}]", "");
-            this.slug = this.slug.replaceAll("\\?", "");
-        }
+        this.slug = LafocaUtils.createSlug(this.tittle, this.newsId);
 
     }
 
+    @PrePersist
+    @PreUpdate
     public void createDescription() {
         if (this.content != null) {
             final String substring = StringUtils.substring(this.content, 0, 220);

@@ -2,13 +2,13 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Member;
-import com.ufpa.lafocabackend.domain.model.UserPhoto;
-import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
+import com.ufpa.lafocabackend.domain.model.MemberPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.MemberDto;
+import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.domain.service.MemberService;
-import com.ufpa.lafocabackend.domain.service.UserPhotoService;
+import com.ufpa.lafocabackend.domain.service.PhotoService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -27,7 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Objects;
+
+import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
 
 @RestController
 @RequestMapping("/members")
@@ -35,17 +36,17 @@ public class MemberController {
 
     private final MemberService memberService;
     private final ModelMapper modelMapper;
-    private final UserPhotoService userPhotoService;
+    private final PhotoService photoService;
 
-    public MemberController(MemberService memberService, ModelMapper modelMapper, UserPhotoService userPhotoService) {
+    public MemberController(MemberService memberService, ModelMapper modelMapper, PhotoService photoService) {
         this.memberService = memberService;
         this.modelMapper = modelMapper;
-        this.userPhotoService = userPhotoService;
+        this.photoService = photoService;
     }
 
     @CheckSecurityPermissionMethods.L1
     @PostMapping
-    public ResponseEntity<MemberDto> add (@RequestBody MemberInputDto memberInputDto) {
+    public ResponseEntity<MemberDto> add(@RequestBody MemberInputDto memberInputDto) {
 
         final MemberDto memberSaved = modelMapper.map(memberService.save(memberInputDto), MemberDto.class);
 
@@ -53,7 +54,7 @@ public class MemberController {
     }
 
     @GetMapping("/id/{memberId}")
-    public ResponseEntity<MemberDto> read (@PathVariable String memberId){
+    public ResponseEntity<MemberDto> read(@PathVariable String memberId) {
 
         final Member member = memberService.read(memberId);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
@@ -61,7 +62,7 @@ public class MemberController {
     }
 
     @GetMapping("/search/{slug}")
-    public ResponseEntity<MemberDto> getByName (@PathVariable String slug){
+    public ResponseEntity<MemberDto> getByName(@PathVariable String slug) {
 
         final Member member = memberService.getMemberByName(slug);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
@@ -70,13 +71,13 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @PostMapping("/generate-slug-all")
-    public ResponseEntity<Void> generateSlugAll () {
-            memberService.generateSlugAll();
+    public ResponseEntity<Void> generateSlugAll() {
+        memberService.generateSlugAll();
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<Page<MemberDto>> list (@PageableDefault(size = 7) Pageable pageable){
+    public ResponseEntity<Page<MemberDto>> list(@PageableDefault(size = 7) Pageable pageable) {
 
         final Page<Member> list = memberService.list(pageable);
 
@@ -101,7 +102,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{memberId}")
-    public ResponseEntity<MemberDto> update (@PathVariable String memberId, @RequestBody MemberInputDto memberInputDto){
+    public ResponseEntity<MemberDto> update(@PathVariable String memberId, @RequestBody MemberInputDto memberInputDto) {
 
         final Member memberUpdated = memberService.update(memberId, memberInputDto);
         final MemberDto memberDtoUpdated = modelMapper.map(memberUpdated, MemberDto.class);
@@ -110,7 +111,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<Void> delete (@PathVariable String memberId){
+    public ResponseEntity<Void> delete(@PathVariable String memberId) {
 
         memberService.delete(memberId);
 
@@ -123,25 +124,20 @@ public class MemberController {
 
         final Member member = memberService.read(memberId);
 
-        String originalFilename = member.getName()
-                + "_"
-                + member.getMemberId()
-                + Objects.requireNonNull
-                        (photo.getOriginalFilename())
-                .substring(photo.getOriginalFilename().lastIndexOf("."));
+        String originalFilename = createPhotoFilename(member.getSlug(), photo.getOriginalFilename());
 
-        final UserPhoto userPhoto = new UserPhoto();
-        userPhoto.setUserPhotoId(String.valueOf(member.getMemberId()));
-        userPhoto.setFileName(originalFilename);
-        userPhoto.setSize(photo.getSize());
-        userPhoto.setContentType(photo.getContentType());
+        MemberPhoto p = new MemberPhoto();
+        p.setPhotoId(member.getMemberId());
+        p.setFileName(originalFilename);
+        p.setSize(photo.getSize());
+        p.setContentType(photo.getContentType());
 
-        final UserPhoto photoSaved = userPhotoService.save(userPhoto, photo.getInputStream());
+        p = photoService.save(p, photo.getInputStream());
 
-        member.setPhoto(photoSaved);
+        member.setMemberPhoto(p);
         memberService.save(member);
 
-        final PhotoDto photoDto = modelMapper.map(photoSaved, PhotoDto.class);
+        final PhotoDto photoDto = modelMapper.map(p, PhotoDto.class);
 
         return ResponseEntity.ok(photoDto);
     }
@@ -150,22 +146,22 @@ public class MemberController {
     public ResponseEntity<?> getPhoto(@PathVariable String memberId) {
 
         final Member member = memberService.read(memberId);
-        final UserPhoto photo = member.getPhoto();
+        final MemberPhoto memberPhoto = member.getMemberPhoto();
 
-        if (photo == null) {
+        if (memberPhoto == null) {
             return ResponseEntity.notFound().build();
         }
 
-        if (photo.getUrl() != null) {
+        if (memberPhoto.getUrl() != null) {
             return ResponseEntity
                     .status(HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, photo.getUrl()).build();
+                    .header(HttpHeaders.LOCATION, memberPhoto.getUrl()).build();
         } else {
 
-            final PhotoStorageService.RecoveredPhoto recoveredPhoto = userPhotoService.get(photo.getFileName());
+            final PhotoStorageService.RecoveredPhoto recoveredPhoto = photoService.get(memberPhoto.getFileName());
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, photo.getContentType());
+            headers.add(HttpHeaders.CONTENT_TYPE, memberPhoto.getContentType());
 
             return ResponseEntity.ok().headers(headers).body(new InputStreamResource(recoveredPhoto.getInputStream()));
         }
@@ -177,7 +173,7 @@ public class MemberController {
     public ResponseEntity<Void> deletePhoto(@PathVariable String memberId) {
 
         memberService.read(memberId);
-        userPhotoService.delete(String.valueOf(memberId));
+        photoService.delete(String.valueOf(memberId));
         memberService.deletePhoto(memberId);
 
         return ResponseEntity.noContent().build();
@@ -185,7 +181,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{memberId}/functions-member/{functionMemberId}")
-    public ResponseEntity<Void> associateFunction (@PathVariable String memberId, @PathVariable Long functionMemberId) {
+    public ResponseEntity<Void> associateFunction(@PathVariable String memberId, @PathVariable Long functionMemberId) {
 
         memberService.associateFunction(functionMemberId, memberId);
 
@@ -194,7 +190,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{memberId}/skills/{skillId}")
-    public ResponseEntity<Void> associateSkill (@PathVariable String memberId, @PathVariable Long skillId) {
+    public ResponseEntity<Void> associateSkill(@PathVariable String memberId, @PathVariable Long skillId) {
 
         memberService.associateSkill(memberId, skillId);
 
@@ -203,7 +199,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.L1
     @DeleteMapping("/{memberId}/skills/{skillId}")
-    public ResponseEntity<Void> disassociateSkill (@PathVariable String memberId, @PathVariable Long skillId) {
+    public ResponseEntity<Void> disassociateSkill(@PathVariable String memberId, @PathVariable Long skillId) {
 
         memberService.disassociateSkill(memberId, skillId);
 

@@ -19,21 +19,21 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM UserPhoto up WHERE up.userPhotoId = :photoId")
+    @Query("DELETE FROM MemberPhoto up WHERE up.photoId = :photoId")
     void deletePhotoByUserId(String photoId);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Member m SET m.photo = null WHERE m.memberId = :memberId")
+    @Query("UPDATE Member m SET m.memberPhoto = null WHERE m.memberId = :memberId")
     void removePhotoReference(@Param("memberId") String memberId);
 
-    @Query("SELECT m.photo.userPhotoId FROM Member m WHERE m.memberId = :memberId")
+    @Query("SELECT m.memberPhoto.photoId FROM Member m WHERE m.memberId = :memberId")
     String getUserPhotoIdByMemberId(String memberId);
 
-    @Query("SELECT up.fileName FROM UserPhoto up WHERE up.userPhotoId = :userPhotoId")
+    @Query("SELECT up.fileName FROM MemberPhoto up WHERE up.photoId = :userPhotoId")
     String findFileNameByUserPhotoId(String userPhotoId);
 
-    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.name, m.slug, m.functionMember.name, m.photo.url) FROM Member m ORDER BY RAND()")
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.name, m.slug, m.functionMember.name, m.memberPhoto.url) FROM Member m ORDER BY RAND()")
     Page<MemberSummaryDto> getMemberSummary(Pageable pageable);
 
     Optional<Member> findMemberBySlug(String slug);
