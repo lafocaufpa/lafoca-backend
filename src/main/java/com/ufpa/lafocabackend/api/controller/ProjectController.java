@@ -114,8 +114,8 @@ public class ProjectController {
     @DeleteMapping(value = "/{projectId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String projectId) {
 
-        Project member = projectService.read(projectId);
-        projectPhotoService.delete(member);
+        Project project = projectService.read(projectId);
+        projectPhotoService.delete(project);
 
         return ResponseEntity.noContent().build();
     }

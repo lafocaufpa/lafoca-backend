@@ -33,12 +33,11 @@ public class ProjectPhotoService {
     @Transactional
     public void delete(Project project) {
 
-        String memberId = project.getProjectId();
+        String projectId = project.getProjectId();
 
-        String photoFilename = projectPhotoRepository.findProjectPhotoFileNameByPhotoId(memberId);
-        projectPhotoRepository.removeProjectPhotoReference(memberId);
-        projectPhotoRepository.removeProjectPhotoReference(memberId);
-
+        String photoFilename = projectPhotoRepository.findProjectPhotoFileNameByPhotoId(projectId);
+        projectPhotoRepository.removeProjectPhotoReference(projectId);
+        projectPhotoRepository.deleteProjectPhotoByProjectId(projectId);
         var storagePhotoUtils = StoragePhotoUtils
                 .builder()
                 .fileName(photoFilename)
