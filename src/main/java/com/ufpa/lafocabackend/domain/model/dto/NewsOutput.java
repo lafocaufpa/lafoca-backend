@@ -13,4 +13,5 @@ public class NewsOutput {
     private String tittle;
     private OffsetDateTime newsDate;
     private String description;
+    private String urlPhoto;
 }

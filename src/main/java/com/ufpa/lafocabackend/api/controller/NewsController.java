@@ -1,20 +1,14 @@
 package com.ufpa.lafocabackend.api.controller;
 
-import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.domain.model.News;
-import com.ufpa.lafocabackend.domain.model.NewsPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.NewsOutput;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
 import com.ufpa.lafocabackend.domain.service.NewsPhotoService;
 import com.ufpa.lafocabackend.domain.service.NewsService;
-import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,10 +42,18 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
-    @GetMapping("/{newsSlug}")
-    public ResponseEntity<NewsDto> read (@PathVariable String newsSlug ){
+    @GetMapping("/search/{newsSlug}")
+    public ResponseEntity<NewsDto> readBySlug(@PathVariable String newsSlug ){
 
-        final News news = newsService.read(newsSlug);
+        final News news = newsService.readBySlug(newsSlug);
+        final NewsDto newsDto = modelMapper.map(news, NewsDto.class);
+        return ResponseEntity.ok(newsDto);
+    }
+
+    @GetMapping("/{newsId}")
+    public ResponseEntity<NewsDto> read(@PathVariable String newsId ){
+
+        final News news = newsService.read(newsId);
         final NewsDto newsDto = modelMapper.map(news, NewsDto.class);
         return ResponseEntity.ok(newsDto);
     }
@@ -70,7 +72,7 @@ public class NewsController {
 
     @PutMapping("/{newsSlug}")
     public ResponseEntity<NewsDto> update (@PathVariable String newsSlug, @RequestBody NewsInputDto newsInputDto){
-        final News news = newsService.read(newsSlug);
+        final News news = newsService.readBySlug(newsSlug);
 
         modelMapper.map(newsInputDto, news);
 
@@ -82,65 +84,44 @@ public class NewsController {
     @DeleteMapping("/{newsSlug}")
     public ResponseEntity<Void> delete (@PathVariable String newsSlug){
 
-        final News news = newsService.read(newsSlug);
+        final News news = newsService.readBySlug(newsSlug);
 
         newsService.delete(news.getSlug());
 
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(value = "/{newsSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto (MultipartFile photo, @PathVariable String newsSlug) throws IOException {
+    @PostMapping(value = "/search/{newsSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String newsSlug) throws IOException {
 
-        final News news = newsService.read(newsSlug);
+        final News news = newsService.readBySlug(newsSlug);
 
-        NewsPhoto newsPhoto = new NewsPhoto();
-        final String originalFileName = LafocaUtils.createPhotoFilename(news.getNewsId(), photo.getOriginalFilename());
-
-        newsPhoto.setNewsPhotoId(news.getNewsId());
-        newsPhoto.setFileName(originalFileName);
-        newsPhoto.setSize(photo.getSize());
-        newsPhoto.setContentType(photo.getContentType());
-
-        final NewsPhoto save = newsPhotoService.save(newsPhoto, photo.getInputStream());
-
-        news.setNewsPhoto(save);
-        newsService.save(news);
-
-        final PhotoDto photoDto = modelMapper.map(save, PhotoDto.class);
-
+        PhotoDto photoDto = newsPhotoService.save(news, photo);
         return ResponseEntity.ok(photoDto);
     }
 
-    @GetMapping("{newsSlug}/photo")
-    public ResponseEntity<?> getPhoto(@PathVariable String newsSlug){
-        final News news = newsService.read(newsSlug);
-        final NewsPhoto newsPhoto = news.getNewsPhoto();
+    @PostMapping(value = "/{newsId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PhotoDto> addPhoto (MultipartFile photo, @PathVariable String newsId) throws IOException {
 
-        if(newsPhoto == null) {
-            return ResponseEntity.notFound().build();
-        }
+        final News news = newsService.read(newsId);
 
-        if (newsPhoto.getUrl() != null) {
-            return ResponseEntity
-                    .status(HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, newsPhoto.getUrl()).build();
-        } else {
-
-            final PhotoStorageService.RecoveredPhoto recoveredPhoto = newsPhotoService.get(newsPhoto.getFileName());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, newsPhoto.getContentType());
-
-            return ResponseEntity.ok().headers(headers).body(new InputStreamResource(recoveredPhoto.getInputStream()));
-        }
+        PhotoDto photoDto = newsPhotoService.save(news, photo);
+        return ResponseEntity.ok(photoDto);
     }
 
-    @DeleteMapping(value = "{newsSlug}/photo")
-    public ResponseEntity<Void> deletePhoto(@PathVariable String newsSlug) {
+    @DeleteMapping(value = "/search/{newsSlug}/photo")
+    public ResponseEntity<Void> deletePhotoWhitSlug(@PathVariable String newsSlug) {
 
-        final News news = newsService.read(newsSlug);
-        newsPhotoService.delete(news.getNewsPhoto().getNewsPhotoId());
+        final News news = newsService.readBySlug(newsSlug);
+        newsPhotoService.delete(news);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "{newsId}/photo")
+    public ResponseEntity<Void> deletePhoto(@PathVariable String newsId) {
+
+        final News news = newsService.read(newsId);
+        newsPhotoService.delete(news);
         return ResponseEntity.noContent().build();
     }
 }

@@ -2,14 +2,19 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
+import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.NewsPhoto;
+import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.NewsPhotoRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
+
+import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
 
 @Service
 public class NewsPhotoService {
@@ -17,39 +22,59 @@ public class NewsPhotoService {
 
     private final PhotoStorageService photoStorageService;
     private final NewsPhotoRepository newsPhotoRepository;
+    private final ModelMapper modelMapper;
+    private final NewsService newsService;
 
-    public NewsPhotoService(PhotoStorageService photoStorageService, NewsPhotoRepository newsPhotoRepository) {
+    public NewsPhotoService(PhotoStorageService photoStorageService, NewsPhotoRepository newsPhotoRepository, ModelMapper modelMapper, NewsService newsService) {
         this.newsPhotoRepository = newsPhotoRepository;
         this.photoStorageService = photoStorageService;
+        this.modelMapper = modelMapper;
+        this.newsService = newsService;
     }
 
     @Transactional
-    public NewsPhoto save(NewsPhoto photo, InputStream inputStream) throws IOException {
+    public PhotoDto save(News news, MultipartFile photo) throws IOException {
 
-        final NewsPhoto photoSaved = newsPhotoRepository.save(photo);
+        String originalPhotoFilename = createPhotoFilename(news.getSlug(), photo.getOriginalFilename());
+
+        NewsPhoto newsPhoto = new NewsPhoto();
+        newsPhoto.setPhotoId(news.getNewsId());
+        newsPhoto.setFileName(originalPhotoFilename);
+        newsPhoto.setSize(photo.getSize());
+        newsPhoto.setContentType(photo.getContentType());
+
+        NewsPhoto newsPhotoSaved = newsPhotoRepository.save(newsPhoto);
 
         StoragePhotoUtils newPhoto = StoragePhotoUtils.builder()
-                .fileName(photo.getFileName())
-                .contentType(photo.getContentType())
+                .fileName(newsPhoto.getFileName())
+                .contentType(newsPhoto.getContentType())
+                .contentLength(newsPhoto.getSize())
                 .type(TypeEntityPhoto.News)
-                .inputStream(inputStream)
+                .inputStream(photo.getInputStream())
                 .build();
 
         final String url = photoStorageService.armazenar(newPhoto);
+        newsPhotoSaved.setUrl(url);
 
-        photoSaved.setUrl(url);
-
-        return photoSaved;
+        news.setNewsPhoto(newsPhotoSaved);
+        newsService.save(news);
+        return modelMapper.map(newsPhotoSaved, PhotoDto.class);
     }
 
     @Transactional
-    public void delete(String newsId) {
+    public void delete(News news) {
 
-        final String fileName = newsPhotoRepository.findFileName(newsId);
+        String newsId = news.getNewsId();
 
-        newsPhotoRepository.removePhotoReference(newsId);
-        newsPhotoRepository.deleteById(newsId);
-        photoStorageService.deletar(StoragePhotoUtils.builder().type(TypeEntityPhoto.News).fileName(fileName).build());
+        String photoFilename = newsPhotoRepository.findNewsPhotoFileNameByPhotoId(newsId);
+        newsPhotoRepository.removeNewsPhotoReference(newsId);
+        newsPhotoRepository.deleteNewsPhotoByNewsId(newsId);
+
+        var storagePhotoUtils = StoragePhotoUtils
+                .builder()
+                .fileName(photoFilename)
+                .type(TypeEntityPhoto.News).build();
+
+        photoStorageService.deletar(storagePhotoUtils);
     }
-
 }

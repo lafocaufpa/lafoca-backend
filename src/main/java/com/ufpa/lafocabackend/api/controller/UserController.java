@@ -7,7 +7,6 @@ import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
-import com.ufpa.lafocabackend.domain.service.MemberPhotoService;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -28,12 +27,10 @@ public class UserController {
 
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private final MemberPhotoService memberPhotoService;
 
-    public UserController(UserService userService, ModelMapper modelMapper, MemberPhotoService memberPhotoService) {
+    public UserController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
         this.modelMapper = modelMapper;
-        this.memberPhotoService = memberPhotoService;
     }
 
     @CheckSecurityPermissionMethods.User.L1L2

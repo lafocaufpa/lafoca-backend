@@ -55,9 +55,9 @@ public class MemberController {
     }
 
     @GetMapping("/search/{slug}")
-    public ResponseEntity<MemberDto> getByName(@PathVariable String slug) {
+    public ResponseEntity<MemberDto> getBySlug(@PathVariable String slug) {
 
-        final Member member = memberService.getMemberByName(slug);
+        final Member member = memberService.readMemberBySlug(slug);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
         return ResponseEntity.ok(memberDto);
     }
@@ -108,14 +108,34 @@ public class MemberController {
     @PostMapping(value = "/{memberId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String memberId) throws IOException {
 
-        return ResponseEntity.ok(memberPhotoService.save(memberId, photo));
+        Member member = memberService.read(memberId);
+        return ResponseEntity.ok(memberPhotoService.save(member, photo));
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
+
+        Member member = memberService.readMemberBySlug(memberSlug);
+        return ResponseEntity.ok(memberPhotoService.save(member, photo));
     }
 
     @CheckSecurityPermissionMethods.L1
     @DeleteMapping(value = "/{memberId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String memberId) {
 
-        memberPhotoService.delete(memberId);
+        Member member = memberService.read(memberId);
+        memberPhotoService.delete(member);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @DeleteMapping(value = "/search/{memberSlug}/photo")
+    public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String memberSlug) {
+
+        Member member = memberService.readMemberBySlug(memberSlug);
+        memberPhotoService.delete(member);
 
         return ResponseEntity.noContent().build();
     }

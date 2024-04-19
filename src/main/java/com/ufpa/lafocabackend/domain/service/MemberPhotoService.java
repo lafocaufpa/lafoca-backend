@@ -22,17 +22,18 @@ public class MemberPhotoService {
     private final PhotoStorageService photoStorageService;
     private final MemberPhotoRepository memberPhotoRepository;
     private final ModelMapper modelMapper;
-    private final MemberService memberService;
 
-    public MemberPhotoService(PhotoStorageService photoStorageService, MemberPhotoRepository memberPhotoRepository, ModelMapper modelMapper, MemberService memberService) {
+
+    public MemberPhotoService(PhotoStorageService photoStorageService, MemberPhotoRepository memberPhotoRepository, ModelMapper modelMapper) {
         this.memberPhotoRepository = memberPhotoRepository;
         this.photoStorageService = photoStorageService;
         this.modelMapper = modelMapper;
-        this.memberService = memberService;
     }
 
     @Transactional
-    public void delete(String memberId) {
+    public void delete(Member member) {
+
+        String memberId = member.getMemberId();
 
         String photoFilename = memberPhotoRepository.findMemberPhotoFileNameByPhotoId(memberId);
         memberPhotoRepository.removeMemberPhotoReference(memberId);
@@ -48,9 +49,7 @@ public class MemberPhotoService {
     }
 
     @Transactional
-    public PhotoDto save(String memberId, MultipartFile photo) throws IOException {
-
-        final Member member = memberService.read(memberId);
+    public PhotoDto save(Member member, MultipartFile photo) throws IOException {
 
         String originalPhotoFilename = createPhotoFilename(member.getSlug(), photo.getOriginalFilename());
 
@@ -76,4 +75,6 @@ public class MemberPhotoService {
         member.setMemberPhoto(memberPhotoSaved);
         return modelMapper.map(memberPhotoSaved, PhotoDto.class);
     }
+
+
 }

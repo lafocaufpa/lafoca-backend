@@ -4,12 +4,11 @@ import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 public interface PhotoStorageService {
 
-    String armazenar(StoragePhotoUtils newPhoto) throws IOException;
+    String armazenar(StoragePhotoUtils newPhoto);
 
     RecoveredPhoto recuperar (String fileName);
 

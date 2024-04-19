@@ -1,22 +1,14 @@
 package com.ufpa.lafocabackend.domain.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class NewsPhoto {
-
-    @Id
-    @EqualsAndHashCode.Include
-    private String newsPhotoId;
-    private Long size;
-    private String contentType;
-    private String url;
-    private String fileName;
+@Getter
+@Setter
+@ToString(callSuper = true)
+public class NewsPhoto extends Photo {
 
 }

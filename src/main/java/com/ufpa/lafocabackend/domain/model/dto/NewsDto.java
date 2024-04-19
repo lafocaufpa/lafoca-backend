@@ -9,6 +9,8 @@ import java.time.OffsetDateTime;
 @Setter
 public class NewsDto {
 
+    private String newsId;
+
     private String slug;
 
     private String tittle;
@@ -20,4 +22,6 @@ public class NewsDto {
     private String tags;
 
     private String content;
+
+    private String urlPhoto;
 }

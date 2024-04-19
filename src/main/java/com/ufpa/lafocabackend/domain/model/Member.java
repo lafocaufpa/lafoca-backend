@@ -87,7 +87,6 @@ public class Member {
         generateSlug();
     }
 
-
     public boolean addSkill(Skill skill) {
         return skills.add(skill);
     }

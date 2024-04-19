@@ -50,12 +50,20 @@ public class NewsService {
 
     }
 
-    private News getOrFail(String newsSlug) {
-        return newsRepository.findBySlug(newsSlug).orElseThrow(() -> new EntityNotFoundException(getClass().getSimpleName(), newsSlug));
+    private News getOrFail(String newsId) {
+        return newsRepository
+                .findById(newsId)
+                .orElseThrow(() -> new EntityNotFoundException(News.class.getSimpleName(), newsId));
     }
 
-    public News read(String newsSlug) {
-        return getOrFail(newsSlug);
+    public News readBySlug(String newsSlug) {
+        return newsRepository
+                .findBySlug(newsSlug)
+                .orElseThrow(() -> new EntityNotFoundException(News.class.getSimpleName(), newsSlug));
+    }
+
+    public News read(String newsId) {
+        return getOrFail(newsId);
     }
 
 }
