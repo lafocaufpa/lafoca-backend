@@ -66,7 +66,7 @@ public class MemberService {
         }
 
         if (memberInputDto.getProjects() != null) {
-            for (Long projectId : memberInputDto.getProjects()) {
+            for (String projectId : memberInputDto.getProjects()) {
                 member.addProject(projectService.read(projectId));
             }
         }
@@ -108,7 +108,7 @@ public class MemberService {
 
         if (memberInputDto.getProjects() != null) {
             Set<Project> projects = new HashSet<>();
-            for (Long projectId : memberInputDto.getProjects()) {
+            for (String projectId : memberInputDto.getProjects()) {
                 projects.add(projectService.read(projectId));
             }
             member.setProjects(projects);

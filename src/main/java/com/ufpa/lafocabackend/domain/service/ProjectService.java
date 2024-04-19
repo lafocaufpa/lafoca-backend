@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
+import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.ProjectDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
@@ -35,11 +36,11 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public Project read (Long projectId) {
+    public Project read (String projectId) {
         return getOrFail(projectId);
     }
 
-    public Project update (Long projectId, ProjectDto newProject) {
+    public Project update (String projectId, ProjectDto newProject) {
 
         final Project currentProject = read(projectId);
 
@@ -49,7 +50,7 @@ public class ProjectService {
         return projectRepository.save(currentProject);
     }
 
-    public void delete (Long projectId) {
+    public void delete (String projectId) {
 
         try {
             projectRepository.deleteById(projectId);
@@ -60,7 +61,7 @@ public class ProjectService {
         }
     }
 
-    private Project getOrFail(Long projectId) {
+    private Project getOrFail(String projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow( () -> new EntityNotFoundException(Project.class.getSimpleName(), projectId));
     }
@@ -68,5 +69,10 @@ public class ProjectService {
     public Page<ProjectSummaryDto> listSummaryProjects(Pageable pageable) {
 
         return projectRepository.getProjectSummary(pageable);
+    }
+
+    public Project readProjectBySlug(String projectSlug) {
+        return projectRepository.findBySlug(projectSlug).
+                orElseThrow(() -> new EntityNotFoundException(Project.class.getSimpleName(), projectSlug));
     }
 }

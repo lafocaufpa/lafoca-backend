@@ -8,9 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ProjectRepository extends JpaRepository<Project, Long> {
+import java.util.Optional;
 
-    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto(p.projectId, p.type, p.tittle, p.description, p.completed, p.year) FROM Project p")
+@Repository
+public interface ProjectRepository extends JpaRepository<Project, String> {
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto(p.projectId, p.type, p.tittle, p.description, p.completed, p.year, p.projectPhoto.url) FROM Project p")
     Page<ProjectSummaryDto> getProjectSummary(Pageable pageable);
+
+    Optional<Project> findBySlug(String slug);
 }

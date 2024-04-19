@@ -9,10 +9,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ProjectSummaryDto {
 
-    private Long projectId;
+    private String projectId;
     private String type;
     private String tittle;
     private String description;
     private Boolean completed;
     private String year;
+    private String urlPhoto;
 }

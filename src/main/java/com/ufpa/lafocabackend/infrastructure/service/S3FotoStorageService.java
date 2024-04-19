@@ -81,7 +81,9 @@ public class S3FotoStorageService implements PhotoStorageService {
             return storageProperties.getS3().getDiretorio_news();
         } else if (typeEntity == TypeEntityPhoto.Member) {
             return storageProperties.getS3().getDiretorio_members();
-        } else {
+        } else if (typeEntity == TypeEntityPhoto.Project) {
+            return storageProperties.getS3().getDiretorio_projects();
+        }else {
             return null;
         }
     }

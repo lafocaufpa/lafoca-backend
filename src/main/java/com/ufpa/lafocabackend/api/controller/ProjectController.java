@@ -2,8 +2,10 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Project;
+import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.ProjectDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
+import com.ufpa.lafocabackend.domain.service.ProjectPhotoService;
 import com.ufpa.lafocabackend.domain.service.ProjectService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -11,9 +13,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
@@ -24,10 +29,12 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final ModelMapper modelMapper;
+    private final ProjectPhotoService projectPhotoService;
 
-    public ProjectController(ProjectService projectService, ModelMapper modelMapper) {
+    public ProjectController(ProjectService projectService, ModelMapper modelMapper, ProjectPhotoService projectPhotoService) {
         this.projectService = projectService;
         this.modelMapper = modelMapper;
+        this.projectPhotoService = projectPhotoService;
     }
 
     @CheckSecurityPermissionMethods.L1
@@ -41,7 +48,7 @@ public class ProjectController {
 
     @CheckSecurityPermissionMethods.L1
     @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectDto> read (@PathVariable Long projectId){
+    public ResponseEntity<ProjectDto> read (@PathVariable String projectId){
 
         final ProjectDto projectDto = modelMapper.map(projectService.read(projectId), ProjectDto.class);
         return ResponseEntity.ok(projectDto);
@@ -72,7 +79,7 @@ public class ProjectController {
 
     @CheckSecurityPermissionMethods.L1
     @PutMapping("/{projectId}")
-    public ResponseEntity<ProjectDto> update (@PathVariable Long projectId, @RequestBody ProjectDto newProject){
+    public ResponseEntity<ProjectDto> update (@PathVariable String projectId, @RequestBody ProjectDto newProject){
 
         final ProjectDto projectUpdated = modelMapper.map(projectService.update(projectId, newProject), ProjectDto.class);
         return ResponseEntity.ok(projectUpdated);
@@ -80,9 +87,45 @@ public class ProjectController {
 
     @CheckSecurityPermissionMethods.L1
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<Void> delete (@PathVariable Long projectId){
+    public ResponseEntity<Void> delete (@PathVariable String projectId){
 
         projectService.delete(projectId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @PostMapping(value = "/{projectId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String projectId) throws IOException {
+
+        Project member = projectService.read(projectId);
+        return ResponseEntity.ok(projectPhotoService.save(member, photo));
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
+
+        Project member = projectService.readProjectBySlug(memberSlug);
+        return ResponseEntity.ok(projectPhotoService.save(member, photo));
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @DeleteMapping(value = "/{projectId}/photo")
+    public ResponseEntity<Void> deletePhoto(@PathVariable String projectId) {
+
+        Project member = projectService.read(projectId);
+        projectPhotoService.delete(member);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @DeleteMapping(value = "/search/{memberSlug}/photo")
+    public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String memberSlug) {
+
+        Project member = projectService.readProjectBySlug(memberSlug);
+        projectPhotoService.delete(member);
 
         return ResponseEntity.noContent().build();
     }

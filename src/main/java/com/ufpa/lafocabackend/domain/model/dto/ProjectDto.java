@@ -7,10 +7,11 @@ import lombok.Setter;
 @Setter
 public class ProjectDto {
 
-    private Long projectId;
+    private String projectId;
     private String type;
     private String tittle;
     private String description;
     private Boolean completed;
     private String year;
+    private String urlPhoto;
 }
