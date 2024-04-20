@@ -11,7 +11,7 @@ public class ProjectSummaryDto {
 
     private String projectId;
     private String type;
-    private String tittle;
+    private String title;
     private String description;
     private Boolean completed;
     private String year;

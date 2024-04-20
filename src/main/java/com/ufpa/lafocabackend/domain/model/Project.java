@@ -27,7 +27,7 @@ public class Project {
     private String slug;
 
     @Column(nullable = false)
-    private String tittle;
+    private String title;
     
     @Column(nullable = false)
     private String description;
@@ -45,7 +45,7 @@ public class Project {
 
     @PreUpdate
     public void generateSlug() {
-        this.slug = createSlug(this.tittle, this.projectId);
+        this.slug = createSlug(this.title, this.projectId);
     }
 
     @PrePersist

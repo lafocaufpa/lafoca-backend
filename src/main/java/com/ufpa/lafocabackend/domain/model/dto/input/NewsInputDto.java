@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class NewsInputDto {
 
-    private String tittle;
+    private String title;
 
     private String content;
 

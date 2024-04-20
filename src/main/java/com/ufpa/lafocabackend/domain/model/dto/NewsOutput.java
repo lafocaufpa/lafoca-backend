@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 public class NewsOutput {
 
     private String slug;
-    private String tittle;
+    private String title;
     private OffsetDateTime newsDate;
     private String description;
     private String urlPhoto;

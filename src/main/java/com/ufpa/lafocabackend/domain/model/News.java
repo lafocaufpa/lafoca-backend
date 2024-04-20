@@ -23,7 +23,7 @@ public class News {
     private String newsId;
 
     @Column(nullable = false)
-    private String tittle;
+    private String title;
 
     @Column(nullable = false, unique = true)
     private String slug;
@@ -47,7 +47,7 @@ public class News {
 
     @PreUpdate
     public void generateSlug() {
-        this.slug = createSlug(this.tittle, this.newsId);
+        this.slug = createSlug(this.title, this.newsId);
     }
 
     @PrePersist

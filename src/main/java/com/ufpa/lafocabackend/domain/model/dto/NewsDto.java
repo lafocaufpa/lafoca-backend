@@ -13,7 +13,7 @@ public class NewsDto {
 
     private String slug;
 
-    private String tittle;
+    private String title;
 
     private OffsetDateTime newsDate;
 
