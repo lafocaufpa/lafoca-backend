@@ -110,7 +110,7 @@ public class NewsController {
     }
 
     @DeleteMapping(value = "/search/{newsSlug}/photo")
-    public ResponseEntity<Void> deletePhotoWhitSlug(@PathVariable String newsSlug) {
+    public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String newsSlug) {
 
         final News news = newsService.readBySlug(newsSlug);
         newsPhotoService.delete(news);

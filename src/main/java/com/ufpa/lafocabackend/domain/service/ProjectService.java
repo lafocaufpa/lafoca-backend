@@ -2,7 +2,6 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
-import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.ProjectDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
@@ -13,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -71,8 +71,17 @@ public class ProjectService {
         return projectRepository.getProjectSummary(pageable);
     }
 
-    public Project readProjectBySlug(String projectSlug) {
+    public Project readBySlug(String projectSlug) {
         return projectRepository.findBySlug(projectSlug).
                 orElseThrow(() -> new EntityNotFoundException(Project.class.getSimpleName(), projectSlug));
+    }
+
+    @Transactional
+    public void createSlugAll() {
+        List<Project> all = projectRepository.findAll();
+        for (Project project : all) {
+            project.generateSlug();
+            projectRepository.save(project);
+        }
     }
 }

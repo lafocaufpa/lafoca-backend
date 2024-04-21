@@ -36,6 +36,6 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.name, m.slug, m.functionMember.name, m.memberPhoto.url) FROM Member m ORDER BY RAND()")
     Page<MemberSummaryDto> getMemberSummary(Pageable pageable);
 
-    Optional<Member> findMemberBySlug(String slug);
+    Optional<Member> findBySlug(String slug);
 
 }

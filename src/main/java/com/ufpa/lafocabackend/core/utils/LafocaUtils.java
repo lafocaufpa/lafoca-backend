@@ -1,12 +1,26 @@
 package com.ufpa.lafocabackend.core.utils;
 
 import java.text.Normalizer;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class LafocaUtils {
+
+    /**
+     * Cria um slug com base no nome e ID fornecidos, ou apenas no nome se o ID for nulo.
+     * Se o ID for nulo, o slug será composto pelo nome seguido pela data e hora atuais formatadas.
+     *
+     * @param name O nome a ser utilizado para gerar o slug.
+     * @param id O ID a ser utilizado para gerar o sufixo do slug. Pode ser nulo.
+     * @return O slug gerado.
+     * <p>
+     * Exemplo:
+     * Se o nome fornecido for "Meu Projeto" e o ID for nulo, o slug resultante será algo como
+     * "meu-projeto-04122020231555", onde "04122020231555" representa a data e hora atuais formatadas.
+     */
     public static String createSlug(String name, String id) {
+
         String slug = Normalizer.normalize(name, Normalizer.Form.NFD)
                 .replaceAll("[^\\p{ASCII}]", "")
                 .toLowerCase()
@@ -14,12 +28,14 @@ public class LafocaUtils {
                 .replaceAll("[^a-z0-9-]", "")
                 .replaceAll("-{2,}", "-");
         if (id != null) {
+
             String suffix = id.substring(0, id.indexOf("-"));
             return slug + "-" + suffix;
         } else {
-            LocalDate currentDate = LocalDate.now();
-            String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-            return slug + "-" + formattedDate;
+
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            String ddMMyyyyHHmmss = currentDateTime.format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmss"));
+            return slug + "-" + ddMMyyyyHHmmss;
         }
 
     }

@@ -37,6 +37,11 @@ public class ArticleService {
         return getOrFail(articleId);
     }
 
+    public Article readBySlug(String slug) {
+        return articleRepository.findBySlug(slug).
+                orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName(), slug));
+    }
+
     public Article update (Long articleId, ArticleDto newArticle) {
 
         final Article currentArticle = read(articleId);

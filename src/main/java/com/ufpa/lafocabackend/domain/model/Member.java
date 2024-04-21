@@ -56,8 +56,8 @@ public class Member {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private MemberPhoto memberPhoto;
 
-    @OneToOne
-    @JoinColumn(name = "function_member_id")
+    @ManyToOne
+    @JoinColumn(name = "function_member_id", unique = false)
     private FunctionMember functionMember;
 
     @OneToOne

@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
@@ -19,7 +20,6 @@ import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
     private String userId;
 
@@ -50,11 +50,15 @@ public class User {
         return encoder.matches(login.password(), this.password);
     }
 
-    @PrePersist
     @PreUpdate
     public void generateSlug() {
-
         this.slug = createSlug(this.name, this.userId);
+    }
+
+    @PrePersist
+    private void generateUUID() {
+        this.userId = UUID.randomUUID().toString();
+        generateSlug();
     }
 
     public boolean addGroup (Group group){

@@ -54,6 +54,15 @@ public class ProjectController {
         return ResponseEntity.ok(projectDto);
     }
 
+    @GetMapping("/search/{projectSlug}")
+    public ResponseEntity<ProjectDto> readBySlug(@PathVariable String projectSlug) {
+
+        final Project project = projectService.readBySlug(projectSlug);
+        ProjectDto projectDto = modelMapper.map(project, ProjectDto.class);
+
+        return ResponseEntity.ok(projectDto);
+    }
+
     @CheckSecurityPermissionMethods.L1
     @GetMapping
     public ResponseEntity<Collection<ProjectDto>> list (){
@@ -106,7 +115,7 @@ public class ProjectController {
     @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
 
-        Project member = projectService.readProjectBySlug(memberSlug);
+        Project member = projectService.readBySlug(memberSlug);
         return ResponseEntity.ok(projectPhotoService.save(member, photo));
     }
 
@@ -121,12 +130,19 @@ public class ProjectController {
     }
 
     @CheckSecurityPermissionMethods.L1
-    @DeleteMapping(value = "/search/{memberSlug}/photo")
-    public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String memberSlug) {
+    @DeleteMapping(value = "/search/{projectSlug}/photo")
+    public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String projectSlug) {
 
-        Project member = projectService.readProjectBySlug(memberSlug);
-        projectPhotoService.delete(member);
+        Project project = projectService.readBySlug(projectSlug);
+        projectPhotoService.delete(project);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/generate-slug")
+    public String generateSlug() {
+
+        projectService.createSlugAll();
+        return "<h1>Deu certo!</h1>";
     }
 }

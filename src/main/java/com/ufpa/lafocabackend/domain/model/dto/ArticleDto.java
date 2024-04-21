@@ -8,7 +8,8 @@ import lombok.Setter;
 public class ArticleDto {
 
     private Long ArticleId;
-    private String name;
+    private String title;
+    private String slug;
     private String journal;
     private String url;
 }

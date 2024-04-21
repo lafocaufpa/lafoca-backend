@@ -152,8 +152,8 @@ public class MemberService {
         return getOrFail(memberId);
     }
 
-    public Member readMemberBySlug(String slug) {
-        return memberRepository.findMemberBySlug(slug).
+    public Member readBySlug(String slug) {
+        return memberRepository.findBySlug(slug).
                 orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), slug));
     }
 

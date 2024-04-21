@@ -65,6 +65,15 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @GetMapping("/search/{slug}")
+    public ResponseEntity<UserDto> readBySlug(@PathVariable String slug) {
+
+        final User user = userService.readBySlug(slug);
+        final UserDto userDto = modelMapper.map(user, UserDto.class);
+
+        return ResponseEntity.ok(userDto);
+    }
+
     @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> update(@RequestBody UserDtoInput userDtoInput, @PathVariable String userId) {
@@ -95,19 +104,38 @@ public class UserController {
     @PostMapping(value = "/{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
 
-
-        String url = userService.addPhoto(photo, userId);
+        User user = userService.read(userId);
+        String url = userService.addPhoto(photo, user);
 
         return ResponseEntity.ok(url);
     }
 
+    @CheckSecurityPermissionMethods.L1
+    @PostMapping(value = "/search/{userSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> addPhotoBySlug(MultipartFile photo, @PathVariable String userSlug) throws IOException {
+
+        User user = userService.readBySlug(userSlug);
+        String url = userService.addPhoto(photo, user);
+
+        return ResponseEntity.ok(url);
+    }
 
     @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
     @DeleteMapping(value = "/{userId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String userId) {
 
-        userService.removePhoto(userId);
+        User user = userService.read(userId);
+        userService.removePhoto(user);
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @CheckSecurityPermissionMethods.L1
+    @DeleteMapping(value = "/search/{userSlug}/photo")
+    public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String userSlug) {
+
+        User user = userService.readBySlug(userSlug);
+        userService.removePhoto(user);
         return ResponseEntity.noContent().build();
     }
 

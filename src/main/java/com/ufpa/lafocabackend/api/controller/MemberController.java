@@ -46,7 +46,7 @@ public class MemberController {
         return ResponseEntity.ok(memberSaved);
     }
 
-    @GetMapping("/id/{memberId}")
+    @GetMapping("/{memberId}")
     public ResponseEntity<MemberDto> read(@PathVariable String memberId) {
 
         final Member member = memberService.read(memberId);
@@ -54,10 +54,10 @@ public class MemberController {
         return ResponseEntity.ok(memberDto);
     }
 
-    @GetMapping("/search/{slug}")
-    public ResponseEntity<MemberDto> getBySlug(@PathVariable String slug) {
+    @GetMapping("/search/{memberSlug}")
+    public ResponseEntity<MemberDto> readBySlug(@PathVariable String memberSlug) {
 
-        final Member member = memberService.readMemberBySlug(slug);
+        final Member member = memberService.readBySlug(memberSlug);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
         return ResponseEntity.ok(memberDto);
     }
@@ -116,7 +116,7 @@ public class MemberController {
     @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
 
-        Member member = memberService.readMemberBySlug(memberSlug);
+        Member member = memberService.readBySlug(memberSlug);
         return ResponseEntity.ok(memberPhotoService.save(member, photo));
     }
 
@@ -134,7 +134,7 @@ public class MemberController {
     @DeleteMapping(value = "/search/{memberSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String memberSlug) {
 
-        Member member = memberService.readMemberBySlug(memberSlug);
+        Member member = memberService.readBySlug(memberSlug);
         memberPhotoService.delete(member);
 
         return ResponseEntity.noContent().build();

@@ -90,6 +90,11 @@ public class UserService {
         return getOrFail(userId);
     }
 
+    public User readBySlug(String slug) {
+        return userRepository.findBySlug(slug).
+                orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), slug));
+    }
+
     @Transactional
     public void changePassword(userInputPasswordDTO passwordDTO, String userId) {
         final User user = getOrFail(userId);
@@ -116,9 +121,7 @@ public class UserService {
     }
 
     @Transactional
-    public String addPhoto(MultipartFile photo, String userId) throws IOException {
-
-        final User user = read(userId);
+    public String addPhoto(MultipartFile photo, User user) throws IOException {
 
         String originalFilename = createPhotoFilename(user.getSlug(), photo.getOriginalFilename());
 
@@ -137,8 +140,7 @@ public class UserService {
     }
 
     @Transactional
-    public void removePhoto(String userId) {
-        User user = read(userId);
+    public void removePhoto(User user) {
 
         if(user.getUrlPhoto() != null){
 

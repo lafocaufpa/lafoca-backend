@@ -1,11 +1,12 @@
 package com.ufpa.lafocabackend.domain.model;
 
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -18,8 +19,16 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long ArticleId;
-    private String name;
+    private String title;
+    private String slug;
     private String journal;
     private String url;
+
+    @PreUpdate
+    @PrePersist
+    public void generateSlug() {
+
+        this.slug = createSlug(this.title, null);
+    }
 
 }

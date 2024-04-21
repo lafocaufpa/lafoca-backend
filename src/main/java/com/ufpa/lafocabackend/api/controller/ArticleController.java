@@ -42,6 +42,14 @@ public class ArticleController {
     }
 
     @CheckSecurityPermissionMethods.L1
+    @GetMapping("/search/{articleSlug}")
+    public ResponseEntity<ArticleDto> readBySlug (@PathVariable String articleSlug){
+
+        final ArticleDto articleDto = modelMapper.map(articleService.readBySlug(articleSlug), ArticleDto.class);
+        return ResponseEntity.ok(articleDto);
+    }
+
+    @CheckSecurityPermissionMethods.L1
     @GetMapping
     public ResponseEntity<Collection<ArticleDto>> list (){
 
