@@ -44,7 +44,9 @@ public class ResourceServerConfig {
 
         httpSecurity
                 .authorizeHttpRequests(
-                        auth -> auth.requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        auth -> auth
+                                .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/check-token").permitAll()
                                 .requestMatchers( "/members/**").permitAll()
                                 .requestMatchers( "/projects/**").permitAll()
                                 .requestMatchers("/info/**").permitAll()

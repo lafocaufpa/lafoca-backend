@@ -1,71 +1,52 @@
 package com.ufpa.lafocabackend.core.security.controller;
 
+import com.ufpa.lafocabackend.core.security.dto.JwtUtil;
 import com.ufpa.lafocabackend.core.security.dto.LoginRequest;
-import com.ufpa.lafocabackend.core.security.dto.LoginResponse;
-import com.ufpa.lafocabackend.domain.model.User;
+import com.ufpa.lafocabackend.core.security.dto.Session;
+import com.ufpa.lafocabackend.core.security.dto.Token;
 import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 public class LoginController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtEncoder jwtEncoder;
+    private final JwtUtil jwtUtil;
 
-    public LoginController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtEncoder jwtEncoder) {
+    public LoginController(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtEncoder = jwtEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Token> login(@RequestBody LoginRequest loginRequest) {
 
         var user = userRepository.findByEmail(loginRequest.username());
 
-        if(user.isEmpty() || user.get().isLoginCorrect(loginRequest, passwordEncoder)){
+        if (user.isEmpty() || user.get().isLoginCorrect(loginRequest, passwordEncoder)) {
             throw new BadCredentialsException("Invalid username or password!");
         }
 
-        var now = Instant.now();
-        long expiresIn = 1_296_000L;
+        Token jwtValue = jwtUtil.encodeJwtToken(user.get());
 
-        Collection<GrantedAuthority> authorities = getAuthorities(user.get());
-        Set<String> roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-
-        var claims = JwtClaimsSet.builder()
-                .issuer("lafoca-backend")
-                .subject(user.get().getEmail())
-                .claim("full_name", user.get().getName())
-                .claim("user_id", user.get().getUserId())
-                .claim("authorities", roles)
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiresIn))
-                .build();
-        var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        return ResponseEntity.ok(new LoginResponse(jwtValue));
+        return ResponseEntity.ok(jwtValue);
     }
 
-    private Collection<GrantedAuthority> getAuthorities (User user){
-        return user.getGroups().stream()
-                .flatMap(group -> group.getPermissions().stream())
-                .map(permission -> new SimpleGrantedAuthority(permission.getName().toUpperCase()))
-                .collect(Collectors.toSet());
+    @PostMapping("/check-token")
+    public ResponseEntity<Session> decodeToken(@RequestBody Token token) {
+
+        Session session = jwtUtil.decodeJwtToken(token.accessToken());
+
+        return ResponseEntity.ok(session);
     }
+
 }

@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.exceptionhandler;
 
+import com.nimbusds.jose.proc.BadJWSException;
 import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -26,6 +28,28 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
+    }
+
+    @ExceptionHandler(JwtValidationException.class) /*também subclasses*/
+    public ResponseEntity<?> handleTokenExpired(Exception ex, WebRequest request) {
+        HttpStatus unauthorized = HttpStatus.UNAUTHORIZED;
+        ProblemType problemType = ProblemType.TOKEN_EXPIRADO;
+        String userMessage = "O tempo de validade do token expirou. Por favor, renove suas credenciais para continuar acessando o sistema.";
+
+        final Problem problem = createProblemType(unauthorized, problemType, ex.getMessage()).userMessage(userMessage).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), unauthorized, request);
+    }
+
+    @ExceptionHandler(BadJWSException.class) /*também subclasses*/
+    public ResponseEntity<?> handleTokenInvalid(Exception ex, WebRequest request) {
+        HttpStatus unauthorized = HttpStatus.UNAUTHORIZED;
+        ProblemType problemType = ProblemType.TOKEN_EXPIRADO;
+        String userMessage = "Assinatura JWT inválida: assinatura inválida";
+
+        final Problem problem = createProblemType(unauthorized, problemType, ex.getMessage()).userMessage(userMessage).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), unauthorized, request);
     }
 
     @ExceptionHandler(EntityAlreadyRegisteredException.class)
@@ -65,6 +89,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
     }
+
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
