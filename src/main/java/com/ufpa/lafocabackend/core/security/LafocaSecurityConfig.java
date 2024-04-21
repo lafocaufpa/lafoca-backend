@@ -37,7 +37,7 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity()
 @EnableWebSecurity
-public class ResourceServerConfig {
+public class LafocaSecurityConfig {
 
     @Bean
     public SecurityFilterChain ResourceServerSecurityFilterChain (HttpSecurity httpSecurity) throws Exception {

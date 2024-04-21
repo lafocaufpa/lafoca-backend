@@ -38,8 +38,8 @@ public class JwtUtil {
         String userName = jwt.getClaim("full_name");
         String userEmail = jwt.getSubject();
         String issuer = jwt.getClaim("iss");
-        String created_at = Objects.requireNonNull(jwt.getIssuedAt()).toString();
-        String exp_at = Objects.requireNonNull(jwt.getExpiresAt()).toString();
+        String created_at = String.valueOf(Objects.requireNonNull(jwt.getIssuedAt()).toEpochMilli());
+        String exp_at = String.valueOf(Objects.requireNonNull(jwt.getExpiresAt()).toEpochMilli());
         String authorities = jwt.getClaimAsString("authorities");
 
         return Session.builder()
