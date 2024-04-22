@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,6 +47,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus unauthorized = HttpStatus.UNAUTHORIZED;
         ProblemType problemType = ProblemType.TOKEN_EXPIRADO;
         String userMessage = "Assinatura JWT inválida: assinatura inválida";
+
+        final Problem problem = createProblemType(unauthorized, problemType, ex.getMessage()).userMessage(userMessage).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), unauthorized, request);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class) /*também subclasses*/
+    public ResponseEntity<?> handleBadCredentialsException(Exception ex, WebRequest request) {
+        HttpStatus unauthorized = HttpStatus.UNAUTHORIZED;
+        ProblemType problemType = ProblemType.ACESSO_NEGADO;
+        String userMessage = ex.getMessage();
 
         final Problem problem = createProblemType(unauthorized, problemType, ex.getMessage()).userMessage(userMessage).build();
 

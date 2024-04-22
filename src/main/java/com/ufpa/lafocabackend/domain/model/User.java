@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.domain.model;
 
-import com.ufpa.lafocabackend.core.security.dto.LoginRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,8 +45,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> groups = new HashSet<>();
 
-    public Boolean isLoginCorrect(LoginRequest login, PasswordEncoder encoder){
-        return encoder.matches(login.password(), this.password);
+    public Boolean isLoginCorrect(String password, PasswordEncoder encoder){
+        return encoder.matches(password, this.password);
     }
 
     @PreUpdate

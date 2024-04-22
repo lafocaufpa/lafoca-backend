@@ -30,10 +30,10 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<Token> login(@RequestBody LoginRequest loginRequest) {
 
-        var user = userRepository.findByEmail(loginRequest.username());
+        var user = userRepository.findByEmail(loginRequest.email());
 
-        if (user.isEmpty() || user.get().isLoginCorrect(loginRequest, passwordEncoder)) {
-            throw new BadCredentialsException("Invalid username or password!");
+        if (user.isEmpty() || !(user.get().isLoginCorrect(loginRequest.password(), passwordEncoder))) {
+            throw new BadCredentialsException("Invalid email or password!");
         }
 
         Token jwtValue = jwtUtil.encodeJwtToken(user.get());
