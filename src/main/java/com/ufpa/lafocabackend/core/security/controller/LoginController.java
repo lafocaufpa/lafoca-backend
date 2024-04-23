@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.core.security.dto.JwtUtil;
 import com.ufpa.lafocabackend.core.security.dto.LoginRequest;
 import com.ufpa.lafocabackend.core.security.dto.Session;
 import com.ufpa.lafocabackend.core.security.dto.Token;
+import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,23 +29,23 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Token> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Session> login(@RequestBody LoginRequest loginRequest) {
 
         var user = userRepository.findByEmail(loginRequest.email());
 
         if (user.isEmpty() || !(user.get().isLoginCorrect(loginRequest.password(), passwordEncoder))) {
-            throw new BadCredentialsException("Invalid email or password!");
+            throw new BadCredentialsException(ErrorMessage.ACESSO_NEGADO.get());
         }
 
-        Token jwtValue = jwtUtil.encodeJwtToken(user.get());
+        Session session = jwtUtil.encodeJwtToken(user.get());
 
-        return ResponseEntity.ok(jwtValue);
+        return ResponseEntity.ok(session);
     }
 
     @PostMapping("/check-token")
     public ResponseEntity<Session> decodeToken(@RequestBody Token token) {
 
-        Session session = jwtUtil.decodeJwtToken(token.accessToken());
+        Session session = jwtUtil.decodeJwtToken(token.token());
 
         return ResponseEntity.ok(session);
     }

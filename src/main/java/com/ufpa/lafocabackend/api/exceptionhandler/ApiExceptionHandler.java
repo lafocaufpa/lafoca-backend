@@ -112,7 +112,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return Problem.builder()
                 .status(status.value())
-                .type(problemType.getUri())
+                .path(problemType.getUri())
                 .title(problemType.getTitle())
                 .timeStamp(OffsetDateTime.now())
                 .detail(detail);

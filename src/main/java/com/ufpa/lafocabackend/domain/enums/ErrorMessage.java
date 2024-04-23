@@ -14,7 +14,8 @@ public enum ErrorMessage {
     ENTIDADE_EM_USO("A entidade %s de código %d não pode ser excluída, pois está em uso."),
     SENHA_NAO_COINCIDE("Senha atual informada não coincide com a senha do usuário."),
     ENTIDADE_EXISTENTE("Entidade %s de identificação %s já existe."),
-    PERMISSAO_NAO_ENCONTRADA("Não existe permissão de código %d.");
+    PERMISSAO_NAO_ENCONTRADA("Não existe permissão de código %d."),
+    ACESSO_NEGADO("Credenciais inválidas");
     private String mensagem;
 
     private ErrorMessage(String mensagem){

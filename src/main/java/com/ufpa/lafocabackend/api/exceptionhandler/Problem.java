@@ -17,7 +17,7 @@ public class Problem {
 
     private OffsetDateTime timeStamp;
 
-    private String type;
+    private String path;
 
     private String title;
 

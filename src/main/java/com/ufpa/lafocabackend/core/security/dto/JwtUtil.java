@@ -33,6 +33,10 @@ public class JwtUtil {
 
         Jwt jwt = jwtDecoder.decode(token);
 
+        return getSession(jwt);
+    }
+
+    private static Session getSession(Jwt jwt) {
         String tokenValue = jwt.getTokenValue();
         String userId = jwt.getClaim("user_id");
         String userName = jwt.getClaim("full_name");
@@ -54,7 +58,7 @@ public class JwtUtil {
                 .build();
     }
 
-    public Token encodeJwtToken(User user) {
+    public Session encodeJwtToken(User user) {
 
 
         var now = Instant.now();
@@ -72,9 +76,9 @@ public class JwtUtil {
                 .issuedAt(now)
                 .expiresAt(expiresIn)
                 .build();
-        String jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        Jwt jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims));
 
-        return new Token(jwtValue);
+        return getSession(jwt);
     }
 
     private Collection<GrantedAuthority> getAuthorities(User user) {
