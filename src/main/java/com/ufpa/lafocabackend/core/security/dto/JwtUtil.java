@@ -40,6 +40,7 @@ public class JwtUtil {
         String tokenValue = jwt.getTokenValue();
         String userId = jwt.getClaim("user_id");
         String userName = jwt.getClaim("full_name");
+        String photo = jwt.getClaim("photo");
         String userEmail = jwt.getSubject();
         String issuer = jwt.getClaim("iss");
         String created_at = String.valueOf(Objects.requireNonNull(jwt.getIssuedAt()).toEpochMilli());
@@ -51,6 +52,7 @@ public class JwtUtil {
                 .user_id(userId)
                 .full_name(userName)
                 .user_email(userEmail)
+                .photo(photo)
                 .issuer(issuer)
                 .exp_at(exp_at)
                 .create_at(created_at)
@@ -73,6 +75,7 @@ public class JwtUtil {
                 .claim("full_name", user.getName())
                 .claim("user_id", user.getUserId())
                 .claim("authorities", roles)
+                .claim("photo", user.getUrlPhoto() == null ? "" : user.getUrlPhoto())
                 .issuedAt(now)
                 .expiresAt(expiresIn)
                 .build();
