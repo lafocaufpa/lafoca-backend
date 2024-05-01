@@ -51,7 +51,7 @@ public class Member {
     @Column(columnDefinition = "datetime", nullable = false)
     private OffsetDateTime dateRegister;
 
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "photo_id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private MemberPhoto memberPhoto;
@@ -60,7 +60,7 @@ public class Member {
     @JoinColumn(name = "function_member_id", unique = false)
     private FunctionMember functionMember;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tcc_id")
     private Tcc tcc;
 

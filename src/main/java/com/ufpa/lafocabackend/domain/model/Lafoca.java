@@ -1,11 +1,10 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -14,13 +13,18 @@ import java.time.OffsetDateTime;
 public class Lafoca {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long LafocaId;
+
     private int numberOfMembers;
+
     private int numberOfDefendedTCCs;
+
     private int numberOfPublishedArticles;
+
     private int numberOfProjects;
-    private int yearOfCreation;
 
     @CreationTimestamp
-    private OffsetDateTime offsetDateTime;
+    private OffsetDateTime dateTime;
+
 }

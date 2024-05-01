@@ -1,18 +1,14 @@
 package com.ufpa.lafocabackend.domain.service;
 
-import com.ufpa.lafocabackend.domain.events.addedMemberEvent;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.*;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
-import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.MemberRepository;
 import com.ufpa.lafocabackend.repository.TccRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -27,7 +23,6 @@ import java.util.Set;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final PhotoStorageService photoStorageService;
     private final FunctionMemberService functionMemberService;
     private final SkillService skillService;
     private final ModelMapper modelMapper;
@@ -36,12 +31,8 @@ public class MemberService {
     private final ProjectService projectService;
     private final TccRepository tccRepository;
 
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    public MemberService(MemberRepository memberRepository, PhotoStorageService photoStorageService, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository) {
+    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository) {
         this.memberRepository = memberRepository;
-        this.photoStorageService = photoStorageService;
         this.functionMemberService = functionMemberService;
         this.skillService = skillService;
         this.modelMapper = modelMapper;
@@ -85,7 +76,6 @@ public class MemberService {
         }
 
         final Member memberSaved = memberRepository.save(member);
-        applicationEventPublisher.publishEvent(new addedMemberEvent(memberSaved));
         return memberSaved;
     }
 

@@ -13,4 +13,5 @@ public class LafocaDto {
     private int totalProjects;
     private int totalTcc;
     private int totalArticles;
+
 }
