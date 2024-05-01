@@ -54,9 +54,6 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        final Group group = groupService.standardMemberLafoca();
-        user.addGroup(group);
-
         return userRepository.save(user);
     }
 
@@ -73,7 +70,9 @@ public class UserService {
     public void delete(String userId){
 
         try {
+            removePhoto(read(userId));
             userRepository.deleteById(userId);
+
         } catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(User.class.getSimpleName(), userId);
         } catch (EmptyResultDataAccessException e) {

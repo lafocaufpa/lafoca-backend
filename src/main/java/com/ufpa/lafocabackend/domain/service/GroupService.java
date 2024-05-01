@@ -5,7 +5,6 @@ import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.repository.GroupRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,13 +18,10 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final PermissionService permissionService;
 
-    @Value("${lafoca.group.standard-member}")
-    private final String STANDARD_USER;
-
-    public GroupService(GroupRepository groupRepository, PermissionService permissionService) {
+    public GroupService(GroupRepository groupRepository,
+                        PermissionService permissionService) {
         this.groupRepository = groupRepository;
         this.permissionService = permissionService;
-        STANDARD_USER = null;
     }
 
     public Group save (Group group) {
@@ -40,14 +36,6 @@ public class GroupService {
 
     public Group read (Long groupId) {
         return getOrFail(groupId);
-    }
-
-    public Group standardMemberLafoca() {
-
-        return groupRepository.findGroupByName(STANDARD_USER)
-                .orElseThrow(() ->
-                        new EntityNotFoundException(getClass().getSimpleName(), STANDARD_USER));
-
     }
 
     public Group update (Group group) {

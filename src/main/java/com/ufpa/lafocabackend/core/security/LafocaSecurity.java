@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LafocaSecurity {
 
-    private Authentication getAuthentication(){
+    private Authentication getAuthentication()  {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 

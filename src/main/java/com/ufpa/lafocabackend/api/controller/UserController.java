@@ -33,7 +33,7 @@ public class UserController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.User.L1L2
+    @CheckSecurityPermissionMethods.L1
     @PostMapping
     public ResponseEntity<UserDto> add(@RequestBody UserDtoInput userDtoInput) {
 
@@ -44,7 +44,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @CheckSecurityPermissionMethods.User.L1L2
+    @CheckSecurityPermissionMethods.L1
     @GetMapping
     public ResponseEntity<List<UserDto>> list() {
 
@@ -54,7 +54,7 @@ public class UserController {
         return ResponseEntity.ok(dtos);
     }
 
-    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> read(@PathVariable String userId) {
 
@@ -65,6 +65,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @GetMapping("/search/{slug}")
     public ResponseEntity<UserDto> readBySlug(@PathVariable String slug) {
 
@@ -88,19 +89,21 @@ public class UserController {
     @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> delete(@PathVariable String userId) {
+
+        userService.removePhoto(userService.read(userId));
         userService.delete(userId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{userId}/password")
-    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     public ResponseEntity<Void> updatePassword(@RequestBody userInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
         userService.changePassword(passwordDTO, userId);
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @PostMapping(value = "/{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
 
@@ -110,7 +113,7 @@ public class UserController {
         return ResponseEntity.ok(url);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @PostMapping(value = "/search/{userSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhotoBySlug(MultipartFile photo, @PathVariable String userSlug) throws IOException {
 
@@ -120,7 +123,7 @@ public class UserController {
         return ResponseEntity.ok(url);
     }
 
-    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @DeleteMapping(value = "/{userId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String userId) {
 
@@ -130,7 +133,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @DeleteMapping(value = "/search/{userSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String userSlug) {
 
@@ -139,7 +142,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.User.L1OrUserHimself
     @GetMapping("/{userId}/groups")
     public ResponseEntity<Collection<GroupDto>> listGroups(@PathVariable String userId){
 
@@ -155,6 +158,7 @@ public class UserController {
         return ResponseEntity.ok(groupsDto);
     }
 
+    @CheckSecurityPermissionMethods.L1
     @PutMapping("/{userId}/groups/{groupId}")
     public ResponseEntity<Void> associateGroup(@PathVariable String userId, @PathVariable Long groupId) {
 
@@ -163,6 +167,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurityPermissionMethods.L1
     @DeleteMapping("/{userId}/groups/{groupId}")
     public ResponseEntity<Void> DisassociateGroup(@PathVariable String userId, @PathVariable Long groupId) {
 
