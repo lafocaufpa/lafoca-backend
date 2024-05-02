@@ -41,6 +41,8 @@ public class Member {
 
     private String linkPortifolio;
 
+    private String linkLinkedin;
+
     @ManyToMany
     @JoinTable(name = "member_skill",
             joinColumns = @JoinColumn(name = "member_id"),

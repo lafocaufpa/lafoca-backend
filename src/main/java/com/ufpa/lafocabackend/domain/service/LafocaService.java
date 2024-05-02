@@ -72,9 +72,9 @@ public class LafocaService {
         try {
             lafocaRepository.deleteById(lafocaId);
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(getClass().getSimpleName(), lafocaId);
+            throw new EntityInUseException(Lafoca.class.getSimpleName(), lafocaId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(getClass().getSimpleName(), lafocaId);
+            throw new EntityNotFoundException(Lafoca.class.getSimpleName(), lafocaId);
         }
 
     }

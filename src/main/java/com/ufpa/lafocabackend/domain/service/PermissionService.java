@@ -45,16 +45,16 @@ public class PermissionService {
         try {
             permissionRepository.deleteById(permissionId);
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(getClass().getSimpleName(), permissionId);
+            throw new EntityInUseException(Permission.class.getSimpleName(), permissionId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(getClass().getSimpleName(), permissionId);
+            throw new EntityNotFoundException(Permission.class.getSimpleName(), permissionId);
         }
 
     }
 
     private Permission getOrFail(Long permissionId) {
         return permissionRepository.findById(permissionId)
-                .orElseThrow( () -> new EntityNotFoundException(getClass().getSimpleName(), permissionId));
+                .orElseThrow( () -> new EntityNotFoundException(Permission.class.getSimpleName(), permissionId));
     }
 
 }

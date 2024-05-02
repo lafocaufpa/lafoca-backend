@@ -13,6 +13,7 @@ public class MemberInputDto {
     private String email;
     private String biography;
     private String linkPortifolio;
+    private String linkLinkedin;
     private Long functionMemberId;
     private Long[] SkillsId;
     private TccDto tcc;

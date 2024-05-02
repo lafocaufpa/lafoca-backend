@@ -47,9 +47,10 @@ public class LafocaSecurityConfig {
                         auth -> auth
                                 .requestMatchers(HttpMethod.POST, "/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/check-token").permitAll()
-                                .requestMatchers( "/members/**").permitAll()
-                                .requestMatchers( "/projects/**").permitAll()
-                                .requestMatchers("/info/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/members/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/projects/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/info/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/lines-of-research/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
@@ -58,7 +59,6 @@ public class LafocaSecurityConfig {
 
         return httpSecurity.build();
     }
-
 
     /**
      * Um converter customizado para ler authorities do Authorization Server.

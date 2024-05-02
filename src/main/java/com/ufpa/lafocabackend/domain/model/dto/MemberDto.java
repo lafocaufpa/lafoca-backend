@@ -18,6 +18,7 @@ public class MemberDto {
     private String email;
     private String biography;
     private String linkPortifolio;
+    private String linkLinkedin;
     private OffsetDateTime dateRegister;
     private String urlPhoto;
     private FunctionMemberDto functionMember;

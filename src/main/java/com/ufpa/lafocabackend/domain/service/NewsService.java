@@ -43,9 +43,9 @@ public class NewsService {
             newsRepository.deleteBySlug(newsId);
             newsRepository.flush();
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(getClass().getSimpleName(), newsId);
+            throw new EntityInUseException(News.class.getSimpleName(), newsId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(getClass().getSimpleName(), newsId);
+            throw new EntityNotFoundException(News.class.getSimpleName(), newsId);
         }
 
     }

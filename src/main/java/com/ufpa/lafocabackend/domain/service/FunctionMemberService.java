@@ -44,15 +44,15 @@ public class FunctionMemberService {
         try {
             functionMemberRepository.deleteById(functionMemberId);
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(getClass().getSimpleName(), functionMemberId);
+            throw new EntityInUseException(FunctionMember.class.getSimpleName(), functionMemberId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(getClass().getSimpleName(), functionMemberId);
+            throw new EntityNotFoundException(FunctionMember.class.getSimpleName(), functionMemberId);
         }
 
     }
 
     private FunctionMember getOrFail(Long functionMemberId) {
         return functionMemberRepository.findById(functionMemberId)
-                .orElseThrow( () -> new EntityNotFoundException(getClass().getSimpleName(), functionMemberId));
+                .orElseThrow( () -> new EntityNotFoundException(FunctionMember.class.getSimpleName(), functionMemberId));
     }
 }

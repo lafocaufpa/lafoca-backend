@@ -161,7 +161,7 @@ public class MemberService {
 
     private Member getOrFail(String memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException(getClass().getSimpleName(), memberId));
+                .orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), memberId));
     }
 
     @Transactional
