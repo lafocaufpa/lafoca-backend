@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, String> {
 
-    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto(p.projectId, p.type, p.title, p.description, p.completed, p.year, COALESCE(p.projectPhoto.url, NULL)) FROM Project p LEFT JOIN p.projectPhoto")
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto(p.projectId, p.type, p.title, p.slug, p.description, p.completed, p.year, COALESCE(p.projectPhoto.url, NULL)) FROM Project p LEFT JOIN p.projectPhoto")
     Page<ProjectSummaryDto> getProjectSummary(Pageable pageable);
 
     Optional<Project> findBySlug(String slug);

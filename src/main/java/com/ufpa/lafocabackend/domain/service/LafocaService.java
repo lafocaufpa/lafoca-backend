@@ -57,14 +57,12 @@ public class LafocaService {
     }
 
     public LafocaDto printCounts() {
-        final LafocaRepository.CountResult counts = lafocaRepository.getCounts();
 
-        return LafocaDto.builder()
-                .totalArticles(counts.getTotalArticles())
-                .totalProjects(counts.getTotalProjects())
-                .totalTcc(counts.getTotalTccs())
-                .totalMembers(counts.getTotalMembers())
-                .build();
+        Lafoca lafoca = lafocaRepository.
+                findFirstByOrderByDateTimeDesc()
+                .orElseThrow(() -> new EntityNotFoundException(Lafoca.class.getSimpleName(), "lafoca"));
+
+        return modelMapper.map(lafoca, LafocaDto.class);
     }
 
     public void delete(Long lafocaId) {

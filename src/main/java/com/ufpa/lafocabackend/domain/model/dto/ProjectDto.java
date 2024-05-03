@@ -10,6 +10,7 @@ public class ProjectDto {
     private String projectId;
     private String type;
     private String title;
+    private String slug;
     private String description;
     private Boolean completed;
     private String year;
