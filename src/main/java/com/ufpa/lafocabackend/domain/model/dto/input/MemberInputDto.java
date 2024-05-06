@@ -16,6 +16,6 @@ public class MemberInputDto {
     private Long functionMemberId;
     private Long[] SkillsId;
     private TccDto tcc;
-    private Long[] articles;
-    private String[] projects;
+    private Long[] articlesId;
+    private String[] projectsId;
 }

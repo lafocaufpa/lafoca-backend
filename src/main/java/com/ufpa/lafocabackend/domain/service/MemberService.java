@@ -56,14 +56,14 @@ public class MemberService {
             }
         }
 
-        if (memberInputDto.getProjects() != null) {
-            for (String projectId : memberInputDto.getProjects()) {
+        if (memberInputDto.getProjectsId() != null) {
+            for (String projectId : memberInputDto.getProjectsId()) {
                 member.addProject(projectService.read(projectId));
             }
         }
 
-        if (memberInputDto.getArticles() != null) {
-            for (Long articleId : memberInputDto.getArticles()) {
+        if (memberInputDto.getArticlesId() != null) {
+            for (Long articleId : memberInputDto.getArticlesId()) {
                 member.addArticles(articleService.read(articleId));
             }
         }
@@ -96,98 +96,105 @@ public class MemberService {
             member.setSkills(skills);
         }
 
-        if (memberInputDto.getProjects() != null) {
+        if (memberInputDto.getProjectsId() != null) {
             Set<Project> projects = new HashSet<>();
-            for (String projectId : memberInputDto.getProjects()) {
+            for (String projectId : memberInputDto.getProjectsId()) {
                 projects.add(projectService.read(projectId));
             }
             member.setProjects(projects);
         }
 
-        if (memberInputDto.getArticles() != null) {
+        if (memberInputDto.getArticlesId() != null) {
             Set<Article> articles = new HashSet<>();
-            for (Long articleId : memberInputDto.getArticles()) {
+            for (Long articleId : memberInputDto.getArticlesId()) {
                 articles.add(articleService.read(articleId));
             }
             member.setArticles(articles);
         }
 
-        if (memberInputDto.getTcc() != null) {
-
-            final TccDto tccDto = memberInputDto.getTcc();
-            final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
-            final Tcc tccSaved = tccService.save(tcc);
-            member.setTcc(tccSaved);
-        } else {
-            if (member.getTcc() != null) {
+        if (member.getTcc() != null) {// se o membro do banco de dados já ter um tcc
+            if (memberInputDto.getTcc() != null) { // se o membro vindo da requisição ter um tcc,
+                // será atualizado o que tem no banco de dados
+                Tcc tcc = member.getTcc();
+                tcc.setName(memberInputDto.getName());
+                tcc.setDate(memberInputDto.getTcc().getDate());
+                tcc.setUrl(memberInputDto.getTcc().getUrl());
+            } else { //se o membro vindo da requisição não ter um tcc, o tcc do membro será deletado
                 tccRepository.deleteById(member.getTcc().getTccId());
                 member.setTcc(null);
+            }
+        } else {// se o membro não ter um tcc definido na hora de criação
+            if(memberInputDto.getTcc() != null){//vai ser definido um tcc para o membro
+                final TccDto tccDto = memberInputDto.getTcc();
+                final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
+                final Tcc tccSaved = tccService.save(tcc);
+                member.setTcc(tccSaved);
             }
         }
 
         return memberRepository.save(member);
+}
+
+public Page<Member> list(Pageable pageable) {
+
+    return memberRepository.findAll(pageable);
+}
+
+public Page<MemberSummaryDto> listSummaryMember(Pageable pageable) {
+
+    return memberRepository.getMemberSummary(pageable);
+}
+
+public Member read(String memberId) {
+    return getOrFail(memberId);
+}
+
+public Member readBySlug(String slug) {
+    return memberRepository.findBySlug(slug).
+            orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), slug));
+}
+
+public void delete(String memberId) {
+
+    try {
+        memberRepository.deleteById(memberId);
+    } catch (DataIntegrityViolationException e) {
+        throw new EntityInUseException(Member.class.getSimpleName(), memberId);
+    } catch (EmptyResultDataAccessException e) {
+        throw new EntityNotFoundException(Member.class.getSimpleName(), memberId);
     }
 
-    public Page<Member> list(Pageable pageable) {
+}
 
-        return memberRepository.findAll(pageable);
-    }
+private Member getOrFail(String memberId) {
+    return memberRepository.findById(memberId)
+            .orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), memberId));
+}
 
-    public Page<MemberSummaryDto> listSummaryMember(Pageable pageable) {
+@Transactional
+public void associateFunction(Long functionMemberId, String memberId) {
 
-        return memberRepository.getMemberSummary(pageable);
-    }
+    final FunctionMember functionMember = functionMemberService.read(functionMemberId);
+    final Member member = read(memberId);
+    member.setFunctionMember(functionMember);
+    memberRepository.save(member);
+}
 
-    public Member read(String memberId) {
-        return getOrFail(memberId);
-    }
+@Transactional
+public void associateSkill(String memberId, Long skillId) {
+    final Member member = read(memberId);
+    final Skill skill = skillService.getOrFail(skillId);
+    member.addSkill(skill);
+}
 
-    public Member readBySlug(String slug) {
-        return memberRepository.findBySlug(slug).
-                orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), slug));
-    }
+@Transactional
+public void disassociateSkill(String memberId, Long skillId) {
+    final Member member = read(memberId);
+    final Skill skill = skillService.getOrFail(skillId);
+    member.removeSkill(skill);
+}
 
-    public void delete(String memberId) {
-
-        try {
-            memberRepository.deleteById(memberId);
-        } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(Member.class.getSimpleName(), memberId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(Member.class.getSimpleName(), memberId);
-        }
-
-    }
-
-    private Member getOrFail(String memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), memberId));
-    }
-
-    @Transactional
-    public void associateFunction(Long functionMemberId, String memberId) {
-
-        final FunctionMember functionMember = functionMemberService.read(functionMemberId);
-        final Member member = read(memberId);
-        member.setFunctionMember(functionMember);
-        memberRepository.save(member);
-    }
-
-    @Transactional
-    public void associateSkill(String memberId, Long skillId) {
-        final Member member = read(memberId);
-        final Skill skill = skillService.getOrFail(skillId);
-        member.addSkill(skill);
-    }
-
-    @Transactional
-    public void disassociateSkill(String memberId, Long skillId) {
-        final Member member = read(memberId);
-        final Skill skill = skillService.getOrFail(skillId);
-        member.removeSkill(skill);
-    }
-
-    public Member save(Member member) {
-        return memberRepository.save(member);
-    }
+public Member save(Member member) {
+    return memberRepository.save(member);
+}
 }
