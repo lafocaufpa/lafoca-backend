@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.file.MultipartFileWrapper;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.dto.MemberDto;
@@ -109,7 +110,7 @@ public class MemberController {
     public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String memberId) throws IOException {
 
         Member member = memberService.read(memberId);
-        return ResponseEntity.ok(memberPhotoService.save(member, photo));
+        return ResponseEntity.ok(memberPhotoService.save(member, new MultipartFileWrapper(photo)));
     }
 
     @CheckSecurityPermissionMethods.L1
@@ -117,7 +118,7 @@ public class MemberController {
     public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
 
         Member member = memberService.readBySlug(memberSlug);
-        return ResponseEntity.ok(memberPhotoService.save(member, photo));
+        return ResponseEntity.ok(memberPhotoService.save(member, new MultipartFileWrapper(photo)));
     }
 
     @CheckSecurityPermissionMethods.L1

@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.file.MultipartFileWrapper;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
@@ -108,7 +109,7 @@ public class UserController {
     public ResponseEntity<String> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
 
         User user = userService.read(userId);
-        String url = userService.addPhoto(photo, user);
+        String url = userService.addPhoto(new MultipartFileWrapper(photo), user);
 
         return ResponseEntity.ok(url);
     }
@@ -118,7 +119,7 @@ public class UserController {
     public ResponseEntity<String> addPhotoBySlug(MultipartFile photo, @PathVariable String userSlug) throws IOException {
 
         User user = userService.readBySlug(userSlug);
-        String url = userService.addPhoto(photo, user);
+        String url = userService.addPhoto(new MultipartFileWrapper(photo), user);
 
         return ResponseEntity.ok(url);
     }

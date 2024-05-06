@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.core.file.FileWrapper;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
@@ -16,7 +17,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -120,7 +120,7 @@ public class UserService {
     }
 
     @Transactional
-    public String addPhoto(MultipartFile photo, User user) throws IOException {
+    public String addPhoto(FileWrapper photo, User user) throws IOException {
 
         String originalFilename = createPhotoFilename(user.getSlug(), photo.getOriginalFilename());
 

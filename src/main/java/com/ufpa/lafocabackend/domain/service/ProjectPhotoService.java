@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.core.file.FileWrapper;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.model.Project;
@@ -10,7 +11,6 @@ import com.ufpa.lafocabackend.repository.ProjectPhotoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -48,7 +48,7 @@ public class ProjectPhotoService {
     }
 
     @Transactional
-    public PhotoDto save(Project project, MultipartFile photo) throws IOException {
+    public PhotoDto save(Project project, FileWrapper photo) throws IOException {
 
         String originalPhotoFilename = createPhotoFilename(project.getSlug(), photo.getOriginalFilename());
 

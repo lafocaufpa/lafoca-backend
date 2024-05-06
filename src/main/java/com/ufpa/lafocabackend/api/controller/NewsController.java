@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.file.MultipartFileWrapper;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.dto.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.NewsOutput;
@@ -96,7 +97,7 @@ public class NewsController {
 
         final News news = newsService.readBySlug(newsSlug);
 
-        PhotoDto photoDto = newsPhotoService.save(news, photo);
+        PhotoDto photoDto = newsPhotoService.save(news, new MultipartFileWrapper(photo));
         return ResponseEntity.ok(photoDto);
     }
 
@@ -105,7 +106,7 @@ public class NewsController {
 
         final News news = newsService.read(newsId);
 
-        PhotoDto photoDto = newsPhotoService.save(news, photo);
+        PhotoDto photoDto = newsPhotoService.save(news, new MultipartFileWrapper(photo));
         return ResponseEntity.ok(photoDto);
     }
 
