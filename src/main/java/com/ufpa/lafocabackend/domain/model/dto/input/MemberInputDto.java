@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class MemberInputDto {
 
-    private String id;
     private String name;
     private String description;
     private String email;

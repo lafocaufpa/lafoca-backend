@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ProjectSummaryDto {
 
-    private String projectId;
+    private String id;
     private String type;
     private String title;
     private String slug;

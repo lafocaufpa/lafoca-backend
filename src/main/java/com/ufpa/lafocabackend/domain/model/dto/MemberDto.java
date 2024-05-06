@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,8 @@ import java.util.List;
 @Setter
 public class MemberDto {
 
-    private String memberId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String id;
     private String name;
     private String slug;
     private String description;
@@ -19,6 +21,8 @@ public class MemberDto {
     private String biography;
     private String linkPortifolio;
     private String linkLinkedin;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OffsetDateTime dateRegister;
     private String urlPhoto;
     private FunctionMemberDto functionMember;

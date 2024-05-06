@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 @Setter
 public class LafocaDto {
 
-    private Long lafocaId;
+    private Long id;
     private int numberOfMembers;
     private int numberOfDefendedTCCs;
     private int numberOfPublishedArticles;
