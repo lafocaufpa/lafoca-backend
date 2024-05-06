@@ -51,7 +51,7 @@ public class MemberPhotoService {
     @Transactional
     public PhotoDto save(Member member, FileWrapper photo) throws IOException {
 
-        String originalPhotoFilename = createPhotoFilename(member.getSlug(), photo.getOriginalFilename());
+        String originalPhotoFilename = createPhotoFilename(member.getMemberId(), photo.getOriginalFilename());
 
         MemberPhoto memberPhoto = new MemberPhoto();
         memberPhoto.setPhotoId(member.getMemberId());
@@ -62,6 +62,7 @@ public class MemberPhotoService {
         final MemberPhoto memberPhotoSaved = memberPhotoRepository.save(memberPhoto);
 
         StoragePhotoUtils newPhoto = StoragePhotoUtils.builder()
+                .id(member.getMemberId())
                 .fileName(memberPhoto.getFileName())
                 .contentType(memberPhoto.getContentType())
                 .contentLength(memberPhoto.getSize())

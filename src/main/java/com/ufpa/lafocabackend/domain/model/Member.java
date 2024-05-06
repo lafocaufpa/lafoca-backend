@@ -81,6 +81,7 @@ public class Member {
     @PreUpdate
     public void generateSlug() {
         this.slug = createSlug(this.name, this.memberId);
+
     }
 
     @PrePersist

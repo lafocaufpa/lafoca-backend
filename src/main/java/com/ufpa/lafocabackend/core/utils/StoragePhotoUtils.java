@@ -9,6 +9,7 @@ import java.io.InputStream;
 @Builder
 public class StoragePhotoUtils {
 
+    private String id;
     private TypeEntityPhoto type;
     private String fileName;
     private String contentType;
