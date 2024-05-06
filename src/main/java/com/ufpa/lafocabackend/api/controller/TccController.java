@@ -25,7 +25,7 @@ public class TccController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<TccDto> add (@RequestBody TccDto tccDto) {
 
@@ -37,7 +37,7 @@ public class TccController {
         return ResponseEntity.ok(map);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{tccId}")
     public ResponseEntity<TccDto> read (@PathVariable Long tccId){
 
@@ -48,7 +48,7 @@ public class TccController {
         return ResponseEntity.ok(map);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Collection<TccDto>> list (){
 
@@ -62,7 +62,7 @@ public class TccController {
         return ResponseEntity.ok(map);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{tccId}")
     public ResponseEntity<TccDto> update (@PathVariable Long tccId, @RequestBody TccDto newTcc){
 
@@ -75,7 +75,7 @@ public class TccController {
         return ResponseEntity.ok(tccDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{tccId}")
     public ResponseEntity<Void> delete (@PathVariable Long tccId){
 

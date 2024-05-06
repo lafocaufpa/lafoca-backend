@@ -28,7 +28,7 @@ public class GroupController {
         this.groupService = groupService;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<GroupDto> add (@RequestBody GroupDto groupDto) {
 
@@ -39,7 +39,7 @@ public class GroupController {
         return ResponseEntity.ok(groupSaved);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{groupId}")
     public ResponseEntity<GroupDto> read (@PathVariable Long groupId){
 
@@ -48,7 +48,7 @@ public class GroupController {
         return ResponseEntity.ok(groupDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Collection<GroupDto>> list (){
 
@@ -63,7 +63,7 @@ public class GroupController {
         return ResponseEntity.ok(map);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{groupId}")
     public ResponseEntity<GroupDto> update (@PathVariable Long groupId, @RequestBody GroupDto groupDto){
 
@@ -76,7 +76,7 @@ public class GroupController {
         return ResponseEntity.ok(groupDtoUpdated);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{groupId}")
     public ResponseEntity<Void> delete (@PathVariable Long groupId){
 
@@ -85,7 +85,7 @@ public class GroupController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{groupId}/permissions")
     public ResponseEntity<Collection<PermissionDto>> listPermissions(@PathVariable Long groupId){
 
@@ -102,7 +102,7 @@ public class GroupController {
         return ResponseEntity.ok(permissionsDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{groupId}/permissions/{permissionId}")
     public ResponseEntity<Void> associatePermission(@PathVariable Long groupId,
                                                   @PathVariable Long permissionId){
@@ -111,7 +111,7 @@ public class GroupController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{groupId}/permissions/{permissionId}")
     public ResponseEntity<Void> disassociatePermission(@PathVariable Long groupId,
                                                      @PathVariable Long permissionId){

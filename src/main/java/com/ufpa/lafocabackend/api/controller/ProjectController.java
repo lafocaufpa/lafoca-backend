@@ -38,7 +38,7 @@ public class ProjectController {
         this.projectPhotoService = projectPhotoService;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<ProjectDto> add (@RequestBody ProjectDto projectDto) {
 
@@ -47,7 +47,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectSaved);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{projectId}")
     public ResponseEntity<ProjectDto> read (@PathVariable String projectId){
 
@@ -64,7 +64,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Collection<ProjectDto>> list (){
 
@@ -87,7 +87,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectsSummarizedPage);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{projectId}")
     public ResponseEntity<ProjectDto> update (@PathVariable String projectId, @RequestBody ProjectDto newProject){
 
@@ -95,7 +95,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectUpdated);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{projectId}")
     public ResponseEntity<Void> delete (@PathVariable String projectId){
 
@@ -104,7 +104,7 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/{projectId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String projectId) throws IOException {
 
@@ -112,7 +112,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectPhotoService.save(member, new MultipartFileWrapper(photo)));
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
 
@@ -120,7 +120,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectPhotoService.save(member, new MultipartFileWrapper(photo)));
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping(value = "/{projectId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String projectId) {
 
@@ -130,7 +130,7 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping(value = "/search/{projectSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String projectSlug) {
 

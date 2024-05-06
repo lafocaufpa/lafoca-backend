@@ -26,7 +26,7 @@ public class FunctionMemberController {
     }
 
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<FunctionMemberDto> add (@RequestBody FunctionMemberDto functionMemberDto) {
 
@@ -37,7 +37,7 @@ public class FunctionMemberController {
         return ResponseEntity.ok(functionMemberSaved);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{functionMemberId}")
     public ResponseEntity<FunctionMemberDto> read (@PathVariable Long functionMemberId){
 
@@ -46,7 +46,7 @@ public class FunctionMemberController {
         return ResponseEntity.ok(functionMemberDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Collection<FunctionMemberDto>> list (){
 
@@ -61,7 +61,7 @@ public class FunctionMemberController {
         return ResponseEntity.ok(map);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{functionMemberId}")
     public ResponseEntity<FunctionMemberDto> update (@PathVariable Long functionMemberId, @RequestBody FunctionMemberDto functionMemberDto){
 
@@ -74,7 +74,7 @@ public class FunctionMemberController {
         return ResponseEntity.ok(groupDtoUpdated);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{functionMemberId}")
     public ResponseEntity<Void> delete (@PathVariable Long functionMemberId){
 

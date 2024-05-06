@@ -24,7 +24,7 @@ public class ArticleController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<ArticleDto> add (@RequestBody ArticleDto articleDto) {
 
@@ -33,7 +33,7 @@ public class ArticleController {
         return ResponseEntity.ok(articleSaved);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{articleId}")
     public ResponseEntity<ArticleDto> read (@PathVariable Long articleId){
 
@@ -41,7 +41,7 @@ public class ArticleController {
         return ResponseEntity.ok(articleDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/search/{articleSlug}")
     public ResponseEntity<ArticleDto> readBySlug (@PathVariable String articleSlug){
 
@@ -49,7 +49,7 @@ public class ArticleController {
         return ResponseEntity.ok(articleDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Collection<ArticleDto>> list (){
 
@@ -64,7 +64,7 @@ public class ArticleController {
         return ResponseEntity.ok(map);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{articleId}")
     public ResponseEntity<ArticleDto> update (@PathVariable Long articleId, @RequestBody ArticleDto newArticle){
         
@@ -72,7 +72,7 @@ public class ArticleController {
         return ResponseEntity.ok(articletUpdated);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{articleId}")
     public ResponseEntity<Void> delete (@PathVariable Long articleId){
 

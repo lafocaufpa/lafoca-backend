@@ -19,8 +19,8 @@ public enum ProblemType {
 //    DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos"),
     ;
 
-    private String title;
-    private String uri;
+    private final String title;
+    private final String uri;
     ProblemType(String path, String title){
         this.uri = path;
         this.title = title;

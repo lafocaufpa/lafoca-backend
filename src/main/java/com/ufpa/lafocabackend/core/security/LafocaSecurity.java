@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class LafocaSecurity {
 
+    public final String ADMIN_LEVEL_1 = "ADMIN_LEVEL_1";
+    public final String ADMIN_LEVEL_2 = "ADMIN_LEVEL_2";
+
     private Authentication getAuthentication()  {
         return SecurityContextHolder.getContext().getAuthentication();
     }
@@ -27,4 +30,5 @@ public class LafocaSecurity {
 
         return getUserId().equals(userId);
     }
+
 }

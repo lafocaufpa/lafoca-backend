@@ -19,7 +19,7 @@ public class SkillController {
         this.skillService = skillService;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<SkillDto> add (@RequestBody SkillDto skillDto) {
 
@@ -28,21 +28,21 @@ public class SkillController {
         return ResponseEntity.ok(skillSaved);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{skillId}")
     public ResponseEntity<SkillDto> read (@PathVariable Long skillId){
 
         return ResponseEntity.ok(skillService.read(skillId));
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Collection<SkillDto>> list (){
 
         return ResponseEntity.ok(skillService.list());
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{skillId}")
     public ResponseEntity<SkillDto> update (@PathVariable Long skillId, @RequestBody SkillDto newSkill){
 
@@ -50,7 +50,7 @@ public class SkillController {
         return ResponseEntity.ok(skillService.update(skillId, newSkill));
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{skillId}")
     public ResponseEntity<Void> delete (@PathVariable Long skillId){
 

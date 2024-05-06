@@ -34,7 +34,7 @@ public class UserController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<UserDto> add(@RequestBody UserDtoInput userDtoInput) {
 
@@ -45,7 +45,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<List<UserDto>> list() {
 
@@ -55,7 +55,7 @@ public class UserController {
         return ResponseEntity.ok(dtos);
     }
 
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> read(@PathVariable String userId) {
 
@@ -66,7 +66,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @GetMapping("/search/{slug}")
     public ResponseEntity<UserDto> readBySlug(@PathVariable String slug) {
 
@@ -76,7 +76,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @CheckSecurityPermissionMethods.User.L1L2OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1OrLevel2
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> update(@RequestBody UserDtoInput userDtoInput, @PathVariable String userId) {
 
@@ -87,7 +87,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> delete(@PathVariable String userId) {
 
@@ -97,14 +97,14 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/password")
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     public ResponseEntity<Void> updatePassword(@RequestBody userInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
         userService.changePassword(passwordDTO, userId);
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @PostMapping(value = "/{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
 
@@ -114,7 +114,7 @@ public class UserController {
         return ResponseEntity.ok(url);
     }
 
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @PostMapping(value = "/search/{userSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhotoBySlug(MultipartFile photo, @PathVariable String userSlug) throws IOException {
 
@@ -124,7 +124,7 @@ public class UserController {
         return ResponseEntity.ok(url);
     }
 
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @DeleteMapping(value = "/{userId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String userId) {
 
@@ -134,7 +134,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @DeleteMapping(value = "/search/{userSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String userSlug) {
 
@@ -143,7 +143,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.User.L1OrUserHimself
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @GetMapping("/{userId}/groups")
     public ResponseEntity<Collection<GroupDto>> listGroups(@PathVariable String userId){
 
@@ -159,7 +159,7 @@ public class UserController {
         return ResponseEntity.ok(groupsDto);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{userId}/groups/{groupId}")
     public ResponseEntity<Void> associateGroup(@PathVariable String userId, @PathVariable Long groupId) {
 
@@ -168,7 +168,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{userId}/groups/{groupId}")
     public ResponseEntity<Void> DisassociateGroup(@PathVariable String userId, @PathVariable Long groupId) {
 

@@ -10,36 +10,36 @@ import java.lang.annotation.Target;
 public @interface CheckSecurityPermissionMethods {
 
 
-    @PreAuthorize("hasAnyAuthority('ADMIN_LEVEL_1') ")
+    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1)")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface L1 {}
+    public @interface Level1 {}
 
-    @PreAuthorize("hasAnyAuthority('ADMIN_LEVEL_1', 'ADMIN_LEVEL_2') ")
+    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1, @lafocaSecurity.ADMIN_LEVEL_2) ")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface L1orL2 {}
+    public @interface Level1OrLevel2 {}
 
     @interface User {
 
-        @PreAuthorize("hasAnyAuthority('ADMIN_LEVEL_1') ")
+        @PreAuthorize("hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1) ")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        public @interface L1L2 {
+        public @interface Level1 {
 
         }
 
-        @PreAuthorize("@lafocaSecurity.userHimself(#userId) or hasAnyAuthority('ADMIN_LEVEL_1', 'ADMIN_LEVEL_2')")
+        @PreAuthorize("@lafocaSecurity.userHimself(#userId) or hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1, @lafocaSecurity.ADMIN_LEVEL_2)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        public @interface L1L2OrUserHimself {
+        public @interface UserHimselfOrLevel1OrLevel2 {
 
         }
 
-        @PreAuthorize("@lafocaSecurity.userHimself(#userId) or hasAnyAuthority('ADMIN_LEVEL_1')")
+        @PreAuthorize("@lafocaSecurity.userHimself(#userId) or hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        public @interface L1OrUserHimself {
+        public @interface UserHimselfOrLevel1 {
 
         }
     }

@@ -26,7 +26,7 @@ public class LineOfResearchController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<LineOfResearchDto> add (@RequestBody LineOfResearchDto lineOfResearchDto) {
 
@@ -56,7 +56,7 @@ public class LineOfResearchController {
         return ResponseEntity.ok(map);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{lineOfResearchId}")
     public ResponseEntity<LineOfResearchDto> update (@PathVariable String lineOfResearchId, @RequestBody LineOfResearchDto newArticle){
         
@@ -64,7 +64,7 @@ public class LineOfResearchController {
         return ResponseEntity.ok(articletUpdated);
     }
 
-    @CheckSecurityPermissionMethods.L1
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{lineOfResearchId}")
     public ResponseEntity<Void> delete (@PathVariable String lineOfResearchId){
 
