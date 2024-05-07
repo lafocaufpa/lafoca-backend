@@ -25,14 +25,12 @@ public class Problem {
 
     private String userMessage;
 
-    private List<Object> objects;
+    private List<Field> fields;
 
     @Getter
     @Builder
-    public static class Object {
-
+    public static class Field{
         private String name;
-
         private String userMessage;
     }
 }

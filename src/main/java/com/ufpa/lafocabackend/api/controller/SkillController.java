@@ -30,7 +30,7 @@ public class SkillController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{skillId}")
-    public ResponseEntity<SkillDto> read (@PathVariable Long skillId){
+    public ResponseEntity<SkillDto> read (@PathVariable Integer skillId){
 
         return ResponseEntity.ok(skillService.read(skillId));
     }
@@ -44,7 +44,7 @@ public class SkillController {
 
     @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{skillId}")
-    public ResponseEntity<SkillDto> update (@PathVariable Long skillId, @RequestBody SkillDto newSkill){
+    public ResponseEntity<SkillDto> update (@PathVariable Integer skillId, @RequestBody SkillDto newSkill){
 
 
         return ResponseEntity.ok(skillService.update(skillId, newSkill));
@@ -52,7 +52,7 @@ public class SkillController {
 
     @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{skillId}")
-    public ResponseEntity<Void> delete (@PathVariable Long skillId){
+    public ResponseEntity<Void> delete (@PathVariable Integer skillId){
 
         skillService.delete(skillId);
 

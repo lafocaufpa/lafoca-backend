@@ -15,4 +15,8 @@ public class EntityNotFoundException extends RuntimeException {
     public EntityNotFoundException(String message, Long id) {
         super(String.format(ErrorMessage.ENTIDADE_NOT_FOUND.get(), message, id));
     }
+
+    public EntityNotFoundException(String message, Integer id) {
+        super(String.format(ErrorMessage.ENTIDADE_NOT_FOUND.get(), message, id));
+    }
 }

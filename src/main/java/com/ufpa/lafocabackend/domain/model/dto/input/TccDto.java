@@ -1,7 +1,7 @@
 package com.ufpa.lafocabackend.domain.model.dto.input;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,9 +11,13 @@ public class TccDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-    @NotNull
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String url;
+
+    @NotBlank
     private String date;
 
 }

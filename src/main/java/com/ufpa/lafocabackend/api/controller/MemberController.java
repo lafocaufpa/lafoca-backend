@@ -153,7 +153,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{memberId}/skills/{skillId}")
-    public ResponseEntity<Void> associateSkill(@PathVariable String memberId, @PathVariable Long skillId) {
+    public ResponseEntity<Void> associateSkill(@PathVariable String memberId, @PathVariable Integer skillId) {
 
         memberService.associateSkill(memberId, skillId);
 
@@ -162,7 +162,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{memberId}/skills/{skillId}")
-    public ResponseEntity<Void> disassociateSkill(@PathVariable String memberId, @PathVariable Long skillId) {
+    public ResponseEntity<Void> disassociateSkill(@PathVariable String memberId, @PathVariable Integer skillId) {
 
         memberService.disassociateSkill(memberId, skillId);
 

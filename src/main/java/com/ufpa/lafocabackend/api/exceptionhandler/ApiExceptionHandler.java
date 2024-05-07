@@ -19,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -105,11 +106,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        final List<Problem.Field> problemFieldErros = ex.getFieldErrors()
+                .stream()
+                .map(fd -> Problem.Field.builder()
+                        .name(fd.getField())
+                        .userMessage(fd.getDefaultMessage())
+                        .build())
+                .toList();
+
         ProblemType problemType = ProblemType.DADOS_INVALIDOS;
         String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
 
         Problem problem = createProblemType(status, problemType, detail)
                 .userMessage(detail)
+                .fields(problemFieldErros)
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);

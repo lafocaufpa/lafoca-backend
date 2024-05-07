@@ -39,11 +39,11 @@ public class SkillService {
         return modelMapper.map(skillRepository.findAll(), type);
     }
 
-    public SkillDto read (Long skillId) {
+    public SkillDto read (Integer skillId) {
         return modelMapper.map(getOrFail(skillId), SkillDto.class) ;
     }
 
-    public SkillDto update (Long skillId, SkillDto newSkillDto) {
+    public SkillDto update (Integer skillId, SkillDto newSkillDto) {
 
         final Skill currentSkill = getOrFail(skillId);
         modelMapper.map(newSkillDto, currentSkill);
@@ -51,7 +51,7 @@ public class SkillService {
         return modelMapper.map(skillRepository.save(currentSkill), SkillDto.class);
     }
 
-    public void delete (Long skillsId) {
+    public void delete (Integer skillsId) {
 
         try {
             skillRepository.deleteById(skillsId);
@@ -62,7 +62,7 @@ public class SkillService {
         }
     }
 
-    public Skill getOrFail(Long skillsId) {
+    public Skill getOrFail(Integer skillsId) {
         return skillRepository.findById(skillsId)
                 .orElseThrow( () -> new EntityNotFoundException(Skill.class.getSimpleName(), skillsId));
     }

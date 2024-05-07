@@ -11,4 +11,8 @@ public class EntityInUseException extends RuntimeException {
     public EntityInUseException(String message, Long id) {
         super(String.format(ErrorMessage.ENTIDADE_EM_USO.get(), message, id));
     }
+
+    public EntityInUseException(String message, Integer id) {
+        super(String.format(ErrorMessage.ENTIDADE_EM_USO.get(), message, id));
+    }
 }

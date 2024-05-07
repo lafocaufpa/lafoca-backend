@@ -15,7 +15,7 @@ public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long SkillId;
+    private Integer SkillId;
 
     private String name;
 
