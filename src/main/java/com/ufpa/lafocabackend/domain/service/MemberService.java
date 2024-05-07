@@ -112,24 +112,9 @@ public class MemberService {
             member.setArticles(articles);
         }
 
-        if (member.getTcc() != null) {// se o membro do banco de dados já ter um tcc
-            if (memberInputDto.getTcc() != null) { // se o membro vindo da requisição ter um tcc,
-                // será atualizado o que tem no banco de dados
-                Tcc tcc = member.getTcc();
-                tcc.setName(memberInputDto.getName());
-                tcc.setDate(memberInputDto.getTcc().getDate());
-                tcc.setUrl(memberInputDto.getTcc().getUrl());
-            } else { //se o membro vindo da requisição não ter um tcc, o tcc do membro será deletado
+        if (member.getTcc() != null && memberInputDto.getTcc() == null) {
                 tccRepository.deleteById(member.getTcc().getTccId());
                 member.setTcc(null);
-            }
-        } else {// se o membro não ter um tcc definido na hora de criação
-            if(memberInputDto.getTcc() != null){//vai ser definido um tcc para o membro
-                final TccDto tccDto = memberInputDto.getTcc();
-                final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
-                final Tcc tccSaved = tccService.save(tcc);
-                member.setTcc(tccSaved);
-            }
         }
 
         return memberRepository.save(member);
