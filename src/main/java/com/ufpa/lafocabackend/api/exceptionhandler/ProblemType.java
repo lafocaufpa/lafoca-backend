@@ -12,7 +12,8 @@ public enum ProblemType {
     ACESSO_NEGADO("acesso-negado", "Acesso negado"),
     ENTIDADE_EM_USO("entidade-em-uso", "Entidade em uso"),
     ERRO_NEGOCIO("erro-negocio", "Violação de regra de negócio"),
-    TOKEN_EXPIRADO("token-expirado", "O token está inválido");
+    TOKEN_EXPIRADO("token-expirado", "O token está inválido"),
+    DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos");
 //    CORPO_NAO_LEGIVEL("/corpo-nao-legivel", "Corpo não legível"),
 //    PARAMETRO_INVALIDO("/parametro-invalido", "parametro inválido"),
 //    ERRO_DE_SISTEMA("/erro-de-sistema","Erro de interno do sistema."),

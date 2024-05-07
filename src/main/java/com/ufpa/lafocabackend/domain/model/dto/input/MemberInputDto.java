@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model.dto.input;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,8 @@ import lombok.Setter;
 public class MemberInputDto {
 
     private String name;
+
+    @NotNull
     private String description;
     private String email;
     private String biography;

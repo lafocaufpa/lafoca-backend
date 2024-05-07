@@ -14,6 +14,7 @@ public class Tcc {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long tccId;
+
     private String name;
     private String date;
     private String url;

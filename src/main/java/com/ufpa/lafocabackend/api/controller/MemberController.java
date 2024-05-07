@@ -9,6 +9,7 @@ import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.domain.service.MemberPhotoService;
 import com.ufpa.lafocabackend.domain.service.MemberService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<MemberDto> add(@RequestBody MemberInputDto memberInputDto) {
+    public ResponseEntity<MemberDto> add(@RequestBody @Valid MemberInputDto memberInputDto) {
 
         final MemberDto memberSaved = modelMapper.map(memberService.save(memberInputDto), MemberDto.class);
 

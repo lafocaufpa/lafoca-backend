@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Tcc;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
 import com.ufpa.lafocabackend.domain.service.TccService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class TccController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<TccDto> add (@RequestBody TccDto tccDto) {
+    public ResponseEntity<TccDto> add (@RequestBody @Valid TccDto tccDto) {
 
         final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
 
