@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
 import com.ufpa.lafocabackend.domain.model.dto.output.LineOfResearchDto;
 import com.ufpa.lafocabackend.domain.service.LineOfResearchService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class LineOfResearchController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<LineOfResearchDto> add (@RequestBody LineOfResearchDto lineOfResearchDto) {
+    public ResponseEntity<LineOfResearchDto> add (@RequestBody @Valid LineOfResearchDto lineOfResearchDto) {
 
         final LineOfResearchDto lineOfResearchSaved = modelMapper.map(lineOfResearchService.save(lineOfResearchDto), LineOfResearchDto.class);
 

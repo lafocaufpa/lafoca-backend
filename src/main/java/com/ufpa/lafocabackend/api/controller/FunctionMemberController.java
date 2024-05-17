@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.FunctionMember;
 import com.ufpa.lafocabackend.domain.model.dto.FunctionMemberDto;
 import com.ufpa.lafocabackend.domain.service.FunctionMemberService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class FunctionMemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<FunctionMemberDto> add (@RequestBody FunctionMemberDto functionMemberDto) {
+    public ResponseEntity<FunctionMemberDto> add (@RequestBody @Valid FunctionMemberDto functionMemberDto) {
 
         final FunctionMember functionMember = modelMapper.map(functionMemberDto, FunctionMember.class);
 

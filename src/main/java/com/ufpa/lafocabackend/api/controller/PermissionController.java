@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.PermissionService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class PermissionController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<PermissionDto> add (@RequestBody PermissionDto permissionDto) {
+    public ResponseEntity<PermissionDto> add (@RequestBody @Valid PermissionDto permissionDto) {
 
         final Permission permission = modelMapper.map(permissionDto, Permission.class);
 

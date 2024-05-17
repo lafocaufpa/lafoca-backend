@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.domain.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,9 @@ public class PermissionDto {
     @JsonProperty(access = READ_ONLY)
     private Long id;
 
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String description;
 }

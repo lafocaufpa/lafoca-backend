@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Article;
 import com.ufpa.lafocabackend.domain.model.dto.ArticleDto;
 import com.ufpa.lafocabackend.domain.service.ArticleService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class ArticleController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<ArticleDto> add (@RequestBody ArticleDto articleDto) {
+    public ResponseEntity<ArticleDto> add (@RequestBody @Valid ArticleDto articleDto) {
 
         final ArticleDto articleSaved = modelMapper.map(articleService.save(articleDto), ArticleDto.class);
 

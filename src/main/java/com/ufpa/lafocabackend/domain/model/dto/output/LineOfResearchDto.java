@@ -1,5 +1,7 @@
 package com.ufpa.lafocabackend.domain.model.dto.output;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +9,12 @@ import lombok.Setter;
 @Setter
 public class LineOfResearchDto {
 
-    private String lineOfResearchId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String id;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String description;
 }

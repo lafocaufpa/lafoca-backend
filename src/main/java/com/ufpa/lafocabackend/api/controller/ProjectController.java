@@ -8,6 +8,7 @@ import com.ufpa.lafocabackend.domain.model.dto.ProjectDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
 import com.ufpa.lafocabackend.domain.service.ProjectPhotoService;
 import com.ufpa.lafocabackend.domain.service.ProjectService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public class ProjectController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<ProjectDto> add (@RequestBody ProjectDto projectDto) {
+    public ResponseEntity<ProjectDto> add (@RequestBody @Valid ProjectDto projectDto) {
 
         final ProjectDto projectSaved = modelMapper.map(projectService.save(projectDto), ProjectDto.class);
 

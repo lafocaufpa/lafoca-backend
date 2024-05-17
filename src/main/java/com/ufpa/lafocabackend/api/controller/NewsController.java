@@ -8,6 +8,7 @@ import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
 import com.ufpa.lafocabackend.domain.service.NewsPhotoService;
 import com.ufpa.lafocabackend.domain.service.NewsService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.MediaType;
@@ -35,7 +36,7 @@ public class NewsController {
     }
 
     @PostMapping
-    public ResponseEntity<NewsDto> add (@RequestBody NewsInputDto newsInputDto) {
+    public ResponseEntity<NewsDto> add (@RequestBody @Valid NewsInputDto newsInputDto) {
 
         final News news = modelMapper.map(newsInputDto, News.class);
 

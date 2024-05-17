@@ -9,6 +9,7 @@ import com.ufpa.lafocabackend.domain.model.dto.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
 import com.ufpa.lafocabackend.domain.service.UserService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.MediaType;
@@ -36,7 +37,7 @@ public class UserController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<UserDto> add(@RequestBody UserDtoInput userDtoInput) {
+    public ResponseEntity<UserDto> add(@RequestBody @Valid UserDtoInput userDtoInput) {
 
         final User user = modelMapper.map(userDtoInput, User.class);
 
@@ -98,7 +99,7 @@ public class UserController {
 
     @PutMapping("/{userId}/password")
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
-    public ResponseEntity<Void> updatePassword(@RequestBody userInputPasswordDTO passwordDTO, @PathVariable String userId) {
+    public ResponseEntity<Void> updatePassword(@RequestBody @Valid userInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
         userService.changePassword(passwordDTO, userId);
         return ResponseEntity.noContent().build();

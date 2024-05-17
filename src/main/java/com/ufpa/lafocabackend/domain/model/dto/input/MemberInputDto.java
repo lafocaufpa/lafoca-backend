@@ -35,7 +35,7 @@ public class MemberInputDto {
     private Long functionMemberId;
 
     @NotNull
-    private List<@Positive Integer> SkillsId;
+    private List<@Positive Integer> skillsId;
 
     @NotNull
     @Valid

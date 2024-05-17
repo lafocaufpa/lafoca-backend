@@ -3,6 +3,7 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.dto.SkillDto;
 import com.ufpa.lafocabackend.domain.service.SkillService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class SkillController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<SkillDto> add (@RequestBody SkillDto skillDto) {
+    public ResponseEntity<SkillDto> add (@RequestBody @Valid SkillDto skillDto) {
 
         final SkillDto skillSaved = skillService.save(skillDto);
 

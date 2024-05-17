@@ -6,6 +6,7 @@ import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.GroupService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class GroupController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<GroupDto> add (@RequestBody GroupDto groupDto) {
+    public ResponseEntity<GroupDto> add (@RequestBody @Valid GroupDto groupDto) {
 
         final Group group = modelMapper.map(groupDto, Group.class);
 
