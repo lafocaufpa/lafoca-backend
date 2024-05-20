@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.core.utils;
 
+import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.domain.exception.InvalidFileException;
 import jakarta.servlet.http.Part;
 
@@ -79,24 +80,22 @@ public class StandardCustomMultipartFile implements CustomMultipartFile, Seriali
 
     public void validate (StandardCustomMultipartFile file){
         if (file == null || file.isEmpty()) {
-            throw new InvalidFileException("O arquivo não pode ser nulo ou vazio.");
+            throw new InvalidFileException(ErrorMessage.ARQUIVO_VAZIO.get());
         }
 
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || !originalFilename.contains(".")) {
-            throw new InvalidFileException("O arquivo deve ter um nome e uma extensão.");
+            throw new InvalidFileException(ErrorMessage.NOME_ARQUIVO_INVALIDO.get());
         }
 
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
         if (!Arrays.asList("jpg", "png", "svg", "jpeg").contains(extension)) {
-            throw new InvalidFileException("Extensão de arquivo não permitida. Apenas .jpg, .png, .svg, .jpeg são aceitas.");
+            throw new InvalidFileException(ErrorMessage.TIPO_NAO_PERMITIDO.get());
         }
 
         long size = file.getSize();
-        if (size < 20 * 1024) {
-            throw new InvalidFileException("O arquivo deve ter pelo menos 20KB.");
-        } else if (size > 5 * 1024 * 1024) {
-            throw new InvalidFileException("O arquivo deve ter no máximo 5MB.");
+        if (size < 20 * 1024 || size > 5 * 1024 * 2024) {
+            throw new InvalidFileException(ErrorMessage.TAMANHO_INVALIDO.get());
         }
     }
 
