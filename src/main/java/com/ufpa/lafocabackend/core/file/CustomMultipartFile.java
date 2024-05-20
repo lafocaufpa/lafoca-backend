@@ -1,4 +1,4 @@
-package com.ufpa.lafocabackend.core.utils;
+package com.ufpa.lafocabackend.core.file;
 
 import java.io.File;
 import java.io.IOException;

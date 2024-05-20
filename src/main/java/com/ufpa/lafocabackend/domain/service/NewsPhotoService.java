@@ -1,7 +1,6 @@
 package com.ufpa.lafocabackend.domain.service;
 
-import com.ufpa.lafocabackend.core.file.FileWrapper;
-import com.ufpa.lafocabackend.core.utils.CustomMultipartFile;
+import com.ufpa.lafocabackend.core.file.CustomMultipartFile;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.model.News;

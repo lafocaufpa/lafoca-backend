@@ -1,4 +1,4 @@
-package com.ufpa.lafocabackend.core.utils;
+package com.ufpa.lafocabackend.core.file;
 
 import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.domain.exception.InvalidFileException;

@@ -1,7 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.dto.MemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;

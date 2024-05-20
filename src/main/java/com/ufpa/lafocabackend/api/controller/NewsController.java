@@ -1,6 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
-import com.ufpa.lafocabackend.core.utils.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.dto.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.NewsOutput;
@@ -15,7 +15,6 @@ import org.modelmapper.TypeToken;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

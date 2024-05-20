@@ -1,7 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
@@ -16,7 +16,6 @@ import org.modelmapper.TypeToken;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
