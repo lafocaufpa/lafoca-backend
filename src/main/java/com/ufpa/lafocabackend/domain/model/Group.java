@@ -18,13 +18,17 @@ public class Group {
     @EqualsAndHashCode.Include
     private Long groupId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToMany
     @JoinTable(name = "permission_group",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+            joinColumns = @JoinColumn(
+                    name = "group_id",
+                    foreignKey = @ForeignKey(name = "fk_permission_group_group_id")),
+            inverseJoinColumns = @JoinColumn(
+                    name = "permission_id",
+                    foreignKey = @ForeignKey(name = "fk_permission_group_permission_id")))
     private Set<Permission> permissions = new HashSet<>();
 
     public boolean associatePermission(Permission Permission) {

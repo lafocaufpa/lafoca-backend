@@ -14,7 +14,7 @@ public class Lafoca {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long LafocaId;
+    private Long lafocaId;
 
     private int numberOfMembers;
 

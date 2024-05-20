@@ -15,10 +15,10 @@ public class FunctionMember {
     @EqualsAndHashCode.Include
     private Long functionMemberId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 225)
     private String name;
 
-    @Column(nullable = false)
-    private String description;
 
+    @Column(nullable = false, length = 225)
+    private String description;
 }

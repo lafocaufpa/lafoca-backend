@@ -19,9 +19,17 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long ArticleId;
+
+    @Column(nullable = false, length = 225)
     private String title;
+
+    @Column(nullable = false, length = 225, unique = true)
     private String slug;
+
+    @Column(nullable = false, length = 225)
     private String journal;
+
+    @Column(nullable = false, length = 2083, unique = true)
     private String url;
 
     @PreUpdate

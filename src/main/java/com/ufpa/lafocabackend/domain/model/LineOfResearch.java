@@ -15,9 +15,9 @@ public class LineOfResearch {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String lineOfResearchId;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String name;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 225)
     private String description;
 }
