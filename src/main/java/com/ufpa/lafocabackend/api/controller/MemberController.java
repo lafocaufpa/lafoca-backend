@@ -110,10 +110,9 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/{memberId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto(@RequestPart("file") Part part, @PathVariable String memberId) throws IOException {
+    public ResponseEntity<PhotoDto> addPhoto(Part file, @PathVariable String memberId) throws IOException {
 
-        String originalFilename = part.getSubmittedFileName();
-        StandardCustomMultipartFile customFile = new StandardCustomMultipartFile(part, originalFilename);
+        var customFile = new StandardCustomMultipartFile(file);
 
         Member member = memberService.read(memberId);
         return ResponseEntity.ok(memberPhotoService.save(member, customFile));

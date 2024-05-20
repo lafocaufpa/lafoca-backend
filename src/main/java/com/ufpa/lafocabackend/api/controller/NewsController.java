@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.utils.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.dto.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.NewsOutput;
@@ -7,6 +8,7 @@ import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
 import com.ufpa.lafocabackend.domain.service.NewsPhotoService;
 import com.ufpa.lafocabackend.domain.service.NewsService;
+import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -93,20 +95,22 @@ public class NewsController {
     }
 
     @PostMapping(value = "/search/{newsSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String newsSlug) throws IOException {
+    public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String newsSlug) throws IOException {
 
+        var filePhoto = new StandardCustomMultipartFile(file);
         final News news = newsService.readBySlug(newsSlug);
 
-        PhotoDto photoDto = newsPhotoService.save(news, new MultipartFileWrapper(photo));
+        PhotoDto photoDto = newsPhotoService.save(news, filePhoto);
         return ResponseEntity.ok(photoDto);
     }
 
     @PostMapping(value = "/{newsId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto (MultipartFile photo, @PathVariable String newsId) throws IOException {
+    public ResponseEntity<PhotoDto> addPhoto (Part file, @PathVariable String newsId) throws IOException {
 
+        var customFile = new StandardCustomMultipartFile(file);
         final News news = newsService.read(newsId);
 
-        PhotoDto photoDto = newsPhotoService.save(news, new MultipartFileWrapper(photo));
+        PhotoDto photoDto = newsPhotoService.save(news, customFile);
         return ResponseEntity.ok(photoDto);
     }
 

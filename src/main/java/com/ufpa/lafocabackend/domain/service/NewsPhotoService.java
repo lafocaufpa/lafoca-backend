@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.core.file.FileWrapper;
+import com.ufpa.lafocabackend.core.utils.CustomMultipartFile;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.model.News;
@@ -33,7 +34,7 @@ public class NewsPhotoService {
     }
 
     @Transactional
-    public PhotoDto save(News news, FileWrapper photo) throws IOException {
+    public PhotoDto save(News news, CustomMultipartFile photo) throws IOException {
 
         String originalPhotoFilename = createPhotoFilename(news.getSlug(), photo.getOriginalFilename());
 

@@ -16,9 +16,9 @@ public class StandardCustomMultipartFile implements CustomMultipartFile, Seriali
     private final Part part;
     private final String filename;
 
-    public StandardCustomMultipartFile(Part part, String filename) {
+    public StandardCustomMultipartFile(Part part) {
         this.part = part;
-        this.filename = filename;
+        this.filename = part.getSubmittedFileName();
         validate(this);
     }
 

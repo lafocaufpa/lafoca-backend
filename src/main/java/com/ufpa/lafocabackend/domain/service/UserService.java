@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.core.file.FileWrapper;
+import com.ufpa.lafocabackend.core.utils.CustomMultipartFile;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
@@ -120,7 +121,7 @@ public class UserService {
     }
 
     @Transactional
-    public String addPhoto(FileWrapper photo, User user) throws IOException {
+    public String addPhoto(CustomMultipartFile photo, User user) throws IOException {
 
         String originalFilename = createPhotoFilename(user.getSlug(), photo.getOriginalFilename());
 

@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
@@ -8,6 +9,7 @@ import com.ufpa.lafocabackend.domain.model.dto.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
 import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
 import com.ufpa.lafocabackend.domain.service.UserService;
+import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -106,20 +108,22 @@ public class UserController {
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @PostMapping(value = "/{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> addPhoto(MultipartFile photo, @PathVariable String userId) throws IOException {
+    public ResponseEntity<String> addPhoto(Part file, @PathVariable String userId) throws IOException {
 
+        var customFile = new StandardCustomMultipartFile(file);
         User user = userService.read(userId);
-        String url = userService.addPhoto(new MultipartFileWrapper(photo), user);
+        String url = userService.addPhoto(customFile, user);
 
         return ResponseEntity.ok(url);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @PostMapping(value = "/search/{userSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> addPhotoBySlug(MultipartFile photo, @PathVariable String userSlug) throws IOException {
+    public ResponseEntity<String> addPhotoBySlug(Part file, @PathVariable String userSlug) throws IOException {
 
+        var customFile = new StandardCustomMultipartFile(file);
         User user = userService.readBySlug(userSlug);
-        String url = userService.addPhoto(new MultipartFileWrapper(photo), user);
+        String url = userService.addPhoto(customFile, user);
 
         return ResponseEntity.ok(url);
     }

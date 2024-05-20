@@ -1,12 +1,14 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.ProjectDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
 import com.ufpa.lafocabackend.domain.service.ProjectPhotoService;
 import com.ufpa.lafocabackend.domain.service.ProjectService;
+import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -106,18 +108,20 @@ public class ProjectController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/{projectId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String projectId) throws IOException {
+    public ResponseEntity<PhotoDto> addPhoto(Part part, @PathVariable String projectId) throws IOException {
 
+        var file = new StandardCustomMultipartFile(part);
         Project member = projectService.read(projectId);
-        return ResponseEntity.ok(projectPhotoService.save(member, new MultipartFileWrapper(photo)));
+        return ResponseEntity.ok(projectPhotoService.save(member, file));
     }
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
+    public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String memberSlug) throws IOException {
 
+        var customFile = new StandardCustomMultipartFile(file);
         Project member = projectService.readBySlug(memberSlug);
-        return ResponseEntity.ok(projectPhotoService.save(member, new MultipartFileWrapper(photo)));
+        return ResponseEntity.ok(projectPhotoService.save(member, customFile));
     }
 
     @CheckSecurityPermissionMethods.Level1
