@@ -55,5 +55,4 @@ public class LafocaUtils {
                         (originalFilename)
                 .substring(originalFilename.lastIndexOf("."));
     }
-
 }

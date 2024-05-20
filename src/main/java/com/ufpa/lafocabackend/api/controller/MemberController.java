@@ -1,7 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
-import com.ufpa.lafocabackend.core.file.MultipartFileWrapper;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.dto.MemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
@@ -9,6 +9,7 @@ import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.domain.service.MemberPhotoService;
 import com.ufpa.lafocabackend.domain.service.MemberService;
+import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/members")
 public class MemberController {
@@ -39,14 +41,14 @@ public class MemberController {
         this.memberPhotoService = memberPhotoService;
     }
 
-    @CheckSecurityPermissionMethods.Level1
-    @PostMapping
-    public ResponseEntity<MemberDto> add(@RequestBody @Valid MemberInputDto memberInputDto) {
-
-        final MemberDto memberSaved = modelMapper.map(memberService.save(memberInputDto), MemberDto.class);
-
-        return ResponseEntity.ok(memberSaved);
-    }
+        @CheckSecurityPermissionMethods.Level1
+        @PostMapping
+        public ResponseEntity<MemberDto> add(@RequestBody @Valid MemberInputDto memberInputDto) {
+    
+            final MemberDto memberSaved = modelMapper.map(memberService.save(memberInputDto), MemberDto.class);
+    
+            return ResponseEntity.ok(memberSaved);
+        }
 
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberDto> read(@PathVariable String memberId) {
@@ -108,10 +110,13 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/{memberId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto(MultipartFile photo, @PathVariable String memberId) throws IOException {
+    public ResponseEntity<PhotoDto> addPhoto(@RequestPart("file") Part part, @PathVariable String memberId) throws IOException {
+
+        String originalFilename = part.getSubmittedFileName();
+        StandardCustomMultipartFile customFile = new StandardCustomMultipartFile(part, originalFilename);
 
         Member member = memberService.read(memberId);
-        return ResponseEntity.ok(memberPhotoService.save(member, new MultipartFileWrapper(photo)));
+        return ResponseEntity.ok(memberPhotoService.save(member, customFile));
     }
 
     @CheckSecurityPermissionMethods.Level1
@@ -119,7 +124,7 @@ public class MemberController {
     public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
 
         Member member = memberService.readBySlug(memberSlug);
-        return ResponseEntity.ok(memberPhotoService.save(member, new MultipartFileWrapper(photo)));
+        return ResponseEntity.ok(memberPhotoService.save(member, null));
     }
 
     @CheckSecurityPermissionMethods.Level1

@@ -13,11 +13,11 @@ public enum ProblemType {
     ENTIDADE_EM_USO("entidade-em-uso", "Entidade em uso"),
     ERRO_NEGOCIO("erro-negocio", "Violação de regra de negócio"),
     TOKEN_EXPIRADO("token-expirado", "O token está inválido"),
-    DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos");
+    DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos"),
+    ARQUIVO_INVALIDO("/arquivo-invalido", "O arquivo enviado não pôde ser processado");
 //    CORPO_NAO_LEGIVEL("/corpo-nao-legivel", "Corpo não legível"),
 //    PARAMETRO_INVALIDO("/parametro-invalido", "parametro inválido"),
 //    ERRO_DE_SISTEMA("/erro-de-sistema","Erro de interno do sistema."),
-//    DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos"),
     ;
 
     private final String title;

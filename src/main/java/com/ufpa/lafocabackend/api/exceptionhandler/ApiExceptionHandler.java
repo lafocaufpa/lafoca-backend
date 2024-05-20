@@ -1,10 +1,9 @@
 package com.ufpa.lafocabackend.api.exceptionhandler;
 
 import com.nimbusds.jose.proc.BadJWSException;
-import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
-import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
-import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
-import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
+import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
+import com.ufpa.lafocabackend.domain.exception.*;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -15,13 +14,15 @@ import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@ControllerAdvice
+@RestControllerAdvice
+@ComponentScan
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class) /*também subclasses*/
@@ -102,6 +103,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
+    }
+
+    @ExceptionHandler(InvalidFileException.class)
+    public ResponseEntity<?> handleInvalidFileException(Exception ex, WebRequest request) {
+
+        HttpStatus unprocessableEntity = HttpStatus.UNPROCESSABLE_ENTITY;
+        ProblemType problemType = ProblemType.ARQUIVO_INVALIDO;
+        final Problem problem = createProblemType(unprocessableEntity, problemType, ErrorMessage.PROPRIEDADES_INVALIDAS.get())
+                .userMessage(ex.getMessage())
+                .build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), unprocessableEntity, request);
     }
 
     @Override

@@ -15,7 +15,8 @@ public enum ErrorMessage {
     SENHA_NAO_COINCIDE("Senha atual informada não coincide com a senha do usuário."),
     ENTIDADE_EXISTENTE("Entidade %s de identificação %s já existe."),
     PERMISSAO_NAO_ENCONTRADA("Não existe permissão de código %d."),
-    ACESSO_NEGADO("Credenciais inválidas");
+    ACESSO_NEGADO("Credenciais inválidas"),
+    PROPRIEDADES_INVALIDAS("Propriedades Inválidas");
     private String mensagem;
 
     private ErrorMessage(String mensagem){
