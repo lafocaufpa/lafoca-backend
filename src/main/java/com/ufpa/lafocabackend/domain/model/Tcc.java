@@ -15,8 +15,13 @@ public class Tcc {
     @EqualsAndHashCode.Include
     private Long tccId;
 
+    @Column(nullable = false, length = 255)
     private String name;
+
+    @Column(nullable = false, length = 25)
     private String date;
+
+    @Column(nullable = false, length = 2083, unique = true)
     private String url;
 
 }

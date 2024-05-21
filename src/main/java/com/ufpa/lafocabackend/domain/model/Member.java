@@ -28,7 +28,7 @@ public class Member {
     @Column(nullable = false, length = 225)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 225)
+    @Column(nullable = false, unique = true, length = 500)
     private String slug;
 
     @Column(nullable = false, length = 225)

@@ -22,12 +22,13 @@ public class News {
     @EqualsAndHashCode.Include
     private String newsId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 225)
     private String title;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 500)
     private String slug;
 
+    @Column(nullable = false, length = 225)
     private String description;
 
     @CreationTimestamp
@@ -37,7 +38,7 @@ public class News {
     @Column(nullable = false)
     private String tags;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 15000)
     private String content;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)

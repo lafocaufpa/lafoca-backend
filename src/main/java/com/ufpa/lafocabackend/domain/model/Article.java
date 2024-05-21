@@ -23,7 +23,7 @@ public class Article {
     @Column(nullable = false, length = 225)
     private String title;
 
-    @Column(nullable = false, length = 225, unique = true)
+    @Column(nullable = false, length = 500, unique = true)
     private String slug;
 
     @Column(nullable = false, length = 225)

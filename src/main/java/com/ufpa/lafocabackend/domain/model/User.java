@@ -22,27 +22,29 @@ public class User {
     @EqualsAndHashCode.Include
     private String userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String name;
 
+    @Column(nullable = false, unique = true, length = 500)
     private String slug;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String password;
 
     @CreationTimestamp
     @Column(columnDefinition = "datetime", nullable = false)
     private OffsetDateTime dateRegister;
 
+    @Column(length = 2083)
     String urlPhoto;
 
     @ManyToMany
     @JoinTable(name = "user_group",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id"))
+            joinColumns = @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_group_user_id")),
+            inverseJoinColumns = @JoinColumn(name = "group_id", foreignKey = @ForeignKey(name = "fk_user_group_group_id")))
     private Set<Group> groups = new HashSet<>();
 
     public Boolean isLoginCorrect(String password, PasswordEncoder encoder){

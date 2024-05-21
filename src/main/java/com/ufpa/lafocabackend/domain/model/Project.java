@@ -23,23 +23,23 @@ public class Project {
     @Column(nullable = false)
     private String type;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 500)
     private String slug;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String title;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String description;
 
     @Column(nullable = false)
     private Boolean completed;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 4)
     private String year;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "photo_id")
+    @JoinColumn(name = "photo_id", foreignKey = @ForeignKey(name = "fk_project_photo_id"))
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private ProjectPhoto projectPhoto;
 
