@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.*;
@@ -15,12 +16,16 @@ public abstract class Photo {
     @EqualsAndHashCode.Include
     private String photoId;
 
+    @Column(nullable = false)
     private Long size;
 
+    @Column(nullable = false, length = 15)
     private String contentType;
 
+    @Column(nullable = false, length = 2083)
     private String url;
 
+    @Column(nullable = false, length = 225)
     private String fileName ;
 
     public Photo() {

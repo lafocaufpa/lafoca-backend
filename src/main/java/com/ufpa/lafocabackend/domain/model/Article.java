@@ -32,6 +32,10 @@ public class Article {
     @Column(nullable = false, length = 2083, unique = true)
     private String url;
 
+    @ManyToOne
+    @JoinColumn(name = "line_of_research_id", foreignKey = @ForeignKey(name = "fk_article_research_id"))
+    private LineOfResearch lineOfResearch;
+
     @PreUpdate
     @PrePersist
     public void generateSlug() {
