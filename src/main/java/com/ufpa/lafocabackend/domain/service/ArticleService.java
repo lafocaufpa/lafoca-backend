@@ -3,13 +3,16 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Article;
-import com.ufpa.lafocabackend.domain.model.dto.ArticleDto;
+import com.ufpa.lafocabackend.domain.model.LineOfResearch;
+import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.repository.ArticleRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -17,15 +20,24 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ModelMapper modelMapper;
+    private final LineOfResearchService lineOfResearchService;
 
-    public ArticleService(ArticleRepository articleRepository, ModelMapper modelMapper) {
+    public ArticleService(ArticleRepository articleRepository, ModelMapper modelMapper, LineOfResearchService lineOfResearchService) {
         this.articleRepository = articleRepository;
         this.modelMapper = modelMapper;
+        this.lineOfResearchService = lineOfResearchService;
     }
 
-    public Article save (ArticleDto articleDto) {
+    public Article save (ArticleInputDto articleDto) {
 
-        return articleRepository.save(modelMapper.map(articleDto, Article.class));
+        Article article = modelMapper.map(articleDto, Article.class);
+
+        for (String lineOfResearchId : articleDto.getLineOfResearchIds()) {
+            LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
+            article.addLineOfResearch(lineOfResearch);
+        }
+
+        return articleRepository.save(article);
     }
 
     public List<Article> list (){
@@ -63,6 +75,10 @@ public class ArticleService {
         }
 
     }
+//
+//    public Boolean addLineOfResearchByArticleSlug(String articleSlug, String lineOfResearch){
+//        readBySlug(articleSlug).addLineOfResearch(lineOfResearch);
+//    }
 
     private Article getOrFail(Long articleId) {
         return articleRepository.findById(articleId)

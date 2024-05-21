@@ -1,9 +1,11 @@
-package com.ufpa.lafocabackend.domain.model.dto;
+package com.ufpa.lafocabackend.domain.model.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,4 +25,7 @@ public class ArticleDto {
 
     @NotBlank
     private String url;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Set<LineOfResearchDto> linesOfResearch;
 }

@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.domain.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import lombok.Getter;
 import lombok.Setter;
 

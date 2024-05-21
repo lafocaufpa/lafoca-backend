@@ -2,7 +2,8 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Article;
-import com.ufpa.lafocabackend.domain.model.dto.ArticleDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.service.ArticleService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -27,7 +28,7 @@ public class ArticleController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<ArticleDto> add (@RequestBody @Valid ArticleDto articleDto) {
+    public ResponseEntity<ArticleDto> add (@RequestBody @Valid ArticleInputDto articleDto) {
 
         final ArticleDto articleSaved = modelMapper.map(articleService.save(articleDto), ArticleDto.class);
 

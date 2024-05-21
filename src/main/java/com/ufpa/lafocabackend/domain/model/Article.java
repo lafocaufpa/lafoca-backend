@@ -6,6 +6,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
 @Entity
@@ -32,9 +37,20 @@ public class Article {
     @Column(nullable = false, length = 2083, unique = true)
     private String url;
 
-    @ManyToOne
-    @JoinColumn(name = "line_of_research_id", foreignKey = @ForeignKey(name = "fk_article_research_id"))
-    private LineOfResearch lineOfResearch;
+    @ManyToMany
+    @JoinTable(name = "article_line_of_research",
+            joinColumns = @JoinColumn(name = "article_id", foreignKey = @ForeignKey(name = "fk_article_research_id")),
+            inverseJoinColumns = @JoinColumn(name = "line_of_research_id", foreignKey = @ForeignKey(name = "fk_research_article_id")))
+    private List<LineOfResearch> linesOfResearch = new ArrayList<>();
+
+    public Boolean addLineOfResearch(LineOfResearch lineOfResearch) {
+        return getLinesOfResearch().add(lineOfResearch);
+    }
+
+    public Boolean removeLineOfResearch(LineOfResearch lineOfResearch) {
+        return getLinesOfResearch().remove(lineOfResearch);
+    }
+
 
     @PreUpdate
     @PrePersist
