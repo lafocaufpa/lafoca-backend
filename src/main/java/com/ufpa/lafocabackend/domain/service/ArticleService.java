@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -54,12 +55,20 @@ public class ArticleService {
                 orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName(), slug));
     }
 
-    public Article update (Long articleId, ArticleDto newArticle) {
+    public Article update (Long articleId, ArticleInputDto newArticle) {
 
         final Article currentArticle = read(articleId);
 
         modelMapper.map(newArticle, currentArticle);
         currentArticle.setArticleId(articleId);
+
+        List<LineOfResearch> linesOfResearches = new ArrayList<>();
+        for (String lineOfResearchId : newArticle.getLineOfResearchIds()) {
+            LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
+            linesOfResearches.add(lineOfResearch);
+        }
+
+        currentArticle.setLinesOfResearch(linesOfResearches);
 
         return articleRepository.save(currentArticle);
     }
@@ -83,5 +92,9 @@ public class ArticleService {
     private Article getOrFail(Long articleId) {
         return articleRepository.findById(articleId)
                 .orElseThrow( () -> new EntityNotFoundException(Article.class.getSimpleName(), articleId));
+    }
+
+    public void addLinesOfResearch(Long articleId, List<String> linesOfResearch) {
+
     }
 }

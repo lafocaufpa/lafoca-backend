@@ -68,7 +68,7 @@ public class ArticleController {
 
     @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{articleId}")
-    public ResponseEntity<ArticleDto> update (@PathVariable Long articleId, @RequestBody ArticleDto newArticle){
+    public ResponseEntity<ArticleDto> update (@PathVariable Long articleId, @RequestBody ArticleInputDto newArticle){
         
         final ArticleDto articletUpdated = modelMapper.map(articleService.update(articleId, newArticle), ArticleDto.class);
         return ResponseEntity.ok(articletUpdated);
