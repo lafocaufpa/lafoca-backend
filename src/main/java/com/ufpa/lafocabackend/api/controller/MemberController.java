@@ -120,10 +120,12 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhotoBySlug(MultipartFile photo, @PathVariable String memberSlug) throws IOException {
+    public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String memberSlug) throws IOException {
+
+        var customFile = new StandardCustomMultipartFile(file);
 
         Member member = memberService.readBySlug(memberSlug);
-        return ResponseEntity.ok(memberPhotoService.save(member, null));
+        return ResponseEntity.ok(memberPhotoService.save(member, customFile));
     }
 
     @CheckSecurityPermissionMethods.Level1

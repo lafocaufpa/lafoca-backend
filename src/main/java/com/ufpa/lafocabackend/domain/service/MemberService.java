@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.*;
@@ -44,6 +45,11 @@ public class MemberService {
 
     @Transactional
     public Member save(MemberInputDto memberInputDto) {
+
+        if(memberRepository.existsByEmail(memberInputDto.getEmail())){
+            throw new EntityAlreadyRegisteredException(Member.class.getSimpleName(), memberInputDto.getEmail());
+        }
+
         Member member = modelMapper.map(memberInputDto, Member.class);
 
         if (memberInputDto.getFunctionMemberId() != null) {

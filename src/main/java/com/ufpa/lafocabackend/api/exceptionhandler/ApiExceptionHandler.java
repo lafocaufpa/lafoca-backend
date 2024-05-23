@@ -4,6 +4,7 @@ import com.nimbusds.jose.proc.BadJWSException;
 import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.domain.exception.*;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -71,7 +72,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleEntityAlreadyRegisteredException(Exception ex, WebRequest request) {
         HttpStatus statusNotFound = HttpStatus.BAD_REQUEST;
         ProblemType problemType = ProblemType.ERRO_NEGOCIO;
-        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(UserErrorMessage.USUARIO_EXISTENTE.get()).build();
+        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ErrorMessage.EMAIL_EXISTENTE.get()).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleDataIntegrityViolation(Exception ex, WebRequest request) {
+        HttpStatus statusNotFound = HttpStatus.BAD_REQUEST;
+        ProblemType problemType = ProblemType.ERRO_NEGOCIO;
+        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ErrorMessage.EMAIL_EXISTENTE.get()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
     }
