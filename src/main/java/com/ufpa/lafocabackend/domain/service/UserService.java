@@ -45,11 +45,9 @@ public class UserService {
         por isso é necessário desanexar do contexto de persistencia, pois vai adicionar no bd um user com o mesmo
         email*/
 
-        final Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-
         /*Se um user vindo do banco com o mesmo email for diferente do user vindo da requisição, cai no if */
-        if(existingUser.isPresent() && !existingUser.get().equals(user)){
-            throw new EntityAlreadyRegisteredException(getClass().getSimpleName(), user.getEmail());
+        if(userRepository.existsByEmail(user.getEmail())){
+            throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), user.getEmail());
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));

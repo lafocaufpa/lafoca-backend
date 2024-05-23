@@ -23,7 +23,7 @@ public enum ErrorMessage {
     TAMANHO_INVALIDO("O arquivo deve ter entre 20KB e 5MB");
     private String mensagem;
 
-    private ErrorMessage(String mensagem){
+    ErrorMessage(String mensagem){
         this.mensagem = mensagem;
     }
 

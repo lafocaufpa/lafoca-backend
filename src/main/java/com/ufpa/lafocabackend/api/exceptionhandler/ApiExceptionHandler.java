@@ -71,7 +71,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleEntityAlreadyRegisteredException(Exception ex, WebRequest request) {
         HttpStatus statusNotFound = HttpStatus.BAD_REQUEST;
         ProblemType problemType = ProblemType.ERRO_NEGOCIO;
-        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ex.getMessage()).build();
+        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(UserErrorMessage.USUARIO_EXISTENTE.get()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
     }

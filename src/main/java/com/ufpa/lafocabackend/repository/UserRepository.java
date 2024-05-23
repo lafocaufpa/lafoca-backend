@@ -13,8 +13,11 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.userId = :userId")
-    boolean existsByUserId(@Param("userId") String userId);
+    /**
+     *
+     * @return se existir um usuário com o mesmo email, retorna true, caso contrário, retorna false
+     */
+    boolean existsByEmail(String email);
 
     Optional<User> findBySlug(String slug);
 }
