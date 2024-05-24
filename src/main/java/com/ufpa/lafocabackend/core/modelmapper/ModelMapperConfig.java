@@ -1,9 +1,9 @@
 package com.ufpa.lafocabackend.core.modelmapper;
 
 import com.ufpa.lafocabackend.domain.model.*;
-import com.ufpa.lafocabackend.domain.model.dto.FunctionMemberDto;
-import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
-import com.ufpa.lafocabackend.domain.model.dto.PermissionDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;

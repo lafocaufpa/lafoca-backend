@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class userInputPasswordDTO {
+public class UserInputPasswordDTO {
 
     @NotBlank
     private String currentPassword;

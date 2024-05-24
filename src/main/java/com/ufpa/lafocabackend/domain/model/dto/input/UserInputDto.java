@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserDtoInput {
+public class UserInputDto {
 
     @NotBlank
     private String email;

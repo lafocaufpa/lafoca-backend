@@ -1,8 +1,7 @@
-package com.ufpa.lafocabackend.domain.model.dto;
+package com.ufpa.lafocabackend.domain.model.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,7 +27,7 @@ public class MemberDto {
     private String urlPhoto;
     private FunctionMemberDto functionMember;
     private List<SkillDto> skills;
-    private TccDto tcc;
+    private TccInputDto tcc;
     private List<ArticleDto> articles;
     private List<ProjectDto> projects;
 }

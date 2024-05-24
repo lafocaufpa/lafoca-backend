@@ -3,7 +3,7 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Project;
-import com.ufpa.lafocabackend.domain.model.dto.ProjectDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.ProjectDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
 import com.ufpa.lafocabackend.repository.ProjectRepository;
 import org.modelmapper.ModelMapper;

@@ -5,7 +5,7 @@ import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.MemberPhoto;
-import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.MemberPhotoRepository;
 import org.modelmapper.ModelMapper;

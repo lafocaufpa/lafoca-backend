@@ -4,10 +4,10 @@ import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
-import com.ufpa.lafocabackend.domain.model.dto.GroupDto;
-import com.ufpa.lafocabackend.domain.model.dto.UserDto;
-import com.ufpa.lafocabackend.domain.model.dto.input.UserDtoInput;
-import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
+import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.UserDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.UserInputPasswordDTO;
 import com.ufpa.lafocabackend.domain.service.UserService;
 import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
@@ -37,9 +37,9 @@ public class UserController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<UserDto> add(@RequestBody @Valid UserDtoInput userDtoInput) {
+    public ResponseEntity<UserDto> add(@RequestBody @Valid UserInputDto userInputDto) {
 
-        final User user = modelMapper.map(userDtoInput, User.class);
+        final User user = modelMapper.map(userInputDto, User.class);
 
         final UserDto userDto = modelMapper.map(userService.save(user), UserDto.class);
 
@@ -79,11 +79,11 @@ public class UserController {
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1OrLevel2
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> update(@RequestBody UserDtoInput userDtoInput, @PathVariable String userId) {
+    public ResponseEntity<UserDto> update(@RequestBody UserInputDto userInputDto, @PathVariable String userId) {
 
         final User existingUser = userService.read(userId);
 
-        modelMapper.map(userDtoInput, existingUser);
+        modelMapper.map(userInputDto, existingUser);
         final UserDto userDto = modelMapper.map(existingUser, UserDto.class);
         return ResponseEntity.ok(userDto);
     }
@@ -99,7 +99,7 @@ public class UserController {
 
     @PutMapping("/{userId}/password")
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
-    public ResponseEntity<Void> updatePassword(@RequestBody @Valid userInputPasswordDTO passwordDTO, @PathVariable String userId) {
+    public ResponseEntity<Void> updatePassword(@RequestBody @Valid UserInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
         userService.changePassword(passwordDTO, userId);
         return ResponseEntity.noContent().build();

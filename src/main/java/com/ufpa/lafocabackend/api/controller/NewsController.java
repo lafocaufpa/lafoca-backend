@@ -2,9 +2,9 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.News;
-import com.ufpa.lafocabackend.domain.model.dto.NewsDto;
-import com.ufpa.lafocabackend.domain.model.dto.NewsOutput;
-import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.NewsDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.NewsOutput;
+import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
 import com.ufpa.lafocabackend.domain.service.NewsPhotoService;
 import com.ufpa.lafocabackend.domain.service.NewsService;

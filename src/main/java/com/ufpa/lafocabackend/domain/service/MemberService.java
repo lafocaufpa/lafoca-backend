@@ -5,7 +5,7 @@ import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.*;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
-import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.repository.MemberRepository;
 import com.ufpa.lafocabackend.repository.TccRepository;
@@ -75,8 +75,8 @@ public class MemberService {
         }
 
         if (memberInputDto.getTcc() != null) {
-            final TccDto tccDto = memberInputDto.getTcc();
-            final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
+            final TccInputDto tccInputDto = memberInputDto.getTcc();
+            final Tcc tcc = modelMapper.map(tccInputDto, Tcc.class);
             final Tcc tccSaved = tccService.save(tcc);
             member.setTcc(tccSaved);
         }

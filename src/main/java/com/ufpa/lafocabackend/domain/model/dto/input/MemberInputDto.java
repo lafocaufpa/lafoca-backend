@@ -35,15 +35,15 @@ public class MemberInputDto {
     private Long functionMemberId;
 
     @NotNull
-    private List<@Positive Integer> skillsId;
+    private List<@Positive @NotNull Integer> skillsId;
 
     @NotNull
     @Valid
-    private TccDto tcc;
+    private TccInputDto tcc;
 
     @NotNull
-    private Long[] articlesId;
+    private List<@NotNull Long> articlesId;
 
     @NotNull
-    private String[] projectsId;
+    private List<@NotBlank String> projectsId;
 }

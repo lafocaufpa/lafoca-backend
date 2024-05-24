@@ -1,4 +1,4 @@
-package com.ufpa.lafocabackend.domain.model.dto;
+package com.ufpa.lafocabackend.domain.model.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;

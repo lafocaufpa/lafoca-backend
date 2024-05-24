@@ -21,7 +21,7 @@ public enum ErrorMessage {
     NOME_ARQUIVO_INVALIDO("O arquivo deve ter um nome e uma extensão."),
     TIPO_NAO_PERMITIDO("Extensão de arquivo não permitida. Apenas .jpg, .png, .svg, .jpeg são aceitas."),
     TAMANHO_INVALIDO("O arquivo deve ter entre 20KB e 5MB."),
-    EMAIL_EXISTENTE("E-mail já cadastrado.");
+    EMAIL_EXISTENTE("Email já cadastrado.");
     private String mensagem;
 
     ErrorMessage(String mensagem){

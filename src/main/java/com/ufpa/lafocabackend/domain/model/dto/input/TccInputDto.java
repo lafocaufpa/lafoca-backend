@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class TccDto {
+public class TccInputDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 

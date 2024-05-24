@@ -3,8 +3,8 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Member;
-import com.ufpa.lafocabackend.domain.model.dto.MemberDto;
-import com.ufpa.lafocabackend.domain.model.dto.PhotoDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.domain.service.MemberPhotoService;
@@ -20,7 +20,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

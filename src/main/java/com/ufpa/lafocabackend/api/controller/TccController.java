@@ -2,7 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Tcc;
-import com.ufpa.lafocabackend.domain.model.dto.input.TccDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
 import com.ufpa.lafocabackend.domain.service.TccService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -28,52 +28,52 @@ public class TccController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<TccDto> add (@RequestBody @Valid TccDto tccDto) {
+    public ResponseEntity<TccInputDto> add (@RequestBody @Valid TccInputDto tccInputDto) {
 
-        final Tcc tcc = modelMapper.map(tccDto, Tcc.class);
+        final Tcc tcc = modelMapper.map(tccInputDto, Tcc.class);
 
         final Tcc tccSaved = tccService.save(tcc);
-        final TccDto map = modelMapper.map(tccSaved, TccDto.class);
+        final TccInputDto map = modelMapper.map(tccSaved, TccInputDto.class);
 
         return ResponseEntity.ok(map);
     }
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{tccId}")
-    public ResponseEntity<TccDto> read (@PathVariable Long tccId){
+    public ResponseEntity<TccInputDto> read (@PathVariable Long tccId){
 
         final Tcc tcc = tccService.read(tccId);
 
-        final TccDto map = modelMapper.map(tcc, TccDto.class);
+        final TccInputDto map = modelMapper.map(tcc, TccInputDto.class);
 
         return ResponseEntity.ok(map);
     }
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Collection<TccDto>> list (){
+    public ResponseEntity<Collection<TccInputDto>> list (){
 
         final List<Tcc> list = tccService.list();
 
-        final Type type = new TypeToken<List<TccDto>>() {
+        final Type type = new TypeToken<List<TccInputDto>>() {
         }.getType();
 
-        final List<TccDto> map = modelMapper.map(list, type);
+        final List<TccInputDto> map = modelMapper.map(list, type);
 
         return ResponseEntity.ok(map);
     }
 
     @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{tccId}")
-    public ResponseEntity<TccDto> update (@PathVariable Long tccId, @RequestBody TccDto newTcc){
+    public ResponseEntity<TccInputDto> update (@PathVariable Long tccId, @RequestBody TccInputDto newTcc){
 
         final Tcc currentTcc = tccService.read(tccId);
         modelMapper.map(newTcc, currentTcc);
         currentTcc.setTccId(tccId);
 
         final Tcc tccUpdated = tccService.update(currentTcc);
-        final TccDto tccDto = modelMapper.map(tccUpdated, TccDto.class);
-        return ResponseEntity.ok(tccDto);
+        final TccInputDto tccInputDto = modelMapper.map(tccUpdated, TccInputDto.class);
+        return ResponseEntity.ok(tccInputDto);
     }
 
     @CheckSecurityPermissionMethods.Level1

@@ -9,7 +9,7 @@ import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
-import com.ufpa.lafocabackend.domain.model.dto.input.userInputPasswordDTO;
+import com.ufpa.lafocabackend.domain.model.dto.input.UserInputPasswordDTO;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
 
@@ -93,7 +92,7 @@ public class UserService {
     }
 
     @Transactional
-    public void changePassword(userInputPasswordDTO passwordDTO, String userId) {
+    public void changePassword(UserInputPasswordDTO passwordDTO, String userId) {
         final User user = getOrFail(userId);
 
         if(!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword()))

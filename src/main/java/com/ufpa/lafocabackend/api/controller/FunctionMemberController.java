@@ -2,7 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.FunctionMember;
-import com.ufpa.lafocabackend.domain.model.dto.FunctionMemberDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;
 import com.ufpa.lafocabackend.domain.service.FunctionMemberService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
