@@ -35,7 +35,7 @@ public class NewsPhotoService {
     @Transactional
     public PhotoDto save(News news, CustomMultipartFile photo) throws IOException {
 
-        String originalPhotoFilename = createPhotoFilename(news.getSlug(), photo.getOriginalFilename());
+        String originalPhotoFilename = createPhotoFilename(news.getNewsId(), photo.getOriginalFilename());
 
         NewsPhoto newsPhoto = new NewsPhoto();
         newsPhoto.setPhotoId(news.getNewsId());
