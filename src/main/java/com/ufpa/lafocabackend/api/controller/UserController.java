@@ -2,6 +2,8 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
+import com.ufpa.lafocabackend.domain.exception.CannotDeleteOnlyAdministratorException;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
@@ -92,7 +94,19 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> delete(@PathVariable String userId) {
 
-        userService.removePhoto(userService.read(userId));
+
+        User user = userService.read(userId);
+
+        boolean isAdmin = user.getGroups().stream().anyMatch(group -> group.getGroupId() == 1L);
+
+        if (isAdmin) {
+            boolean moreThanOneAdmin = userService.existsMoreThanOneAdministrator();
+            if (!moreThanOneAdmin) {
+                throw new CannotDeleteOnlyAdministratorException(ErrorMessage.UNICO_ADM.get());
+            }
+        }
+
+        userService.removePhoto(user);
         userService.delete(userId);
         return ResponseEntity.noContent().build();
     }

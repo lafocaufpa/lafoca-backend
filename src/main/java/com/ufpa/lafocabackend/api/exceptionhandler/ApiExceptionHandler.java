@@ -86,6 +86,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
     }
 
+    @ExceptionHandler(CannotDeleteOnlyAdministratorException.class)
+    public ResponseEntity<?> handleCannotDeleteOnlyAdministratorException(Exception ex, WebRequest request) {
+        HttpStatus statusNotFound = HttpStatus.FORBIDDEN;
+        ProblemType problemType = ProblemType.ERRO_NEGOCIO;
+        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ex.getMessage()).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(Exception ex, WebRequest request) {
         HttpStatus statusNotFound = HttpStatus.FORBIDDEN;

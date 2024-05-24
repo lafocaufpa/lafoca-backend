@@ -19,5 +19,8 @@ public interface UserRepository extends JpaRepository<User, String> {
      */
     boolean existsByEmail(String email);
 
+    @Query("SELECT COUNT(u) > 1 FROM User u JOIN u.groups g WHERE g.groupId = :groupId")
+    boolean existsMoreThanOneAdministrator(Long groupId);
+
     Optional<User> findBySlug(String slug);
 }

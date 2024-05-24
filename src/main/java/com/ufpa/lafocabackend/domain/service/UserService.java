@@ -148,4 +148,8 @@ public class UserService {
             user.removePhoto();
         }
     }
+
+    public boolean existsMoreThanOneAdministrator() {
+        return userRepository.existsMoreThanOneAdministrator(1L);
+    }
 }
