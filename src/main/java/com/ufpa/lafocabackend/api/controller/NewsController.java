@@ -38,9 +38,7 @@ public class NewsController {
     @PostMapping
     public ResponseEntity<NewsDto> add (@RequestBody @Valid NewsInputDto newsInputDto) {
 
-        final News news = modelMapper.map(newsInputDto, News.class);
-
-        final NewsDto newsDto = modelMapper.map(newsService.save(news), NewsDto.class);
+        final NewsDto newsDto = modelMapper.map(newsService.save(newsInputDto), NewsDto.class);
         return ResponseEntity.ok(newsDto);
     }
 
@@ -78,7 +76,7 @@ public class NewsController {
 
         modelMapper.map(newsInputDto, news);
 
-        final News newsUpdate = newsService.update(news);
+        final News newsUpdate = newsService.update(newsSlug, newsInputDto);
         final NewsDto newsDto = modelMapper.map(newsUpdate, NewsDto.class);
         return ResponseEntity.ok(newsDto);
     }

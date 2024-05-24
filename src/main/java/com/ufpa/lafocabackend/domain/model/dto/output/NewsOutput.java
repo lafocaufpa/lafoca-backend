@@ -5,16 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
 public class NewsOutput {
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String slug;
     private String title;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OffsetDateTime newsDate;
     private String description;
+    private Set<LineOfResearchDto> linesOfResearch;
     private String urlPhoto;
 }

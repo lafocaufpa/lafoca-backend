@@ -2,13 +2,17 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
+import com.ufpa.lafocabackend.domain.model.LineOfResearch;
 import com.ufpa.lafocabackend.domain.model.News;
+import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
 import com.ufpa.lafocabackend.repository.NewsRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,13 +20,23 @@ public class NewsService {
 
 
     private final NewsRepository newsRepository;
+    private final ModelMapper modelMapper;
+    private final LineOfResearchService lineOfResearchService;
 
-    public NewsService(NewsRepository newsRepository) {
+    public NewsService(NewsRepository newsRepository, ModelMapper modelMapper, LineOfResearchService lineOfResearchService) {
         this.newsRepository = newsRepository;
+        this.modelMapper = modelMapper;
+        this.lineOfResearchService = lineOfResearchService;
     }
     
-    public News save(News news){
-        
+    public News save(NewsInputDto newsInputDto){
+
+        final News news = modelMapper.map(newsInputDto, News.class);
+
+        for (String lineOfResearchId : newsInputDto.getLineOfResearchIds()) {
+            LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
+            news.addLineOfResearch(lineOfResearch);
+        }
 
         return newsRepository.save(news);
     }
@@ -32,8 +46,21 @@ public class NewsService {
     }
 
     @Transactional
-    public News update(News news){
-        return save(news);
+    public News update(String newsSlug, NewsInputDto newNewsInputDto){
+
+        News news = read(newsSlug);
+        modelMapper.map(newNewsInputDto, news);
+        news.setNewsId(newsSlug);
+
+        List<LineOfResearch> linesOfResearches = new ArrayList<>();
+        for (String lineOfResearchId : newNewsInputDto.getLineOfResearchIds()) {
+            LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
+            linesOfResearches.add(lineOfResearch);
+        }
+
+        news.setLinesOfResearch(linesOfResearches);
+
+        return newsRepository.save(news);
     }
 
     @Transactional

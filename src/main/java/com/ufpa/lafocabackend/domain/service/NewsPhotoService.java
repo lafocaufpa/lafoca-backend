@@ -57,7 +57,6 @@ public class NewsPhotoService {
         newsPhotoSaved.setUrl(url);
 
         news.setNewsPhoto(newsPhotoSaved);
-        newsService.save(news);
         return modelMapper.map(newsPhotoSaved, PhotoDto.class);
     }
 

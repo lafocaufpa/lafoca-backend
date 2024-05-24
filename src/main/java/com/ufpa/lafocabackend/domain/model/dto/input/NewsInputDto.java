@@ -1,8 +1,12 @@
 package com.ufpa.lafocabackend.domain.model.dto.input;
 
+import com.ufpa.lafocabackend.domain.model.dto.output.LineOfResearchDto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,7 +18,7 @@ public class NewsInputDto {
     @NotBlank
     private String content;
 
-    @NotBlank
-    private String tags;
+    @NotNull
+    private List<@NotNull String> lineOfResearchIds;
 
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,7 +24,7 @@ public class NewsDto {
 
     private String description;
 
-    private String tags;
+    private Set<LineOfResearchDto> linesOfResearch;
 
     private String content;
 
