@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.repository;
 
 import com.ufpa.lafocabackend.domain.model.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,8 +20,8 @@ public interface UserRepository extends JpaRepository<User, String> {
      */
     boolean existsByEmail(String email);
 
-    @Query("SELECT COUNT(u) > 1 FROM User u JOIN u.groups g WHERE g.groupId = :groupId")
-    boolean existsMoreThanOneAdministrator(Long groupId);
+    @Query("SELECT COUNT(u) FROM User u JOIN u.groups g WHERE g.groupId = :groupId")
+    long countUsersInGroup(Long groupId);
 
     Optional<User> findBySlug(String slug);
 }

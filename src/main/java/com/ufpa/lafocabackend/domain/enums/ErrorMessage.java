@@ -22,7 +22,7 @@ public enum ErrorMessage {
     TIPO_NAO_PERMITIDO("Extensão de arquivo não permitida. Apenas .jpg, .png, .svg, .jpeg são aceitas."),
     TAMANHO_INVALIDO("O arquivo deve ter entre 20KB e 5MB."),
     EMAIL_EXISTENTE("Email já cadastrado."),
-    UNICO_ADM("Não é possível excluir o único administrador.");
+    UNICO_ADM("O sistema não pode ficar sem um administrador.");
 
     private String mensagem;
 

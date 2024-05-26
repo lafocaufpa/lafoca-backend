@@ -15,6 +15,7 @@ import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,9 @@ import java.util.Set;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
+    @Value("${group.admin.id}")
+    private Long adminGroupId;
 
     private final UserService userService;
     private final ModelMapper modelMapper;
@@ -97,13 +101,9 @@ public class UserController {
 
         User user = userService.read(userId);
 
-        boolean isAdmin = user.getGroups().stream().anyMatch(group -> group.getGroupId() == 1L);
-
-        if (isAdmin) {
-            boolean moreThanOneAdmin = userService.existsMoreThanOneAdministrator();
-            if (!moreThanOneAdmin) {
-                throw new CannotDeleteOnlyAdministratorException(ErrorMessage.UNICO_ADM.get());
-            }
+        boolean thereAreTwoOrMoreAdministrators = userService.existsMoreThanOneAdministrator();
+        if (!thereAreTwoOrMoreAdministrators) {
+            throw new CannotDeleteOnlyAdministratorException(ErrorMessage.UNICO_ADM.get());
         }
 
         userService.removePhoto(user);
@@ -162,7 +162,7 @@ public class UserController {
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
     @GetMapping("/{userId}/groups")
-    public ResponseEntity<Collection<GroupDto>> listGroups(@PathVariable String userId){
+    public ResponseEntity<Collection<GroupDto>> listGroups(@PathVariable String userId) {
 
         final User user = userService.read(userId);
 

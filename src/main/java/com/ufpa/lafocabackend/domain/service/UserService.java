@@ -12,6 +12,7 @@ import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputPasswordDTO;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,9 @@ import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
 
 @Service
 public class UserService {
+
+    @Value("${group.admin.id}")
+    private Long adminGroupId;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -149,7 +153,11 @@ public class UserService {
         }
     }
 
+    public boolean existsAdminUser() {
+        return userRepository.countUsersInGroup(adminGroupId) >= 1;
+    }
+
     public boolean existsMoreThanOneAdministrator() {
-        return userRepository.existsMoreThanOneAdministrator(1L);
+        return userRepository.countUsersInGroup(adminGroupId) >= 2;
     }
 }

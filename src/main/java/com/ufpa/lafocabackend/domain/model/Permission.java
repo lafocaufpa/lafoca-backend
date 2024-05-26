@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Data
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Permission {
 
@@ -18,6 +20,10 @@ public class Permission {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 225)
     private String description;
+
+    public Permission() {
+
+    }
 }

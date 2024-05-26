@@ -9,6 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PermissionService {
@@ -57,4 +58,7 @@ public class PermissionService {
                 .orElseThrow( () -> new EntityNotFoundException(Permission.class.getSimpleName(), permissionId));
     }
 
+    public Optional<Permission> orElseGet(Long id) {
+        return permissionRepository.findById(id);
+    }
 }

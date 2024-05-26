@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "access_group")
 public class Group {
@@ -30,6 +32,10 @@ public class Group {
                     name = "permission_id",
                     foreignKey = @ForeignKey(name = "fk_permission_group_permission_id")))
     private Set<Permission> permissions = new HashSet<>();
+
+    public Group() {
+
+    }
 
     public boolean associatePermission(Permission Permission) {
         return permissions.add(Permission);

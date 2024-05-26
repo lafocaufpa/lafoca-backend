@@ -60,6 +60,10 @@ public class GroupService {
                 .orElseThrow( () -> new EntityNotFoundException(Group.class.getSimpleName(), groupId));
     }
 
+    public boolean existsById(Long groupId) {
+        return groupRepository.existsById(groupId);
+    }
+
     @Transactional
     public void addPermission(Long groupId, Long permissionId) {
         final Group group = read(groupId);
