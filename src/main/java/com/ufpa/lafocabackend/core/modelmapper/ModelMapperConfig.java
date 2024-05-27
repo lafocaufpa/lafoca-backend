@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.core.modelmapper;
 
 import com.ufpa.lafocabackend.domain.model.*;
+import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
@@ -47,6 +48,17 @@ public class ModelMapperConfig {
                 skip(destination.getSkills());
                 skip(destination.getProjects());
                 skip(destination.getArticles());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<UserInputDto, User>() {
+            @Override
+            protected void configure() {
+                skip(destination.getUserId());
+                skip(destination.getSlug());
+                skip(destination.getPassword());
+                skip(destination.getDateRegister());
+                skip(destination.getGroups());
             }
         });
 

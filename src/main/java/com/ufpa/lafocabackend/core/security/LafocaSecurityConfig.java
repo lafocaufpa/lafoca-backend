@@ -51,6 +51,7 @@ public class LafocaSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/projects/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/info/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/lines-of-research/**").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/users/reset-password").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

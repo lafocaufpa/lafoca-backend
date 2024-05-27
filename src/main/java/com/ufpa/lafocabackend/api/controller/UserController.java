@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.security.dto.ResetPassword;
 import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.domain.exception.CannotDeleteOnlyAdministratorException;
 import com.ufpa.lafocabackend.domain.model.Group;
@@ -87,10 +88,7 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> update(@RequestBody UserInputDto userInputDto, @PathVariable String userId) {
 
-        final User existingUser = userService.read(userId);
-
-        modelMapper.map(userInputDto, existingUser);
-        final UserDto userDto = modelMapper.map(existingUser, UserDto.class);
+        final UserDto userDto = modelMapper.map(userService.update(userInputDto, userId), UserDto.class);
         return ResponseEntity.ok(userDto);
     }
 
@@ -116,6 +114,13 @@ public class UserController {
     public ResponseEntity<Void> updatePassword(@RequestBody @Valid UserInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
         userService.changePassword(passwordDTO, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestBody ResetPassword email) {
+
+        userService.resetPassword(email.email());
         return ResponseEntity.noContent().build();
     }
 
