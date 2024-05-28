@@ -1,12 +1,10 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.core.file.CustomMultipartFile;
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
-import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
-import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
-import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
-import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
+import com.ufpa.lafocabackend.domain.exception.*;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
@@ -18,6 +16,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
 
 @Service
+@EnableAsync
 public class UserService {
 
     @Value("${group.admin.id}")
@@ -55,8 +57,8 @@ public class UserService {
     public User save(User user) {
 
         /*Se um user vindo do banco com o mesmo email for diferente do user vindo da requisição, cai no if */
-        if(userRepository.existsUserByEmail(user.getEmail())){
-            throw  new EntityAlreadyRegisteredException(User.class.getSimpleName(), user.getEmail());
+        if (userRepository.existsUserByEmail(user.getEmail())) {
+            throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), user.getEmail());
 
         }
 
@@ -78,7 +80,7 @@ public class UserService {
 
         Set<Group> groups = new HashSet<>();
 
-        for (Long groupId: userInputDto.getGroups()) {
+        for (Long groupId : userInputDto.getGroups()) {
             Group group = groupService.read(groupId);
             groups.add(group);
         }
@@ -113,6 +115,11 @@ public class UserService {
     public User readBySlug(String slug) {
         return userRepository.findBySlug(slug).
                 orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), slug));
+    }
+
+    public User readByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), email));
     }
 
     @Transactional
@@ -181,53 +188,32 @@ public class UserService {
         return userRepository.countUsersInGroup(adminGroupId) > 1;
     }
 
+    @Transactional
+    @Async
     public void resetPassword(String email) {
 
-        String body = "<!DOCTYPE html>" +
-                "<html lang=\"en\">" +
-                "<head>" +
-                "    <meta charset=\"UTF-8\">" +
-                "    <title>Password Reset</title>" +
-                "    <style>" +
-                "        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }" +
-                "        .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }" +
-                "        .header { text-align: center; padding-bottom: 20px; }" +
-                "        .header h1 { margin: 0; color: #007BFF; }" +
-                "        .content { margin: 20px 0; }" +
-                "        .content p { margin: 10px 0; }" +
-                "        .footer { margin-top: 20px; text-align: center; font-size: 0.9em; color: #666; }" +
-                "    </style>" +
-                "</head>" +
-                "<body>" +
-                "    <div class=\"container\">" +
-                "        <div class=\"header\">" +
-                "            <h1>Password Reset</h1>" +
-                "        </div>" +
-                "        <div class=\"content\">" +
-                "            <p>Hi <strong>Name</strong>,</p>" +
-                "            <p>Someone - presumably you - has requested a password reset on Lafoca.com.br</p>" +
-                "            <p>Your new login information is as follows:</p>" +
-                "            <p>Username: <strong>username</strong></p>" +
-                "            <p>Password: <strong>12345678</strong></p>" +
-                "            <p>To login, please click the link below or paste it into your browser's address bar.</p>" +
-                "            <p><a href=\"https://lafoca.com.br/login\" target=\"_blank\">https://lafoca.com.br/login</a></p>" +
-                "        </div>" +
-                "        <div class=\"footer\">" +
-                "            <p>PLEASE DO NOT REPLY TO THIS MESSAGE!</p>" +
-                "            <p>Regards,</p>" +
-                "            <p>Lafoca.com.br Administrator</p>" +
-                "        </div>" +
-                "    </div>" +
-                "</body>" +
-                "</html>";
+        User user = null;
+        try {
+            user = readByEmail(email);
+        } catch (EntityNotFoundException e) {
+            return;
+        }
 
-        userRepository.findByEmail(email).isEmpty();
+        String password = LafocaUtils.generateRandomPassword();
 
-            EmailService.Message message = EmailService.Message.builder()
-                    .body(body)
-                    .recipient(email)
-                    .subject("Password Reset").build();
-            smtpSendEmailService.send(message);
+        sendResetPasswordEmailAsync(email, user, password);
 
+        user.setPassword(passwordEncoder.encode(password));
+
+    }
+
+    public void sendResetPasswordEmailAsync(String email, User user, String password) {
+        EmailService.Message message = EmailService.Message.builder()
+                .body("reset-password.html")
+                .variable("password", password)
+                .variable("user", user)
+                .recipient(email)
+                .subject("Redefinição de Senha").build();
+        smtpSendEmailService.send(message);
     }
 }

@@ -1,9 +1,11 @@
 package com.ufpa.lafocabackend.core.utils;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
+import java.util.*;
 
 public class LafocaUtils {
 
@@ -55,4 +57,40 @@ public class LafocaUtils {
                         (originalFilename)
                 .substring(originalFilename.lastIndexOf("."));
     }
+
+    public static String generateRandomPassword() {
+        int length = 10;
+        Random random = new Random();
+
+        List<Character> characters = new ArrayList<>();
+
+        for (char c = 'A'; c <= 'Z'; c++) {
+            characters.add(c);
+        }
+
+        for (char c = 'a'; c <= 'z'; c++) {
+            characters.add(c);
+        }
+
+        for (char c = '0'; c <= '9'; c++) {
+            characters.add(c);
+        }
+
+        List<Character> result = new ArrayList<>();
+
+        for (int i = 0; i < length - 1; i++) {
+            result.add(characters.get(random.nextInt(characters.size())));
+        }
+
+        result.add('@');
+        Collections.shuffle(result);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Character ch : result) {
+            stringBuilder.append(ch);
+        }
+
+        return stringBuilder.toString();
+    }
+
 }
