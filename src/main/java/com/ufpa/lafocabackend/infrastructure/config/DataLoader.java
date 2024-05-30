@@ -6,8 +6,10 @@ import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.service.GroupService;
 import com.ufpa.lafocabackend.domain.service.PermissionService;
 import com.ufpa.lafocabackend.domain.service.UserService;
+import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -19,6 +21,8 @@ public class DataLoader implements CommandLineRunner {
     private final GroupService groupService;
     private final PermissionService permissionService;
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
 
     @Value("${group.admin.id}")
     private Long adminGroupId;
@@ -53,10 +57,12 @@ public class DataLoader implements CommandLineRunner {
     @Value("${default.admin.user.password}")
     private String defaultAdminPassword;
 
-    public DataLoader(GroupService groupService, PermissionService permissionService, UserService userService) {
+    public DataLoader(GroupService groupService, PermissionService permissionService, UserService userService, UserRepository userRepository, PasswordEncoder encoder) {
         this.groupService = groupService;
         this.permissionService = permissionService;
         this.userService = userService;
+        this.userRepository = userRepository;
+        this.encoder = encoder;
     }
 
     @Override
@@ -81,9 +87,9 @@ public class DataLoader implements CommandLineRunner {
             User defaultAdmin = new User();
             defaultAdmin.setEmail(defaultAdminEmail);
             defaultAdmin.setName(defaultAdminName);
-            defaultAdmin.setPassword(defaultAdminPassword);
+            defaultAdmin.setPassword(encoder.encode(defaultAdminPassword));
             defaultAdmin.getGroups().add(groupService.read(adminGroupId));
-            userService.save(defaultAdmin);
+            userRepository.save(defaultAdmin);
         }
     }
 

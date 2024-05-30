@@ -14,7 +14,8 @@ public enum ProblemType {
     ERRO_NEGOCIO("erro-negocio", "Violação de regra de negócio"),
     TOKEN_EXPIRADO("token-expirado", "O token está inválido"),
     DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos"),
-    ARQUIVO_INVALIDO("/arquivo-invalido", "O arquivo enviado não pôde ser processado");
+    ARQUIVO_INVALIDO("/arquivo-invalido", "O arquivo enviado não pôde ser processado"),
+    ERRO_NO_SISTEMA("/erro-interno", "Consulte o administrador do sistema.");
 //    CORPO_NAO_LEGIVEL("/corpo-nao-legivel", "Corpo não legível"),
 //    PARAMETRO_INVALIDO("/parametro-invalido", "parametro inválido"),
 //    ERRO_DE_SISTEMA("/erro-de-sistema","Erro de interno do sistema."),

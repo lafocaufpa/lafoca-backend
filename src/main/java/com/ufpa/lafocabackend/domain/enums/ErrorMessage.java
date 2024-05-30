@@ -11,7 +11,7 @@ package com.ufpa.lafocabackend.domain.enums;
  */
 public enum ErrorMessage {
     ENTIDADE_NOT_FOUND("A entidade %s de código %s não foi encontrada."),
-    ENTIDADE_EM_USO("A entidade %s de código %d não pode ser excluída, pois está em uso."),
+    ENTIDADE_EM_USO("A entidade %s de código %s não pode ser excluída, pois está em uso."),
     SENHA_NAO_COINCIDE("Senha atual informada não coincide com a senha do usuário."),
     ENTIDADE_EXISTENTE("Entidade %s de identificação %s já existe."),
     PERMISSAO_NAO_ENCONTRADA("Não existe permissão de código %d."),

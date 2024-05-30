@@ -20,6 +20,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @RestControllerAdvice
@@ -81,7 +82,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleDataIntegrityViolation(Exception ex, WebRequest request) {
         HttpStatus statusNotFound = HttpStatus.BAD_REQUEST;
         ProblemType problemType = ProblemType.ERRO_NEGOCIO;
-        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ErrorMessage.EMAIL_EXISTENTE.get()).build();
+
+        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
     }
@@ -104,6 +106,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
     }
 
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<?> handleErroNoSistemaException(Exception ex, WebRequest request) {
+        HttpStatus statusNotFound = HttpStatus.INTERNAL_SERVER_ERROR;
+        ProblemType problemType = ProblemType.ERRO_NO_SISTEMA;
+        final Problem problem = createProblemType(statusNotFound, problemType, Arrays.toString(ex.getStackTrace())).userMessage(ex.getMessage()).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
+    }
+
     @ExceptionHandler(EntityInUseException.class)
     public ResponseEntity<?> handleEntityInUseException(Exception ex, WebRequest request) {
         HttpStatus statusNotFound = HttpStatus.CONFLICT;
@@ -117,7 +128,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handlePasswordDoesNotMachException(Exception ex, WebRequest request) {
         HttpStatus statusNotFound = HttpStatus.UNPROCESSABLE_ENTITY;
         ProblemType problemType = ProblemType.ERRO_NEGOCIO;
-        final Problem problem = createProblemType(statusNotFound, problemType, "")
+        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage())
                 .userMessage(ex.getMessage())
                 .build();
 

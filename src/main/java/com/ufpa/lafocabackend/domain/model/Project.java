@@ -22,9 +22,6 @@ public class Project {
     @EqualsAndHashCode.Include
     private String projectId;
 
-    @Column(nullable = false)
-    private String type;
-
     @ManyToMany
     @JoinTable(name = "project_line_of_research",
             joinColumns = @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "fk_project_research_id")),

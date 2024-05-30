@@ -9,17 +9,15 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UserInputDto {
+public class UserPersonalInputDto {
 
-    @NotBlank
-    private String email;
+        @NotBlank
+        private String email;
 
-    @NotBlank
-    private String name;
+        @NotBlank
+        private String name;
 
-    @NotNull
-    private String password;
+        @NotNull
+        private List<@NotNull Long> groups;
 
-    @NotNull
-    private List<@NotNull Long> groups;
 }

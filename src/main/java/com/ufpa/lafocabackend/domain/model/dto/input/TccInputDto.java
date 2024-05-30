@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.domain.model.dto.input;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ufpa.lafocabackend.core.validation.ValidDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class TccInputDto {
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @ValidDate
     private LocalDate date;
 
 }

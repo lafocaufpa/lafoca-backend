@@ -40,7 +40,6 @@ public class MemberInputDto {
     @NotNull
     private List<@Positive @NotNull Integer> skillsId;
 
-    @NotNull
     @Valid
     private TccInputDto tcc;
 

@@ -59,7 +59,7 @@ public class LineOfResearchController {
 
     @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{lineOfResearchId}")
-    public ResponseEntity<LineOfResearchDto> update (@PathVariable String lineOfResearchId, @RequestBody LineOfResearchDto newArticle){
+    public ResponseEntity<LineOfResearchDto> update (@PathVariable String lineOfResearchId, @RequestBody @Valid LineOfResearchDto newArticle){
         
         final LineOfResearchDto articletUpdated = modelMapper.map(lineOfResearchService.update(lineOfResearchId, newArticle), LineOfResearchDto.class);
         return ResponseEntity.ok(articletUpdated);

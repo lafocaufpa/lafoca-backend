@@ -56,7 +56,6 @@ public class ModelMapperConfig {
             protected void configure() {
                 skip(destination.getUserId());
                 skip(destination.getSlug());
-                skip(destination.getPassword());
                 skip(destination.getDateRegister());
                 skip(destination.getGroups());
             }

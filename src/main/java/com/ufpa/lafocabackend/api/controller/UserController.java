@@ -7,6 +7,7 @@ import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.domain.exception.CannotDeleteOnlyAdministratorException;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
+import com.ufpa.lafocabackend.domain.model.dto.input.UserPersonalInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
@@ -46,9 +47,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDto> add(@RequestBody @Valid UserInputDto userInputDto) {
 
-        final User user = modelMapper.map(userInputDto, User.class);
-
-        final UserDto userDto = modelMapper.map(userService.save(user), UserDto.class);
+        final UserDto userDto = modelMapper.map(userService.save(userInputDto), UserDto.class);
 
         return ResponseEntity.ok(userDto);
     }
@@ -86,7 +85,7 @@ public class UserController {
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1OrLevel2
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> update(@RequestBody UserInputDto userInputDto, @PathVariable String userId) {
+    public ResponseEntity<UserDto> update(@RequestBody @Valid UserPersonalInputDto userInputDto, @PathVariable String userId) {
 
         final UserDto userDto = modelMapper.map(userService.update(userInputDto, userId), UserDto.class);
         return ResponseEntity.ok(userDto);

@@ -4,11 +4,15 @@ import com.ufpa.lafocabackend.core.file.CustomMultipartFile;
 import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
-import com.ufpa.lafocabackend.domain.exception.*;
+import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
+import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
+import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
+import com.ufpa.lafocabackend.domain.exception.PasswordDoesNotMachException;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputPasswordDTO;
+import com.ufpa.lafocabackend.domain.model.dto.input.UserPersonalInputDto;
 import com.ufpa.lafocabackend.infrastructure.SmtpEmailService;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.UserRepository;
@@ -25,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
@@ -34,15 +37,14 @@ import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
 @EnableAsync
 public class UserService {
 
-    @Value("${group.admin.id}")
-    private Long adminGroupId;
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final GroupService groupService;
     private final PhotoStorageService photoStorageService;
     private final SmtpEmailService smtpSendEmailService;
     private final ModelMapper modelMapper;
+    @Value("${group.admin.id}")
+    private Long adminGroupId;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupService groupService, PhotoStorageService photoStorageService, SmtpEmailService smtpSendEmailService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
@@ -54,15 +56,26 @@ public class UserService {
     }
 
     @Transactional
-    public User save(User user) {
+    public User save(UserInputDto userDto) {
 
-        /*Se um user vindo do banco com o mesmo email for diferente do user vindo da requisição, cai no if */
-        if (userRepository.existsUserByEmail(user.getEmail())) {
-            throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), user.getEmail());
+        /*Se um userDto vindo do banco com o mesmo email for diferente do userDto vindo da requisição, cai no if */
+        if (userRepository.existsUserByEmail(userDto.getEmail())) {
+            throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), userDto.getEmail());
 
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        final User user = modelMapper.map(userDto, User.class);
+
+        Set<Group> groups = new HashSet<>();
+        if (userDto.getGroups() != null) {
+            for (Long id : userDto.getGroups()) {
+                groups.add(groupService.read(id));
+            }
+        }
+
+        user.setGroups(groups);
+
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         return userRepository.save(user);
     }
@@ -72,9 +85,15 @@ public class UserService {
     }
 
     @Transactional
-    public User update(UserInputDto userInputDto, String userId) {
+    public User update(UserPersonalInputDto userInputDto, String userId) {
 
         User user = read(userId);
+
+        if (!user.getEmail().equals(userInputDto.getEmail())) {
+            if (userRepository.existsUserByEmail(userInputDto.getEmail())) {
+                throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), userInputDto.getEmail());
+            }
+        }
 
         modelMapper.map(userInputDto, user);
 
@@ -86,6 +105,7 @@ public class UserService {
         }
 
         user.setGroups(groups);
+        user.setUserId(userId);
         return userRepository.save(user);
     }
 
