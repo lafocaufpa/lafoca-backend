@@ -9,7 +9,8 @@ import lombok.Data;
 public class MemberSummaryDto {
 
     private String id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String slug;
     private String function;
     private String photo;

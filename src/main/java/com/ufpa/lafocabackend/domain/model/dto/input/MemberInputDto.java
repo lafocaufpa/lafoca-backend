@@ -15,7 +15,10 @@ import java.util.List;
 public class MemberInputDto {
 
     @NotBlank
-    private String name;
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
 
     @NotBlank
     private String description;

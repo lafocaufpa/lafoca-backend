@@ -1,29 +1,21 @@
-package com.ufpa.lafocabackend.domain.model.dto.output;
+package com.ufpa.lafocabackend.domain.model.dto.input;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
-public class ProjectDto {
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String id;
+public class ProjectInputDto {
 
     @NotBlank
     private String type;
 
     @NotBlank
     private String title;
-
-    @NotBlank
-    private String slug;
 
     @NotBlank
     private String description;
@@ -33,9 +25,9 @@ public class ProjectDto {
 
     @NotNull
     private String year;
-
+    
     private String urlPhoto;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<LineOfResearchDto> linesOfResearch;
+    @NotNull
+    private List<@NotNull String> lineOfResearchIds;
 }

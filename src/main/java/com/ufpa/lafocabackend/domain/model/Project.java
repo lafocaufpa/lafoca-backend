@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
@@ -22,6 +24,12 @@ public class Project {
 
     @Column(nullable = false)
     private String type;
+
+    @ManyToMany
+    @JoinTable(name = "project_line_of_research",
+            joinColumns = @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "fk_project_research_id")),
+            inverseJoinColumns = @JoinColumn(name = "line_of_research_id", foreignKey = @ForeignKey(name = "fk_research_project_id")))
+    private List<LineOfResearch> linesOfResearch = new ArrayList<>();
 
     @Column(nullable = false, unique = true, length = 500)
     private String slug;
@@ -42,6 +50,14 @@ public class Project {
     @JoinColumn(name = "photo_id", foreignKey = @ForeignKey(name = "fk_project_photo_id"))
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private ProjectPhoto projectPhoto;
+
+    public Boolean addLineOfResearch(LineOfResearch lineOfResearch) {
+        return getLinesOfResearch().add(lineOfResearch);
+    }
+
+    public Boolean removeLineOfResearch(LineOfResearch lineOfResearch) {
+        return getLinesOfResearch().remove(lineOfResearch);
+    }
 
     @PreUpdate
     public void generateSlug() {

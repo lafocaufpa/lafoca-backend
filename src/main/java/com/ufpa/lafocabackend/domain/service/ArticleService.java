@@ -63,9 +63,11 @@ public class ArticleService {
         currentArticle.setArticleId(articleId);
 
         List<LineOfResearch> linesOfResearches = new ArrayList<>();
-        for (String lineOfResearchId : newArticle.getLineOfResearchIds()) {
-            LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
-            linesOfResearches.add(lineOfResearch);
+        if(newArticle.getLineOfResearchIds() != null) {
+            for (String lineOfResearchId : newArticle.getLineOfResearchIds()) {
+                LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
+                linesOfResearches.add(lineOfResearch);
+            }
         }
 
         currentArticle.setLinesOfResearch(linesOfResearches);

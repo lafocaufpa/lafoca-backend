@@ -2,9 +2,9 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
+import com.ufpa.lafocabackend.domain.model.LineOfResearch;
 import com.ufpa.lafocabackend.domain.model.Project;
-import com.ufpa.lafocabackend.domain.model.dto.output.ProjectDto;
-import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
+import com.ufpa.lafocabackend.domain.model.dto.input.ProjectInputDto;
 import com.ufpa.lafocabackend.repository.ProjectRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,38 +14,59 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ModelMapper modelMapper;
+    private final LineOfResearchService lineOfResearchService;
 
-    public ProjectService(ProjectRepository projectRepository, ModelMapper modelMapper) {
+    public ProjectService(ProjectRepository projectRepository, ModelMapper modelMapper, LineOfResearchService lineOfResearchService) {
         this.projectRepository = projectRepository;
         this.modelMapper = modelMapper;
+        this.lineOfResearchService = lineOfResearchService;
     }
 
-    public Project save (ProjectDto projectDto) {
+    public Project save (ProjectInputDto projectInputDto) {
 
-        return projectRepository.save(modelMapper.map(projectDto, Project.class));
+        Project project = modelMapper.map(projectInputDto, Project.class);
+
+        if(projectInputDto.getLineOfResearchIds() != null){
+            for (String lineOfResearchId : projectInputDto.getLineOfResearchIds()) {
+                LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
+                project.addLineOfResearch(lineOfResearch);
+            }
+        }
+
+        return projectRepository.save(project);
     }
 
-    public List<Project> list (){
+    public Page<Project> list (Pageable pageable){
 
-        return projectRepository.findAll();
+        return projectRepository.findAll(pageable);
     }
 
     public Project read (String projectId) {
         return getOrFail(projectId);
     }
 
-    public Project update (String projectId, ProjectDto newProject) {
+    public Project update (String projectId, ProjectInputDto newProject) {
 
         final Project currentProject = read(projectId);
 
         modelMapper.map(newProject, currentProject);
         currentProject.setProjectId(projectId);
+
+        List<LineOfResearch> linesOfResearch = new ArrayList<>();
+
+        for(String id: newProject.getLineOfResearchIds()) {
+            LineOfResearch lineOfResearch = lineOfResearchService.read(id);
+            linesOfResearch.add(lineOfResearch);
+        }
+
+        currentProject.setLinesOfResearch(linesOfResearch);
 
         return projectRepository.save(currentProject);
     }
@@ -64,11 +85,6 @@ public class ProjectService {
     private Project getOrFail(String projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow( () -> new EntityNotFoundException(Project.class.getSimpleName(), projectId));
-    }
-
-    public Page<ProjectSummaryDto> listSummaryProjects(Pageable pageable) {
-
-        return projectRepository.getProjectSummary(pageable);
     }
 
     public Project readBySlug(String projectSlug) {

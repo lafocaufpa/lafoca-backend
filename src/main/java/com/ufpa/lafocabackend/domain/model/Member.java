@@ -26,7 +26,10 @@ public class Member {
     private String memberId;
 
     @Column(nullable = false, length = 225)
-    private String name;
+    private String firstName;
+
+    @Column(nullable = false, length = 225)
+    private String lastName;
 
     @Column(nullable = false, unique = true, length = 500)
     private String slug;
@@ -91,7 +94,7 @@ public class Member {
 
     @PreUpdate
     public void generateSlug() {
-        this.slug = createSlug(this.name, this.memberId);
+        this.slug = createSlug(this.firstName + " " + this.lastName, this.memberId);
 
     }
 

@@ -3,9 +3,9 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Project;
+import com.ufpa.lafocabackend.domain.model.dto.input.ProjectInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ProjectDto;
-import com.ufpa.lafocabackend.domain.model.dto.output.ProjectSummaryDto;
 import com.ufpa.lafocabackend.domain.service.ProjectPhotoService;
 import com.ufpa.lafocabackend.domain.service.ProjectService;
 import jakarta.servlet.http.Part;
@@ -41,9 +41,9 @@ public class ProjectController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping
-    public ResponseEntity<ProjectDto> add (@RequestBody @Valid ProjectDto projectDto) {
+    public ResponseEntity<ProjectDto> add (@RequestBody @Valid ProjectInputDto projectInputDto) {
 
-        final ProjectDto projectSaved = modelMapper.map(projectService.save(projectDto), ProjectDto.class);
+        final ProjectDto projectSaved = modelMapper.map(projectService.save(projectInputDto), ProjectDto.class);
 
         return ResponseEntity.ok(projectSaved);
     }
@@ -67,30 +67,24 @@ public class ProjectController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Collection<ProjectDto>> list (){
+    public ResponseEntity<Page<ProjectDto>> list (@PageableDefault(size = 7) Pageable pageable){
 
-        final List<Project> list = projectService.list();
+        final Page<Project> listProjects = projectService.list(pageable);
 
         Type listType = new TypeToken<List<ProjectDto>>() {
 
         }.getType();
 
-        final List<ProjectDto> map = modelMapper.map(list, listType);
+        final List<ProjectDto> map = modelMapper.map(listProjects.getContent(), listType);
 
-        return ResponseEntity.ok(map);
-    }
+        Page<ProjectDto> projects = new PageImpl<>(map, pageable, listProjects.getTotalElements());
 
-    @GetMapping("/summarized")
-    public ResponseEntity<Page<ProjectSummaryDto>> listProjectsSummarized (@PageableDefault(size = 7) Pageable pageable) {
-
-        final Page<ProjectSummaryDto> projectsSummarizedDtos = projectService.listSummaryProjects(pageable);
-        Page<ProjectSummaryDto> projectsSummarizedPage = new PageImpl<>(projectsSummarizedDtos.getContent(), pageable, projectsSummarizedDtos.getTotalElements());
-        return ResponseEntity.ok(projectsSummarizedPage);
+        return ResponseEntity.ok(projects);
     }
 
     @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{projectId}")
-    public ResponseEntity<ProjectDto> update (@PathVariable String projectId, @RequestBody ProjectDto newProject){
+    public ResponseEntity<ProjectDto> update (@PathVariable String projectId, @RequestBody @Valid ProjectInputDto newProject){
 
         final ProjectDto projectUpdated = modelMapper.map(projectService.update(projectId, newProject), ProjectDto.class);
         return ResponseEntity.ok(projectUpdated);

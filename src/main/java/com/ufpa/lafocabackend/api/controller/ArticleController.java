@@ -32,7 +32,6 @@ public class ArticleController {
 
         final ArticleDto articleSaved = modelMapper.map(articleService.save(articleDto), ArticleDto.class);
 
-
         return ResponseEntity.ok(articleSaved);
     }
 
