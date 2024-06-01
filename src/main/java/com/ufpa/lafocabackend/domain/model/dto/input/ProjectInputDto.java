@@ -12,9 +12,6 @@ import java.util.List;
 public class ProjectInputDto {
 
     @NotBlank
-    private String type;
-
-    @NotBlank
     private String title;
 
     @NotBlank

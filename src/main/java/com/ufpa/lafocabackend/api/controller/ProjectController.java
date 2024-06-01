@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/projects")
@@ -48,12 +50,11 @@ public class ProjectController {
         return ResponseEntity.ok(projectSaved);
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{projectId}")
     public ResponseEntity<ProjectDto> read (@PathVariable String projectId){
 
         final ProjectDto projectDto = modelMapper.map(projectService.read(projectId), ProjectDto.class);
-        return ResponseEntity.ok(projectDto);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(projectDto);
     }
 
     @GetMapping("/search/{projectSlug}")
@@ -62,10 +63,9 @@ public class ProjectController {
         final Project project = projectService.readBySlug(projectSlug);
         ProjectDto projectDto = modelMapper.map(project, ProjectDto.class);
 
-        return ResponseEntity.ok(projectDto);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(projectDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Page<ProjectDto>> list (@PageableDefault(size = 7) Pageable pageable){
 
@@ -79,7 +79,7 @@ public class ProjectController {
 
         Page<ProjectDto> projects = new PageImpl<>(map, pageable, listProjects.getTotalElements());
 
-        return ResponseEntity.ok(projects);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(projects);
     }
 
     @CheckSecurityPermissionMethods.Level1
@@ -101,11 +101,11 @@ public class ProjectController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/{projectId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto(Part part, @PathVariable String projectId) throws IOException {
+    public ResponseEntity<PhotoDto> addPhoto(Part file, @PathVariable String projectId) throws IOException {
 
-        var file = new StandardCustomMultipartFile(part);
+        var customFile = new StandardCustomMultipartFile(file);
         Project member = projectService.read(projectId);
-        return ResponseEntity.ok(projectPhotoService.save(member, file));
+        return ResponseEntity.ok(projectPhotoService.save(member, customFile));
     }
 
     @CheckSecurityPermissionMethods.Level1
@@ -137,10 +137,4 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/generate-slug")
-    public String generateSlug() {
-
-        projectService.createSlugAll();
-        return "<h1>Deu certo!</h1>";
-    }
 }

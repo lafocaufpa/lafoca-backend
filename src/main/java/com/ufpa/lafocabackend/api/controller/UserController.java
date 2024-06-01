@@ -32,9 +32,6 @@ import java.util.Set;
 @RequestMapping("/users")
 public class UserController {
 
-    @Value("${group.admin.id}")
-    private Long adminGroupId;
-
     private final UserService userService;
     private final ModelMapper modelMapper;
 

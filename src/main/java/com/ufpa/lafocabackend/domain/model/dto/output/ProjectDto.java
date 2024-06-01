@@ -17,9 +17,6 @@ public class ProjectDto {
     private String id;
 
     @NotBlank
-    private String type;
-
-    @NotBlank
     private String title;
 
     @NotBlank

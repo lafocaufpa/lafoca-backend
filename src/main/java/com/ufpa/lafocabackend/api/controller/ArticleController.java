@@ -8,12 +8,14 @@ import com.ufpa.lafocabackend.domain.service.ArticleService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/articles")
@@ -35,23 +37,20 @@ public class ArticleController {
         return ResponseEntity.ok(articleSaved);
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{articleId}")
     public ResponseEntity<ArticleDto> read (@PathVariable Long articleId){
 
         final ArticleDto articleDto = modelMapper.map(articleService.read(articleId), ArticleDto.class);
-        return ResponseEntity.ok(articleDto);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(articleDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/search/{articleSlug}")
     public ResponseEntity<ArticleDto> readBySlug (@PathVariable String articleSlug){
 
         final ArticleDto articleDto = modelMapper.map(articleService.readBySlug(articleSlug), ArticleDto.class);
-        return ResponseEntity.ok(articleDto);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(articleDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Collection<ArticleDto>> list (){
 
@@ -63,7 +62,7 @@ public class ArticleController {
 
         final List<ArticleDto> map = modelMapper.map(list, listType);
 
-        return ResponseEntity.ok(map);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(map);
     }
 
     @CheckSecurityPermissionMethods.Level1

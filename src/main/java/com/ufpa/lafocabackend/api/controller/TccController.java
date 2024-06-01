@@ -7,12 +7,14 @@ import com.ufpa.lafocabackend.domain.service.TccService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/tccs")
@@ -38,7 +40,6 @@ public class TccController {
         return ResponseEntity.ok(map);
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{tccId}")
     public ResponseEntity<TccInputDto> read (@PathVariable Long tccId){
 
@@ -46,10 +47,9 @@ public class TccController {
 
         final TccInputDto map = modelMapper.map(tcc, TccInputDto.class);
 
-        return ResponseEntity.ok(map);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(map);
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Collection<TccInputDto>> list (){
 
@@ -60,7 +60,7 @@ public class TccController {
 
         final List<TccInputDto> map = modelMapper.map(list, type);
 
-        return ResponseEntity.ok(map);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(map);
     }
 
     @CheckSecurityPermissionMethods.Level1

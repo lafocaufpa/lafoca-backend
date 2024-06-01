@@ -34,18 +34,14 @@ public class MemberInputDto {
 
     private String linkLinkedin;
 
-    @NotNull
     private Long functionMemberId;
 
-    @NotNull
     private List<@Positive @NotNull Integer> skillsId;
 
     @Valid
     private TccInputDto tcc;
 
-    @NotNull
     private List<@NotNull Long> articlesId;
 
-    @NotNull
     private List<@NotBlank String> projectsId;
 }

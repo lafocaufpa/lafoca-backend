@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.dto.output.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.NewsOutput;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/news")
@@ -35,6 +38,7 @@ public class NewsController {
         this.newsPhotoService = newsPhotoService;
     }
 
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping
     public ResponseEntity<NewsDto> add (@RequestBody @Valid NewsInputDto newsInputDto) {
 
@@ -47,7 +51,7 @@ public class NewsController {
 
         final News news = newsService.readBySlug(newsSlug);
         final NewsDto newsDto = modelMapper.map(news, NewsDto.class);
-        return ResponseEntity.ok(newsDto);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(newsDto);
     }
 
     @GetMapping("/{newsId}")
@@ -55,7 +59,7 @@ public class NewsController {
 
         final News news = newsService.read(newsId);
         final NewsDto newsDto = modelMapper.map(news, NewsDto.class);
-        return ResponseEntity.ok(newsDto);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(newsDto);
     }
 
     @GetMapping
@@ -67,9 +71,10 @@ public class NewsController {
 
         final List<NewsOutput> map = modelMapper.map(list, listType);
 
-        return ResponseEntity.ok(map);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(map);
     }
 
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{newsSlug}")
     public ResponseEntity<NewsDto> update (@PathVariable String newsSlug, @RequestBody NewsInputDto newsInputDto){
         final News news = newsService.readBySlug(newsSlug);
@@ -81,6 +86,7 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping("/{newsSlug}")
     public ResponseEntity<Void> delete (@PathVariable String newsSlug){
 
@@ -91,6 +97,7 @@ public class NewsController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/search/{newsSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String newsSlug) throws IOException {
 
@@ -101,6 +108,7 @@ public class NewsController {
         return ResponseEntity.ok(photoDto);
     }
 
+    @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/{newsId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto (Part file, @PathVariable String newsId) throws IOException {
 
@@ -111,6 +119,7 @@ public class NewsController {
         return ResponseEntity.ok(photoDto);
     }
 
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping(value = "/search/{newsSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String newsSlug) {
 
@@ -119,6 +128,7 @@ public class NewsController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurityPermissionMethods.Level1
     @DeleteMapping(value = "{newsId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String newsId) {
 

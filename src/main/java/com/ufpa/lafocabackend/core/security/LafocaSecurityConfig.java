@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -49,12 +50,14 @@ public class LafocaSecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/check-token").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/members/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/projects/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/tccs/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/articles/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/info/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/lines-of-research/**").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/users/reset-password").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable)
+                        .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer( oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
                 .sessionManagement(session -> session.sessionCreationPolicy((SessionCreationPolicy.STATELESS)));
 

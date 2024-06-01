@@ -61,6 +61,7 @@ public class S3FotoStorageService implements PhotoStorageService {
         DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, getCaminhoArquivo(diretorio, storagePhotoUtils.getFileName()));
         try {
             amazonS3.deleteObject(deleteObjectRequest);
+
         } catch (Exception e) {
             throw new RuntimeException("Não foi possível excluir arquivo na Amazon S3.", e);
         }

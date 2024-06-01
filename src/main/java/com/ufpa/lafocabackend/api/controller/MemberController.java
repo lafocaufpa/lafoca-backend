@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @RestController
@@ -54,7 +56,7 @@ public class MemberController {
 
         final Member member = memberService.read(memberId);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
-        return ResponseEntity.ok(memberDto);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDto);
     }
 
     @GetMapping("/search/{memberSlug}")
@@ -62,7 +64,7 @@ public class MemberController {
 
         final Member member = memberService.readBySlug(memberSlug);
         final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
-        return ResponseEntity.ok(memberDto);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDto);
     }
 
     @GetMapping
@@ -78,14 +80,14 @@ public class MemberController {
 
         Page<MemberDto> memberDtoPage = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return ResponseEntity.ok(memberDtoPage);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDtoPage);
     }
 
     @GetMapping("/summarized")
     public ResponseEntity<Page<MemberSummaryDto>> listMembersSummarized(@PageableDefault(size = 7) Pageable pageable) {
         Page<MemberSummaryDto> memberSummaryDtos = memberService.listSummaryMember(pageable);
         Page<MemberSummaryDto> memberSummaryDtoPage = new PageImpl<>(memberSummaryDtos.getContent(), pageable, memberSummaryDtos.getTotalElements());
-        return ResponseEntity.ok(memberSummaryDtoPage);
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberSummaryDtoPage);
 
     }
 

@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Data
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class FunctionMember {
 
@@ -21,4 +23,8 @@ public class FunctionMember {
 
     @Column(nullable = false, length = 225)
     private String description;
+
+    public FunctionMember() {
+
+    }
 }
