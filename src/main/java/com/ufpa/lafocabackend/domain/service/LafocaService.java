@@ -60,7 +60,7 @@ public class LafocaService {
 
         Lafoca lafoca = lafocaRepository.
                 findFirstByOrderByDateTimeDesc()
-                .orElseThrow(() -> new EntityNotFoundException(Lafoca.class.getSimpleName(), "lafoca"));
+                .orElseThrow(() -> new EntityNotFoundException("Sem registros", ""));
 
         return modelMapper.map(lafoca, LafocaDto.class);
     }

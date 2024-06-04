@@ -1,5 +1,7 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
+import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
@@ -7,6 +9,8 @@ import com.ufpa.lafocabackend.domain.model.*;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
+import com.ufpa.lafocabackend.repository.MemberPhotoRepository;
 import com.ufpa.lafocabackend.repository.MemberRepository;
 import com.ufpa.lafocabackend.repository.TccRepository;
 import org.modelmapper.ModelMapper;
@@ -31,8 +35,10 @@ public class MemberService {
     private final ArticleService articleService;
     private final ProjectService projectService;
     private final TccRepository tccRepository;
+    private final MemberPhotoRepository memberPhotoRepository;
+    private final PhotoStorageService photoStorageService;
 
-    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository) {
+    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService) {
         this.memberRepository = memberRepository;
         this.functionMemberService = functionMemberService;
         this.skillService = skillService;
@@ -41,6 +47,8 @@ public class MemberService {
         this.articleService = articleService;
         this.projectService = projectService;
         this.tccRepository = tccRepository;
+        this.memberPhotoRepository = memberPhotoRepository;
+        this.photoStorageService = photoStorageService;
     }
 
     @Transactional
@@ -147,8 +155,17 @@ public Member readBySlug(String slug) {
 
 public void delete(String memberId) {
 
+    String memberPhotoFileNameByPhotoId = memberPhotoRepository.findMemberPhotoFileNameByPhotoId(memberId);
+
     try {
         memberRepository.deleteById(memberId);
+
+        var storagePhotoUtils = StoragePhotoUtils
+                .builder()
+                .fileName(memberPhotoFileNameByPhotoId)
+                .type(TypeEntityPhoto.Member).build();
+
+        photoStorageService.deletar(storagePhotoUtils);
     } catch (DataIntegrityViolationException e) {
         throw new EntityInUseException(Member.class.getSimpleName(), memberId);
     } catch (EmptyResultDataAccessException e) {

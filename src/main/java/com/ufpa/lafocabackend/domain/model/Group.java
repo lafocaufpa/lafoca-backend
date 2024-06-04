@@ -12,7 +12,11 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "access_group")
+@Table(name = "access_group",
+        uniqueConstraints = {
+        @UniqueConstraint(name = "uk_name", columnNames = {"name"})
+}
+)
 public class Group {
 
     @Id

@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
+
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -20,10 +22,20 @@ public class Tcc {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(columnDefinition = "DATE", nullable = false)
+    @Column(nullable = false, length = 500, unique = true)
+    private String slug;
+
+    @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false, length = 2083, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(700)")
     private String url;
+
+    @PreUpdate
+    @PrePersist
+    public void generateSlug() {
+
+        this.slug = createSlug(this.name, date.toString());
+    }
 
 }

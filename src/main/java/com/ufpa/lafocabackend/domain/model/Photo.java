@@ -22,7 +22,7 @@ public abstract class Photo {
     @Column(nullable = false, length = 15)
     private String contentType;
 
-    @Column(nullable = false, length = 2083)
+    @Column(length = 700)
     private String url;
 
     @Column(nullable = false, length = 225)

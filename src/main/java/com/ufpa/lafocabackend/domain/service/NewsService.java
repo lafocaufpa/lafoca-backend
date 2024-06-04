@@ -1,10 +1,14 @@
 package com.ufpa.lafocabackend.domain.service;
 
+import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
+import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.dto.input.NewsInputDto;
+import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
+import com.ufpa.lafocabackend.repository.NewsPhotoRepository;
 import com.ufpa.lafocabackend.repository.NewsRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,11 +26,15 @@ public class NewsService {
     private final NewsRepository newsRepository;
     private final ModelMapper modelMapper;
     private final LineOfResearchService lineOfResearchService;
+    private final NewsPhotoRepository newsPhotoRepository;
+    private final PhotoStorageService photoStorageService;
 
-    public NewsService(NewsRepository newsRepository, ModelMapper modelMapper, LineOfResearchService lineOfResearchService) {
+    public NewsService(NewsRepository newsRepository, ModelMapper modelMapper, LineOfResearchService lineOfResearchService, NewsPhotoRepository newsPhotoRepository, PhotoStorageService photoStorageService) {
         this.newsRepository = newsRepository;
         this.modelMapper = modelMapper;
         this.lineOfResearchService = lineOfResearchService;
+        this.newsPhotoRepository = newsPhotoRepository;
+        this.photoStorageService = photoStorageService;
     }
     
     public News save(NewsInputDto newsInputDto){
@@ -48,7 +56,7 @@ public class NewsService {
     @Transactional
     public News update(String newsSlug, NewsInputDto newNewsInputDto){
 
-        News news = read(newsSlug);
+        News news = readBySlug(newsSlug);
         modelMapper.map(newNewsInputDto, news);
         news.setNewsId(newsSlug);
 
@@ -64,15 +72,25 @@ public class NewsService {
     }
 
     @Transactional
-    public void delete(String newsId){
+    public void delete(News news){
+
+        String photoFilename = newsPhotoRepository.findNewsPhotoFileNameByPhotoId(news.getNewsId());
+
+        var storagePhotoUtils = StoragePhotoUtils
+                .builder()
+                .fileName(photoFilename)
+                .type(TypeEntityPhoto.News).build();
+
+
 
         try {
-            newsRepository.deleteBySlug(newsId);
+            newsRepository.deleteBySlug(news.getSlug());
             newsRepository.flush();
+            photoStorageService.deletar(storagePhotoUtils);
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(News.class.getSimpleName(), newsId);
+            throw new EntityInUseException(News.class.getSimpleName(), news.getSlug());
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(News.class.getSimpleName(), newsId);
+            throw new EntityNotFoundException(News.class.getSimpleName(), news.getSlug());
         }
 
     }

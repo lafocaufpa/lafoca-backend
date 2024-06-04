@@ -75,11 +75,19 @@ public class NewsController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @PutMapping("/{newsSlug}")
-    public ResponseEntity<NewsDto> update (@PathVariable String newsSlug, @RequestBody NewsInputDto newsInputDto){
-        final News news = newsService.readBySlug(newsSlug);
+    @PutMapping("/{newsId}")
+    public ResponseEntity<NewsDto> update (@PathVariable String newsId, @RequestBody NewsInputDto newsInputDto){
+        final News news = newsService.read(newsId);
 
-        modelMapper.map(newsInputDto, news);
+
+        final News newsUpdate = newsService.update(newsId, newsInputDto);
+        final NewsDto newsDto = modelMapper.map(newsUpdate, NewsDto.class);
+        return ResponseEntity.ok(newsDto);
+    }
+
+    @CheckSecurityPermissionMethods.Level1
+    @PutMapping("/search/{newsSlug}")
+    public ResponseEntity<NewsDto> updateBySlug (@PathVariable String newsSlug, @RequestBody NewsInputDto newsInputDto){
 
         final News newsUpdate = newsService.update(newsSlug, newsInputDto);
         final NewsDto newsDto = modelMapper.map(newsUpdate, NewsDto.class);
@@ -87,15 +95,27 @@ public class NewsController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @DeleteMapping("/{newsSlug}")
-    public ResponseEntity<Void> delete (@PathVariable String newsSlug){
+    @DeleteMapping("/search/{newsSlug}")
+    public ResponseEntity<Void> deleteBySlug(@PathVariable String newsSlug){
 
         final News news = newsService.readBySlug(newsSlug);
 
-        newsService.delete(news.getSlug());
+        newsService.delete(news);
 
         return ResponseEntity.noContent().build();
     }
+
+    @CheckSecurityPermissionMethods.Level1
+    @DeleteMapping("/{newsId}")
+    public ResponseEntity<Void> delete (@PathVariable String newsId){
+
+        final News news = newsService.read(newsId);
+
+        newsService.delete(news);
+
+        return ResponseEntity.noContent().build();
+    }
+
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/search/{newsSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

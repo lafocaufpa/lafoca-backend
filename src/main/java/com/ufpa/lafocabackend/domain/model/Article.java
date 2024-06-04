@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,7 +35,7 @@ public class Article {
     @Column(nullable = false, length = 225)
     private String journal;
 
-    @Column(nullable = false, length = 2083, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(700)")
     private String url;
 
     @ManyToMany

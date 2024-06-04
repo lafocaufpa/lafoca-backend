@@ -1,4 +1,4 @@
-package com.ufpa.lafocabackend.infrastructure.config;
+package com.ufpa.lafocabackend.core.database;
 
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.Permission;

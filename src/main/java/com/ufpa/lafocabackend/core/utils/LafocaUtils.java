@@ -3,9 +3,13 @@ package com.ufpa.lafocabackend.core.utils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.text.Normalizer;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LafocaUtils {
 
@@ -21,26 +25,69 @@ public class LafocaUtils {
      * Se o nome fornecido for "Meu Projeto" e o ID for nulo, o slug resultante será algo como
      * "meu-projeto-04122020231555", onde "04122020231555" representa a data e hora atuais formatadas.
      */
+    // Método principal para criar o slug
     public static String createSlug(String name, String id) {
+        String slug = generateSlugFromName(name);
 
-        String slug = Normalizer.normalize(name, Normalizer.Form.NFD)
+        if (id != null && !id.isEmpty()) {
+            String formattedId = formatId(id);
+            return slug + "-" + formattedId;
+        } else {
+            String currentDate = getCurrentDate();
+            return slug + "-" + currentDate;
+        }
+    }
+
+    // Método para gerar o slug a partir do nome
+    private static String generateSlugFromName(String name) {
+        return Normalizer.normalize(name, Normalizer.Form.NFD)
                 .replaceAll("[^\\p{ASCII}]", "")
                 .toLowerCase()
                 .replaceAll("\\s+", "-")
                 .replaceAll("[^a-z0-9-]", "")
                 .replaceAll("-{2,}", "-");
-        if (id != null) {
-
-            String suffix = id.substring(0, id.indexOf("-"));
-            return slug + "-" + suffix;
-        } else {
-
-            LocalDateTime currentDateTime = LocalDateTime.now();
-            String ddMMyyyyHHmmss = currentDateTime.format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmss"));
-            return slug + "-" + ddMMyyyyHHmmss;
-        }
-
     }
+
+    // Método para formatar o ID, verificando se está no formato de data "yyyy-MM-dd"
+    private static String formatId(String id) {
+        if (isValidDateFormat(id)) {
+            return convertDateFormat(id);
+        } else {
+            return extractPrefix(id);
+        }
+    }
+
+    // Método para verificar se o ID está no formato "yyyy-MM-dd"
+    private static boolean isValidDateFormat(String id) {
+        Pattern pattern = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
+        Matcher matcher = pattern.matcher(id);
+        return matcher.matches();
+    }
+
+    // Método para converter a data de "yyyy-MM-dd" para "dd-MM-yyyy"
+    private static String convertDateFormat(String id) {
+        try {
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate date = LocalDate.parse(id, inputFormatter);
+            return date.format(outputFormatter);
+        } catch (DateTimeParseException e) {
+            // Se ocorrer um erro, retorna o ID original
+            return id;
+        }
+    }
+
+    // Método para extrair o prefixo do ID até o primeiro "-"
+    private static String extractPrefix(String id) {
+        return id.contains("-") ? id.substring(0, id.indexOf("-")) : id;
+    }
+
+    // Método para obter a data e hora atual no formato "dd-MM-yyyy"
+    private static String getCurrentDate() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        return currentDateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    }
+
 
     /**
      * Esse método cria o nome da foto a ser armazenada na nuvem, concatenando o id e o formato de arquivo

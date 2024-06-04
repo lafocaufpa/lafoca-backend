@@ -10,6 +10,8 @@ import java.util.Set;
 @Getter
 @Setter
 public class NewsOutput {
+
+    private String id;
     private String slug;
     private String title;
     private OffsetDateTime newsDate;

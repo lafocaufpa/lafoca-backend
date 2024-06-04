@@ -38,7 +38,7 @@ public class User {
     @Column(columnDefinition = "datetime", nullable = false)
     private OffsetDateTime dateRegister;
 
-    @Column(length = 2083)
+    @Column( columnDefinition = "VARCHAR(700)")
     String urlPhoto;
 
     @ManyToMany

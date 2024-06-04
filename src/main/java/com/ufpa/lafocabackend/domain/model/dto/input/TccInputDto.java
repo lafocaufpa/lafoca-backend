@@ -22,6 +22,9 @@ public class TccInputDto {
     @NotBlank
     private String url;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String slug;
+
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @ValidDate

@@ -37,11 +37,11 @@ public class News {
     @Column(columnDefinition = "datetime", nullable = false)
     private OffsetDateTime newsDate;
 
-    @Column(nullable = false, length = 15000)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "photo_id")
+    @JoinColumn(name = "photo_id", foreignKey = @ForeignKey(name = "fk_photo_id"))
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private NewsPhoto newsPhoto;
 
