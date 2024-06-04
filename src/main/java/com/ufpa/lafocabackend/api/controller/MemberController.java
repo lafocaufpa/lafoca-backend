@@ -59,13 +59,13 @@ public class MemberController {
         return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDto);
     }
 
-    @GetMapping("/search/{memberSlug}")
-    public ResponseEntity<MemberDto> readBySlug(@PathVariable String memberSlug) {
+        @GetMapping("/search/{memberSlug}")
+        public ResponseEntity<MemberDto> readBySlug(@PathVariable String memberSlug) {
 
-        final Member member = memberService.readBySlug(memberSlug);
-        final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDto);
-    }
+            final Member member = memberService.readBySlug(memberSlug);
+            final MemberDto memberDto = modelMapper.map(member, MemberDto.class);
+            return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDto);
+        }
 
     @GetMapping
     public ResponseEntity<Page<MemberDto>> list(@PageableDefault(size = 7) Pageable pageable) {
