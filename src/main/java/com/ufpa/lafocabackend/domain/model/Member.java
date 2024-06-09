@@ -46,7 +46,7 @@ public class Member {
     @Column(nullable = true, unique = true, length = 225)
     private String linkPortifolio;
 
-    @Column(nullable = false, unique = true, length = 225)
+    @Column(nullable = true, unique = true, length = 225)
     private String linkLinkedin;
 
     @ManyToMany

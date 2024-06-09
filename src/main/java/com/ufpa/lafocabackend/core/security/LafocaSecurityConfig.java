@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -56,6 +55,7 @@ public class LafocaSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/lines-of-research/**").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/users/reset-password").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/news/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/hello-world").permitAll()
                                 .anyRequest().authenticated()
                 )
                         .csrf(AbstractHttpConfigurer::disable)
