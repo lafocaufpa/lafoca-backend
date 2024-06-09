@@ -107,7 +107,7 @@ public class UserController {
         User user = userService.read(userId);
 
         boolean thereAreTwoOrMoreAdministrators = userService.existsMoreThanOneAdministrator();
-        if (!thereAreTwoOrMoreAdministrators) {
+        if (!thereAreTwoOrMoreAdministrators && userId.equals(userService.getAuthentication())) {
             throw new CannotDeleteOnlyAdministratorException(ErrorMessage.UNICO_ADM.get());
         }
 
