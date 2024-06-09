@@ -3,10 +3,14 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Tcc;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.service.TccService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,16 +55,18 @@ public class TccController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<TccInputDto>> list (){
+    public ResponseEntity<Page<TccInputDto>> list (Pageable pageable    ){
 
-        final List<Tcc> list = tccService.list();
+        final Page<Tcc> list = tccService.list(pageable);
 
         final Type type = new TypeToken<List<TccInputDto>>() {
         }.getType();
 
-        final List<TccInputDto> map = modelMapper.map(list, type);
+        final List<TccInputDto> map = modelMapper.map(list.getContent(), type);
+        PageImpl<TccInputDto> tccInputDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(map);
+
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(tccInputDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

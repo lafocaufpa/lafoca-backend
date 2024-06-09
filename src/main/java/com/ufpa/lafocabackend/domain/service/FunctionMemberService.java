@@ -6,6 +6,8 @@ import com.ufpa.lafocabackend.domain.model.FunctionMember;
 import com.ufpa.lafocabackend.repository.FunctionMemberRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,9 +26,9 @@ public class FunctionMemberService {
         return functionMemberRepository.save(functionMember);
     }
 
-    public List<FunctionMember> list (){
+    public Page<FunctionMember> list (Pageable pageable){
 
-        return functionMemberRepository.findAll();
+        return functionMemberRepository.findAll(pageable);
     }
 
     public FunctionMember read (Long functionMemberId) {

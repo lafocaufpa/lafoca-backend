@@ -5,10 +5,13 @@ import com.ufpa.lafocabackend.domain.model.dto.output.SkillDto;
 import com.ufpa.lafocabackend.domain.service.SkillService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/skills")
@@ -38,9 +41,12 @@ public class SkillController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Collection<SkillDto>> list (){
+    public ResponseEntity<Page<SkillDto>> list (Pageable pageable){
 
-        return ResponseEntity.ok(skillService.list());
+        Page<SkillDto> list = skillService.list(pageable);
+
+
+        return ResponseEntity.ok(list);
     }
 
     @CheckSecurityPermissionMethods.Level1

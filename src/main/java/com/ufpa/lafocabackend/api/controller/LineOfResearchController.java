@@ -2,11 +2,15 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.LineOfResearchDto;
 import com.ufpa.lafocabackend.domain.service.LineOfResearchService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,17 +48,19 @@ public class LineOfResearchController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<LineOfResearchDto>> list (){
+    public ResponseEntity<Page<LineOfResearchDto>> list (Pageable pageable){
 
-        List<LineOfResearch> list = lineOfResearchService.list();
+        Page<LineOfResearch> list = lineOfResearchService.list(pageable);
 
         Type listType = new TypeToken<List<LineOfResearchDto>>() {
 
         }.getType();
 
-        final List<LineOfResearchDto> map = modelMapper.map(list, listType);
+        final List<LineOfResearchDto> map = modelMapper.map(list.getContent(), listType);
 
-        return ResponseEntity.ok(map);
+        PageImpl<LineOfResearchDto> lineOfResearchDtos = new PageImpl<>(map, pageable, list.getTotalElements());
+
+        return ResponseEntity.ok(lineOfResearchDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

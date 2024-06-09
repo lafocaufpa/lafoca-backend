@@ -13,6 +13,8 @@ import com.ufpa.lafocabackend.repository.NewsRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +51,8 @@ public class NewsService {
         return newsRepository.save(news);
     }
 
-    public List<News> list(){
-        return newsRepository.findAll();
+    public Page<News> list(Pageable pageable){
+        return newsRepository.findAll(pageable);
     }
 
     @Transactional

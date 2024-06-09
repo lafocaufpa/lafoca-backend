@@ -6,6 +6,8 @@ import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.repository.PermissionRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,9 +28,9 @@ public class PermissionService {
         return permissionRepository.save(permission);
     }
 
-    public List<Permission> list (){
+    public Page<Permission> list (Pageable pageable){
 
-        return permissionRepository.findAll();
+        return permissionRepository.findAll(pageable);
     }
 
     public Permission read (Long permissionId) {

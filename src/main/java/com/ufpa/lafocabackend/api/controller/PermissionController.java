@@ -2,11 +2,15 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Permission;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.PermissionService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,17 +53,19 @@ public class PermissionController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Collection<PermissionDto>> list (){
+    public ResponseEntity<Page<PermissionDto>> list (Pageable pageable){
 
-        final List<Permission> list = permissionService.list();
+        final Page<Permission> list = permissionService.list(pageable);
 
         Type listType = new TypeToken<List<PermissionDto>>() {
 
         }.getType();
 
-        final List<PermissionDto> map = modelMapper.map(list, listType);
+        final List<PermissionDto> map = modelMapper.map(list.getContent(), listType);
 
-        return ResponseEntity.ok(map);
+        PageImpl<PermissionDto> permissionDtos = new PageImpl<>(map, pageable, list.getTotalElements());
+
+        return ResponseEntity.ok(permissionDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

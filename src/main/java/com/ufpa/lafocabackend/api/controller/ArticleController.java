@@ -4,10 +4,15 @@ import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Article;
 import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
 import com.ufpa.lafocabackend.domain.service.ArticleService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,17 +57,19 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<ArticleDto>> list (){
+    public ResponseEntity<Page<ArticleDto>>  list (Pageable pageable){
 
-        final List<Article> list = articleService.list();
+        final Page<Article> list = articleService.list(pageable);
 
         Type listType = new TypeToken<List<ArticleDto>>() {
 
         }.getType();
 
-        final List<ArticleDto> map = modelMapper.map(list, listType);
+        final List<ArticleDto> map = modelMapper.map(list.getContent(), listType);
 
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(map);
+        PageImpl<ArticleDto> articleDtos = new PageImpl<>(map, pageable, list.getTotalElements());
+
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(articleDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

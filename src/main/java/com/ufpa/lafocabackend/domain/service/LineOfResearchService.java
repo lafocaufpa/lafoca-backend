@@ -8,6 +8,8 @@ import com.ufpa.lafocabackend.repository.LineOfResearchRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,9 +30,9 @@ public class LineOfResearchService {
         return lineOfResearchRepository.save(modelMapper.map(lineOfResearchDto, LineOfResearch.class));
     }
 
-    public List<LineOfResearch> list (){
+    public Page<LineOfResearch> list (Pageable pageable){
 
-        return lineOfResearchRepository.findAll();
+        return lineOfResearchRepository.findAll(pageable);
     }
 
     public LineOfResearch read (String lineOfResearchId) {

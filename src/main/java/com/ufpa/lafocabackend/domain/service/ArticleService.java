@@ -5,15 +5,15 @@ import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Article;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
 import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.repository.ArticleRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -41,9 +41,9 @@ public class ArticleService {
         return articleRepository.save(article);
     }
 
-    public List<Article> list (){
+    public Page<Article> list (Pageable pageable){
 
-        return articleRepository.findAll();
+        return articleRepository.findAll(pageable);
     }
 
     public Article read (Long articleId) {

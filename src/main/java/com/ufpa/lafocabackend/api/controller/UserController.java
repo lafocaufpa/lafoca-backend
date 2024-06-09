@@ -8,6 +8,7 @@ import com.ufpa.lafocabackend.domain.exception.CannotDeleteOnlyAdministratorExce
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserPersonalInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
@@ -18,6 +19,9 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,12 +55,19 @@ public class UserController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<List<UserDto>> list() {
+    public ResponseEntity<Page<UserDto>> list(Pageable pageable) {
 
-        final List<User> users = userService.list();
-        final List<UserDto> dtos = users.stream().map(u -> modelMapper.map(u, UserDto.class)).toList();
+        final Page<User> users = userService.list(pageable);
 
-        return ResponseEntity.ok(dtos);
+        Type type = new TypeToken<List<UserDto>>() {
+
+        }.getType();
+
+        List<UserDto> map = modelMapper.map(users.getContent(), type);
+
+        PageImpl<UserDto> userDtos = new PageImpl<>(map, pageable, users.getTotalElements());
+
+        return ResponseEntity.ok(userDtos);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1

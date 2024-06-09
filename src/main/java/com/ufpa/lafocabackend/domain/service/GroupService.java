@@ -7,6 +7,8 @@ import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.repository.GroupRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +31,9 @@ public class GroupService {
         return groupRepository.save(group);
     }
 
-    public List<Group> list (){
+    public Page<Group> list (Pageable pageable){
 
-        return groupRepository.findAll();
+        return groupRepository.findAll(pageable);
     }
 
     public Group read (Long groupId) {

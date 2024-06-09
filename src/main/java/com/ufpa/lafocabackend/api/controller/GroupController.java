@@ -3,12 +3,16 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.Permission;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.GroupService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,17 +55,19 @@ public class GroupController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Collection<GroupDto>> list (){
+    public ResponseEntity<Page<GroupDto>> list (Pageable pageable){
 
-        final List<Group> list = groupService.list();
+        final Page<Group> list = groupService.list(pageable);
 
         Type listType = new TypeToken<List<GroupDto>>() {
 
         }.getType();
 
-        final List<GroupDto> map = modelMapper.map(list, listType);
+        final List<GroupDto> map = modelMapper.map(list.getContent(), listType);
 
-        return ResponseEntity.ok(map);
+        PageImpl<GroupDto> groupDtos = new PageImpl<>(map, pageable, list.getTotalElements());
+
+        return ResponseEntity.ok(groupDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

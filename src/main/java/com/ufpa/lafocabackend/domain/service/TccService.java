@@ -6,6 +6,8 @@ import com.ufpa.lafocabackend.domain.model.Tcc;
 import com.ufpa.lafocabackend.repository.TccRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,9 +26,9 @@ public class TccService {
         return tccRepository.save(tcc);
     }
 
-    public List<Tcc> list (){
+    public Page<Tcc> list (Pageable pageable){
 
-        return tccRepository.findAll();
+        return tccRepository.findAll(pageable);
     }
 
     public Tcc read (Long tccId) {

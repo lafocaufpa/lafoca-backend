@@ -3,12 +3,16 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Skill;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.SkillDto;
 import com.ufpa.lafocabackend.repository.SkillRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
@@ -30,13 +34,15 @@ public class SkillService {
         return modelMapper.map(skillRepository.save(skill), SkillDto.class);
     }
 
-    public List<SkillDto> list (){
+    public Page<SkillDto> list (Pageable pageable){
 
         final Type type = new TypeToken<List<SkillDto>>() {
 
         }.getType();
 
-        return modelMapper.map(skillRepository.findAll(), type);
+        Page<Skill> skills = skillRepository.findAll(pageable);
+        List<SkillDto> map = modelMapper.map(skills.getContent(), type);
+        return new PageImpl<>(map, pageable, skills.getTotalElements());
     }
 
     public SkillDto read (Integer skillId) {

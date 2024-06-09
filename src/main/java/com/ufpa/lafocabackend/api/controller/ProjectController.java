@@ -67,7 +67,7 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProjectDto>> list (@PageableDefault(size = 7) Pageable pageable){
+    public ResponseEntity<Page<ProjectDto>> list (Pageable pageable){
 
         final Page<Project> listProjects = projectService.list(pageable);
 

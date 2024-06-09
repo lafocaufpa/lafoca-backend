@@ -2,11 +2,15 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.FunctionMember;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;
 import com.ufpa.lafocabackend.domain.service.FunctionMemberService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,17 +53,19 @@ public class FunctionMemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Collection<FunctionMemberDto>> list (){
+    public ResponseEntity<Page<FunctionMemberDto>> list (Pageable pageable){
 
-        final List<FunctionMember> list = functionMemberService.list();
+        final Page<FunctionMember> list = functionMemberService.list(pageable);
 
         Type listType = new TypeToken<List<FunctionMemberDto>>() {
 
         }.getType();
 
-        final List<FunctionMemberDto> map = modelMapper.map(list, listType);
+        final List<FunctionMemberDto> map = modelMapper.map(list.getContent(), listType);
 
-        return ResponseEntity.ok(map);
+        PageImpl<FunctionMemberDto> functionMemberDtos = new PageImpl<>(map, pageable, list.getTotalElements());
+
+        return ResponseEntity.ok(functionMemberDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

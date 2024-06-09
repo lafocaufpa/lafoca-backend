@@ -3,6 +3,7 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.News;
+import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.NewsOutput;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -13,6 +14,9 @@ import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,15 +67,17 @@ public class NewsController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<NewsOutput>> list (){
+    public ResponseEntity<Page<NewsOutput>> list (Pageable pageable){
 
-        final List<News> list = newsService.list();
+        final Page<News> list = newsService.list(pageable);
 
         Type listType = new TypeToken<List<NewsOutput>>() {}.getType();
 
-        final List<NewsOutput> map = modelMapper.map(list, listType);
+        final List<NewsOutput> map = modelMapper.map(list.getContent(), listType);
 
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(map);
+        PageImpl<NewsOutput> newsOutputs = new PageImpl<>(map, pageable, list.getTotalElements());
+
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(newsOutputs);
     }
 
     @CheckSecurityPermissionMethods.Level1

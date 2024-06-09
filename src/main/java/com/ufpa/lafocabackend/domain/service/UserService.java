@@ -20,6 +20,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -80,8 +82,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> list() {
-        return userRepository.findAll();
+    public Page<User> list(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Transactional
