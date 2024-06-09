@@ -1,11 +1,11 @@
-create table access_group
+create table IF NOT EXISTS access_group
 (
     group_id bigint       not null auto_increment,
     name     varchar(255) not null,
     primary key (group_id)
 ) engine = InnoDB;
 
-create table article
+create table IF NOT EXISTS article
 (
     article_id bigint       not null auto_increment,
     journal    varchar(225) not null,
@@ -15,13 +15,13 @@ create table article
     primary key (article_id)
 ) engine = InnoDB;
 
-create table article_line_of_research
+create table IF NOT EXISTS article_line_of_research
 (
     article_id          bigint       not null,
     line_of_research_id varchar(255) not null
 ) engine = InnoDB;
 
-create table function_member
+create table IF NOT EXISTS function_member
 (
     function_member_id bigint       not null auto_increment,
     description        varchar(225) not null,
@@ -29,7 +29,7 @@ create table function_member
     primary key (function_member_id)
 ) engine = InnoDB;
 
-create table lafoca
+create table IF NOT EXISTS lafoca
 (
     number_of_defendedtccs       integer not null,
     number_of_members            integer not null,
@@ -40,7 +40,7 @@ create table lafoca
     primary key (lafoca_id)
 ) engine = InnoDB;
 
-create table line_of_research
+create table IF NOT EXISTS line_of_research
 (
     name                varchar(50)  not null,
     description         varchar(225) not null,
@@ -48,7 +48,7 @@ create table line_of_research
     primary key (line_of_research_id)
 ) engine = InnoDB;
 
-create table member
+create table IF NOT EXISTS member
 (
     date_register      datetime     not null,
     function_member_id bigint,
@@ -66,28 +66,28 @@ create table member
     primary key (member_id)
 ) engine = InnoDB;
 
-create table member_article
+create table IF NOT EXISTS member_article
 (
     article_id bigint       not null,
     member_id  varchar(255) not null,
     primary key (article_id, member_id)
 ) engine = InnoDB;
 
-create table member_project
+create table IF NOT EXISTS member_project
 (
     member_id  varchar(255) not null,
     project_id varchar(255) not null,
     primary key (member_id, project_id)
 ) engine = InnoDB;
 
-create table member_skill
+create table IF NOT EXISTS member_skill
 (
     skill_id  integer      not null,
     member_id varchar(255) not null,
     primary key (skill_id, member_id)
 ) engine = InnoDB;
 
-create table member_photo
+create table IF NOT EXISTS member_photo
 (
     size         bigint       not null,
     content_type varchar(15)  not null,
@@ -97,7 +97,7 @@ create table member_photo
     primary key (photo_id)
 ) engine = InnoDB;
 
-create table news
+create table IF NOT EXISTS news
 (
     news_date   datetime     not null,
     description varchar(225) not null,
@@ -109,13 +109,13 @@ create table news
     primary key (news_id)
 ) engine = InnoDB;
 
-create table news_line_of_research
+create table IF NOT EXISTS news_line_of_research
 (
     line_of_research_id varchar(255) not null,
     news_id             varchar(255) not null
 ) engine = InnoDB;
 
-create table news_photo
+create table IF NOT EXISTS news_photo
 (
     size         bigint       not null,
     content_type varchar(15)  not null,
@@ -125,7 +125,7 @@ create table news_photo
     primary key (photo_id)
 ) engine = InnoDB;
 
-create table permission
+create table IF NOT EXISTS permission
 (
     permission_id bigint       not null auto_increment,
     name          varchar(50)  not null,
@@ -133,14 +133,14 @@ create table permission
     primary key (permission_id)
 ) engine = InnoDB;
 
-create table permission_group
+create table IF NOT EXISTS permission_group
 (
     group_id      bigint not null,
     permission_id bigint not null,
     primary key (group_id, permission_id)
 ) engine = InnoDB;
 
-create table project
+create table IF NOT EXISTS project
 (
     completed   bit           not null,
     year        varchar(4)    not null,
@@ -152,13 +152,13 @@ create table project
     primary key (project_id)
 ) engine = InnoDB;
 
-create table project_line_of_research
+create table IF NOT EXISTS project_line_of_research
 (
     line_of_research_id varchar(255) not null,
     project_id          varchar(255) not null
 ) engine = InnoDB;
 
-create table project_photo
+create table IF NOT EXISTS project_photo
 (
     size         bigint       not null,
     content_type varchar(15)  not null,
@@ -168,14 +168,14 @@ create table project_photo
     primary key (photo_id)
 ) engine = InnoDB;
 
-create table skill
+create table IF NOT EXISTS skill
 (
     skill_id integer     not null auto_increment,
     name     varchar(50) not null,
     primary key (skill_id)
 ) engine = InnoDB;
 
-create table tcc
+create table IF NOT EXISTS tcc
 (
     date   date         not null,
     tcc_id bigint       not null auto_increment,
@@ -185,7 +185,7 @@ create table tcc
     primary key (tcc_id)
 ) engine = InnoDB;
 
-create table user
+create table IF NOT EXISTS user
 (
     date_register datetime     not null,
     slug          varchar(500) not null,
@@ -197,7 +197,7 @@ create table user
     primary key (user_id)
 ) engine = InnoDB;
 
-create table user_group
+create table IF NOT EXISTS user_group
 (
     group_id bigint       not null,
     user_id  varchar(255) not null,

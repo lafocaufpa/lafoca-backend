@@ -1,0 +1,33 @@
+networks:
+  lafoca-network:
+    driver: bridge
+
+services:
+  lafoca-mysql:
+    image: mysql:8.4.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - lafoca-network
+
+  lafoca-backend:
+    image: lafocaufpa/backend:1.0.0
+    command: ["/wait-for-it.sh", "algafodd-mysql:3306", "-t", "30", "--", "java", "-jar", "api.jar"]
+    environment:
+      DB_HOST: lafoca-mysql
+      DEFAULT_ADMIN_USER_EMAIL: ${DEFAULT_ADMIN_USER_EMAIL}
+      DEFAULT_ADMIN_USER_NAME: ${DEFAULT_ADMIN_USER_NAME}
+      DEFAULT_ADMIN_USER_PASSWORD: ${DEFAULT_ADMIN_USER_PASSWORD}
+      LAFOCA_STORAGE_S3_CHAVE_ACESSO_SECRETA: ${LAFOCA_STORAGE_S3_CHAVE_ACESSO_SECRETA}
+      LAFOCA_STORAGE_S3_ID_CHAVE_ACESSO: ${LAFOCA_STORAGE_S3_ID_CHAVE_ACESSO}
+      LAFOCA_STORAGE_TIPO_STORAGE: ${LAFOCA_STORAGE_TIPO_STORAGE}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      - lafoca-network
+    depends_on:
+      - lafoca-mysql
