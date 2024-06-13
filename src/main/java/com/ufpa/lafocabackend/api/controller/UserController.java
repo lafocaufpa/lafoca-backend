@@ -55,7 +55,7 @@ public class UserController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Page<UserDto>> list(Pageable pageable) {
+    public ResponseEntity<Page<UserDto>> list(Pageable pageable) throws InterruptedException {
 
         final Page<User> users = userService.list(pageable);
 

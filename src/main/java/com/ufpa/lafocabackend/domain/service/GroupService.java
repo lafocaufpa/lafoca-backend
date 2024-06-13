@@ -83,4 +83,8 @@ public class GroupService {
         group.disassociatePermission(permission);
         groupRepository.save(group);
     }
+
+    public List<Group> listWithoutPagination() {
+        return groupRepository.findAll();
+    }
 }

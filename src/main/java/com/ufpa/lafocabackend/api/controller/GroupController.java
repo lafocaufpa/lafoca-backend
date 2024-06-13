@@ -71,6 +71,21 @@ public class GroupController {
     }
 
     @CheckSecurityPermissionMethods.Level1
+    @GetMapping("/list")
+    public ResponseEntity<List<GroupDto>> listWithoutPagination (Pageable pageable){
+
+        List<Group> list = groupService.listWithoutPagination();
+
+        Type listType = new TypeToken<List<GroupDto>>() {
+
+        }.getType();
+
+        final List<GroupDto> groupDtos = modelMapper.map(list, listType);
+
+        return ResponseEntity.ok(groupDtos);
+    }
+
+    @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{groupId}")
     public ResponseEntity<GroupDto> update (@PathVariable Long groupId, @RequestBody GroupDto groupDto){
 

@@ -101,7 +101,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleAccessDeniedException(Exception ex, WebRequest request) {
         HttpStatus statusNotFound = HttpStatus.FORBIDDEN;
         ProblemType problemType = ProblemType.ACESSO_NEGADO;
-        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ex.getMessage()).build();
+        final Problem problem = createProblemType(statusNotFound, problemType, ex.getMessage()).userMessage(ProblemType.ACESSO_NEGADO.getTitle()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), statusNotFound, request);
     }
