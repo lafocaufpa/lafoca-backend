@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/users")
@@ -89,6 +91,16 @@ public class UserController {
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
         return ResponseEntity.ok(userDto);
+    }
+
+    @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
+    @GetMapping("/read-by-email/{userEmail}")
+    public ResponseEntity<UserDto> readByEmail (@PathVariable String userEmail) {
+
+        final User user = userService.readByEmail(userEmail);
+        final UserDto userDto = modelMapper.map(user, UserDto.class);
+
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1OrLevel2
