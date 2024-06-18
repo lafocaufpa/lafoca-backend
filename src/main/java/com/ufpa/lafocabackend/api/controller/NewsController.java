@@ -50,7 +50,7 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
-    @GetMapping("/search/{newsSlug}")
+    @GetMapping("/read/{newsSlug}")
     public ResponseEntity<NewsDto> readBySlug(@PathVariable String newsSlug ){
 
         final News news = newsService.readBySlug(newsSlug);
@@ -92,7 +92,7 @@ public class NewsController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @PutMapping("/search/{newsSlug}")
+    @PutMapping("/read/{newsSlug}")
     public ResponseEntity<NewsDto> updateBySlug (@PathVariable String newsSlug, @RequestBody NewsInputDto newsInputDto){
 
         final News newsUpdate = newsService.update(newsSlug, newsInputDto);
@@ -101,7 +101,7 @@ public class NewsController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @DeleteMapping("/search/{newsSlug}")
+    @DeleteMapping("/read/{newsSlug}")
     public ResponseEntity<Void> deleteBySlug(@PathVariable String newsSlug){
 
         final News news = newsService.readBySlug(newsSlug);
@@ -124,7 +124,7 @@ public class NewsController {
 
 
     @CheckSecurityPermissionMethods.Level1
-    @PostMapping(value = "/search/{newsSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/read/{newsSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String newsSlug) throws IOException {
 
         var filePhoto = new StandardCustomMultipartFile(file);
@@ -146,7 +146,7 @@ public class NewsController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @DeleteMapping(value = "/search/{newsSlug}/photo")
+    @DeleteMapping(value = "/read/{newsSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String newsSlug) {
 
         final News news = newsService.readBySlug(newsSlug);

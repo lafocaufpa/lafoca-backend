@@ -57,7 +57,7 @@ public class ProjectController {
         return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(projectDto);
     }
 
-    @GetMapping("/search/{projectSlug}")
+    @GetMapping("/read/{projectSlug}")
     public ResponseEntity<ProjectDto> readBySlug(@PathVariable String projectSlug) {
 
         final Project project = projectService.readBySlug(projectSlug);
@@ -109,7 +109,7 @@ public class ProjectController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/read/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String memberSlug) throws IOException {
 
         var customFile = new StandardCustomMultipartFile(file);
@@ -128,7 +128,7 @@ public class ProjectController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @DeleteMapping(value = "/search/{projectSlug}/photo")
+    @DeleteMapping(value = "/read/{projectSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String projectSlug) {
 
         Project project = projectService.readBySlug(projectSlug);

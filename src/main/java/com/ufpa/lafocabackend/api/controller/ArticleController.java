@@ -49,7 +49,7 @@ public class ArticleController {
         return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(articleDto);
     }
 
-    @GetMapping("/search/{articleSlug}")
+    @GetMapping("/read/{articleSlug}")
     public ResponseEntity<ArticleDto> readBySlug (@PathVariable String articleSlug){
 
         final ArticleDto articleDto = modelMapper.map(articleService.readBySlug(articleSlug), ArticleDto.class);

@@ -59,7 +59,7 @@ public class MemberController {
         return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDto);
     }
 
-        @GetMapping("/search/{memberSlug}")
+        @GetMapping("/read/{memberSlug}")
         public ResponseEntity<MemberDto> readBySlug(@PathVariable String memberSlug) {
 
             final Member member = memberService.readBySlug(memberSlug);
@@ -68,7 +68,7 @@ public class MemberController {
         }
 
     @GetMapping
-    public ResponseEntity<Page<MemberDto>> list(@PageableDefault(size = 7) Pageable pageable) {
+    public ResponseEntity<Page<MemberDto>> list(@PageableDefault(size = 10) Pageable pageable) {
 
         final Page<Member> list = memberService.list(pageable);
 
@@ -120,7 +120,7 @@ public class MemberController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @PostMapping(value = "/search/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/read/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String memberSlug) throws IOException {
 
         var customFile = new StandardCustomMultipartFile(file);
@@ -140,7 +140,7 @@ public class MemberController {
     }
 
     @CheckSecurityPermissionMethods.Level1
-    @DeleteMapping(value = "/search/{memberSlug}/photo")
+    @DeleteMapping(value = "/read/{memberSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String memberSlug) {
 
         Member member = memberService.readBySlug(memberSlug);

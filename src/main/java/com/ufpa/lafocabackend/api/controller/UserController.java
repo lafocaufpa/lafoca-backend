@@ -69,7 +69,9 @@ public class UserController {
 
         PageImpl<UserDto> userDtos = new PageImpl<>(map, pageable, users.getTotalElements());
 
-        return ResponseEntity.ok(userDtos);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
+                .body(userDtos);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
@@ -80,17 +82,21 @@ public class UserController {
 
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
+                .body(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
-    @GetMapping("/search/{slug}")
+    @GetMapping("/read/{slug}")
     public ResponseEntity<UserDto> readBySlug(@PathVariable String slug) {
 
         final User user = userService.readBySlug(slug);
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
+                .body(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
@@ -155,7 +161,7 @@ public class UserController {
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
-    @PostMapping(value = "/search/{userSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/read/{userSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhotoBySlug(Part file, @PathVariable String userSlug) throws IOException {
 
         var customFile = new StandardCustomMultipartFile(file);
@@ -176,7 +182,7 @@ public class UserController {
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
-    @DeleteMapping(value = "/search/{userSlug}/photo")
+    @DeleteMapping(value = "/read/{userSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String userSlug) {
 
         User user = userService.readBySlug(userSlug);
@@ -197,7 +203,9 @@ public class UserController {
 
         final Set<GroupDto> groupsDto = modelMapper.map(groups, type);
 
-        return ResponseEntity.ok(groupsDto);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
+                .body(groupsDto);
     }
 
     @CheckSecurityPermissionMethods.Level1

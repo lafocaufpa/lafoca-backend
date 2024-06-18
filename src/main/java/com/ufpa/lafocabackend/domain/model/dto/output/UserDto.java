@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 @Getter
@@ -14,6 +15,7 @@ public class UserDto {
     private String id;
     private String name;
     private String email;
+    private OffsetDateTime dateRegister;
     private String urlPhoto;
     private Set<GroupDto> groups;
 }

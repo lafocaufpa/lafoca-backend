@@ -13,6 +13,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/groups")
@@ -82,7 +84,9 @@ public class GroupController {
 
         final List<GroupDto> groupDtos = modelMapper.map(list, listType);
 
-        return ResponseEntity.ok(groupDtos);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
+                .body(groupDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1
