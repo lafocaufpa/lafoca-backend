@@ -55,6 +55,8 @@ public class LafocaSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/lines-of-research/**").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/users/reset-password").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/news/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/record-count/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/host-check/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/hello-world").permitAll()
                                 .anyRequest().authenticated()
                 )

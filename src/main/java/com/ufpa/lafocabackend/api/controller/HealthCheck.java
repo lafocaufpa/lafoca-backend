@@ -14,6 +14,6 @@ public class HealthCheck {
 
     @GetMapping("/hello-world")
     public ResponseEntity<String> helloWorld() {
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(90, TimeUnit.DAYS)).body("<h1>Hello World</h1>");
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES)).body("<h1>Hello World</h1>");
     }
 }
