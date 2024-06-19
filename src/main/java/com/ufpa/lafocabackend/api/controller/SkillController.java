@@ -19,7 +19,7 @@ public class SkillController {
 
     private final SkillService skillService;
 
-    public SkillController(SkillService skillService, ModelMapper modelMapper) {
+    public SkillController(SkillService skillService) {
         this.skillService = skillService;
     }
 

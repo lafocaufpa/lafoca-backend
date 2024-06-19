@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
@@ -51,6 +52,7 @@ public class MemberController {
             return ResponseEntity.ok(memberSaved);
         }
 
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberDto> read(@PathVariable String memberId) {
 
@@ -67,7 +69,9 @@ public class MemberController {
             return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDto);
         }
 
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
+    @Deprecated
     public ResponseEntity<Page<MemberDto>> list(@PageableDefault(size = 10) Pageable pageable) {
 
         final Page<Member> list = memberService.list(pageable);
@@ -88,6 +92,15 @@ public class MemberController {
         Page<MemberSummaryDto> memberSummaryDtos = memberService.listSummaryMember(pageable);
         Page<MemberSummaryDto> memberSummaryDtoPage = new PageImpl<>(memberSummaryDtos.getContent(), pageable, memberSummaryDtos.getTotalElements());
         return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberSummaryDtoPage);
+
+    }
+
+    @CheckSecurityPermissionMethods.Level1
+    @GetMapping("/resumed")
+    public ResponseEntity<Page<MemberResumed>> listResumedMembers(@PageableDefault(size = 10) Pageable pageable) {
+        Page<MemberResumed> memberResumeds = memberService.listResumedMembers(pageable);
+        Page<MemberResumed> memberResumedPage = new PageImpl<>(memberResumeds.getContent(), pageable, memberResumeds.getTotalElements());
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberResumedPage);
 
     }
 

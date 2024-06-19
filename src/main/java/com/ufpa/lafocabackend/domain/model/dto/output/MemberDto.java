@@ -14,14 +14,15 @@ public class MemberDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String id;
-    private String firstName;
-    private String lastName;
+    private String fullName;
+    private String displayName;
     private String slug;
     private String description;
     private String email;
     private String biography;
     private String linkPortifolio;
     private String linkLinkedin;
+    private Integer yearClass;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OffsetDateTime dateRegister;

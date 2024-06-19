@@ -11,7 +11,7 @@ import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
 @Entity
 @Data
-    @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Tcc {
 
     @Id

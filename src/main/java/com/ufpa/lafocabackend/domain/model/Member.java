@@ -26,10 +26,10 @@ public class Member {
     private String memberId;
 
     @Column(nullable = false, length = 225)
-    private String firstName;
+    private String fullName;
 
     @Column(nullable = false, length = 225)
-    private String lastName;
+    private String displayName;
 
     @Column(nullable = false, unique = true, length = 500)
     private String slug;
@@ -48,6 +48,10 @@ public class Member {
 
     @Column(nullable = true, unique = true, length = 225)
     private String linkLinkedin;
+
+    @ManyToOne
+    @JoinColumn(name = "year_class_id", foreignKey = @ForeignKey(name = "fk_member_year_class_id"))
+    private YearClass yearClass;
 
     @ManyToMany
     @JoinTable(
@@ -94,7 +98,7 @@ public class Member {
 
     @PreUpdate
     public void generateSlug() {
-        this.slug = createSlug(this.firstName + " " + this.lastName, this.memberId);
+        this.slug = createSlug(this.fullName, this.memberId);
 
     }
 

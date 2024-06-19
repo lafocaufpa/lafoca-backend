@@ -74,7 +74,7 @@ public class GroupController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping("/list")
-    public ResponseEntity<List<GroupDto>> listWithoutPagination (Pageable pageable){
+    public ResponseEntity<List<GroupDto>> listWithoutPagination (){
 
         List<Group> list = groupService.listWithoutPagination();
 

@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.repository;
 
 import com.ufpa.lafocabackend.domain.model.Member;
+import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +34,11 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     @Query("SELECT up.fileName FROM MemberPhoto up WHERE up.photoId = :userPhotoId")
     String findFileNameByUserPhotoId(String userPhotoId);
 
-    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.firstName, m.lastName, m.slug, m.functionMember.name, m.memberPhoto.url) FROM Member m ORDER BY RAND()")
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.displayName, m.slug, m.functionMember.name, m.memberPhoto.url) FROM Member m ORDER BY RAND()")
     Page<MemberSummaryDto> getMemberSummary(Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) FROM Member m")
+    Page<MemberResumed> listMembers(Pageable pageable);
 
     boolean existsByEmail (String email);
 

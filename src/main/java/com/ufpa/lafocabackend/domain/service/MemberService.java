@@ -6,8 +6,10 @@ import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.*;
+import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.MemberPhotoRepository;
@@ -37,8 +39,9 @@ public class MemberService {
     private final TccRepository tccRepository;
     private final MemberPhotoRepository memberPhotoRepository;
     private final PhotoStorageService photoStorageService;
+    private final YearClassService yearClassService;
 
-    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService) {
+    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService, YearClassService yearClassService) {
         this.memberRepository = memberRepository;
         this.functionMemberService = functionMemberService;
         this.skillService = skillService;
@@ -49,16 +52,23 @@ public class MemberService {
         this.tccRepository = tccRepository;
         this.memberPhotoRepository = memberPhotoRepository;
         this.photoStorageService = photoStorageService;
+        this.yearClassService = yearClassService;
     }
 
     @Transactional
     public Member save(MemberInputDto memberInputDto) {
 
-        if(memberRepository.existsByEmail(memberInputDto.getEmail())){
+        if (memberRepository.existsByEmail(memberInputDto.getEmail())) {
             throw new EntityAlreadyRegisteredException(Member.class.getSimpleName(), memberInputDto.getEmail());
         }
 
         Member member = modelMapper.map(memberInputDto, Member.class);
+
+        if (memberInputDto.getYearClassId() != null) {
+            YearClassDTO yearClassDTO = yearClassService.read(memberInputDto.getYearClassId());
+            YearClass yearClass = modelMapper.map(yearClassDTO, YearClass.class);
+            member.setYearClass(yearClass);
+        }
 
         if (memberInputDto.getFunctionMemberId() != null) {
             member.setFunctionMember(functionMemberService.read(memberInputDto.getFunctionMemberId()));
@@ -127,82 +137,90 @@ public class MemberService {
         }
 
         if (member.getTcc() != null && memberInputDto.getTcc() == null) {
-                tccRepository.deleteById(member.getTcc().getTccId());
-                member.setTcc(null);
+            tccRepository.deleteById(member.getTcc().getTccId());
+            member.setTcc(null);
         }
 
         return memberRepository.save(member);
-}
-
-public Page<Member> list(Pageable pageable) {
-
-    return memberRepository.findAll(pageable);
-}
-
-public Page<MemberSummaryDto> listSummaryMember(Pageable pageable) {
-
-    return memberRepository.getMemberSummary(pageable);
-}
-
-public Member read(String memberId) {
-    return getOrFail(memberId);
-}
-
-public Member readBySlug(String slug) {
-    return memberRepository.findBySlug(slug).
-            orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), slug));
-}
-
-public void delete(String memberId) {
-
-    String memberPhotoFileNameByPhotoId = memberPhotoRepository.findMemberPhotoFileNameByPhotoId(memberId);
-
-    try {
-        memberRepository.deleteById(memberId);
-
-        var storagePhotoUtils = StoragePhotoUtils
-                .builder()
-                .fileName(memberPhotoFileNameByPhotoId)
-                .type(TypeEntityPhoto.Member).build();
-
-        photoStorageService.deletar(storagePhotoUtils);
-    } catch (DataIntegrityViolationException e) {
-        throw new EntityInUseException(Member.class.getSimpleName(), memberId);
-    } catch (EmptyResultDataAccessException e) {
-        throw new EntityNotFoundException(Member.class.getSimpleName(), memberId);
     }
 
-}
+    @Deprecated
+    public Page<Member> list(Pageable pageable) {
 
-private Member getOrFail(String memberId) {
-    return memberRepository.findById(memberId)
-            .orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), memberId));
-}
+        return memberRepository.findAll(pageable);
+    }
 
-@Transactional
-public void associateFunction(Long functionMemberId, String memberId) {
+    public Page<MemberSummaryDto> listSummaryMember(Pageable pageable) {
 
-    final FunctionMember functionMember = functionMemberService.read(functionMemberId);
-    final Member member = read(memberId);
-    member.setFunctionMember(functionMember);
-    memberRepository.save(member);
-}
+        return memberRepository.getMemberSummary(pageable);
+    }
 
-@Transactional
-public void associateSkill(String memberId, Integer skillId) {
-    final Member member = read(memberId);
-    final Skill skill = skillService.getOrFail(skillId);
-    member.addSkill(skill);
-}
+    public Page<MemberResumed> listResumedMembers(Pageable pageable) {
 
-@Transactional
-public void disassociateSkill(String memberId, Integer skillId) {
-    final Member member = read(memberId);
-    final Skill skill = skillService.getOrFail(skillId);
-    member.removeSkill(skill);
-}
+        return memberRepository.listMembers(pageable);
+    }
 
-public Member save(Member member) {
-    return memberRepository.save(member);
-}
+    public Member read(String memberId) {
+        return getOrFail(memberId);
+    }
+
+    public Member readBySlug(String slug) {
+        return memberRepository.findBySlug(slug).
+                orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), slug));
+    }
+
+    public void delete(String memberId) {
+
+        read(memberId);
+
+        String memberPhotoFileNameByPhotoId = memberPhotoRepository.findMemberPhotoFileNameByPhotoId(memberId);
+
+        try {
+            memberRepository.deleteById(memberId);
+
+            var storagePhotoUtils = StoragePhotoUtils
+                    .builder()
+                    .fileName(memberPhotoFileNameByPhotoId)
+                    .type(TypeEntityPhoto.Member).build();
+
+            photoStorageService.deletar(storagePhotoUtils);
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityInUseException(Member.class.getSimpleName(), memberId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException(Member.class.getSimpleName(), memberId);
+        }
+
+    }
+
+    private Member getOrFail(String memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), memberId));
+    }
+
+    @Transactional
+    public void associateFunction(Long functionMemberId, String memberId) {
+
+        final FunctionMember functionMember = functionMemberService.read(functionMemberId);
+        final Member member = read(memberId);
+        member.setFunctionMember(functionMember);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void associateSkill(String memberId, Integer skillId) {
+        final Member member = read(memberId);
+        final Skill skill = skillService.getOrFail(skillId);
+        member.addSkill(skill);
+    }
+
+    @Transactional
+    public void disassociateSkill(String memberId, Integer skillId) {
+        final Member member = read(memberId);
+        final Skill skill = skillService.getOrFail(skillId);
+        member.removeSkill(skill);
+    }
+
+    public Member save(Member member) {
+        return memberRepository.save(member);
+    }
 }

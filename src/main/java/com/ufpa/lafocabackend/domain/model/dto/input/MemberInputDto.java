@@ -15,10 +15,10 @@ import java.util.List;
 public class MemberInputDto {
 
     @NotBlank
-    private String firstName;
+    private String fullName;
 
     @NotBlank
-    private String lastName;
+    private String displayName;
 
     @NotBlank
     private String description;
@@ -35,6 +35,8 @@ public class MemberInputDto {
     private String linkLinkedin;
 
     private Long functionMemberId;
+
+    private Long yearClassId;
 
     private List<@Positive @NotNull Integer> skillsId;
 
