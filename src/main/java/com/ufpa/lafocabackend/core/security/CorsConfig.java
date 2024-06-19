@@ -9,7 +9,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /*
  * Classe para configurar cors para solicitar token do authorization code /oatuh/token
@@ -32,7 +34,13 @@ public class CorsConfig {
         config.setAllowCredentials(false);
 
         // Define quais origens são permitidas para fazer requisições CORS. O "*" permite todas as origens.
-        config.setAllowedOrigins(Collections.singletonList("*"));
+        List<String> allowedOrigins = Arrays.asList(
+                "https://www.lafoca.com.br",
+                "https://lafoca.com.br",
+                "http://localhost:3000"
+        );
+
+        config.setAllowedOrigins(allowedOrigins);
 
         // Define quais métodos HTTP são permitidos em requisições CORS. O "*" permite todos os métodos.
         config.setAllowedMethods(Collections.singletonList("*"));
