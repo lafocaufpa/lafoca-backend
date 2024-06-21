@@ -22,6 +22,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.Authentication;
@@ -32,6 +33,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -130,7 +133,7 @@ public class UserService {
 
     private User getOrFail(String userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(getClass().getSimpleName(), userId));
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), userId));
     }
 
     public User read(String userId) {
@@ -175,7 +178,9 @@ public class UserService {
     @Transactional
     public String addPhoto(CustomMultipartFile photo, User user) throws IOException {
 
-        String originalFilename = createPhotoFilename(user.getSlug(), photo.getOriginalFilename());
+        user.setPhotoUpdate(LafocaUtils.formatOffsetDateTime(OffsetDateTime.now()));
+        String idPhoto = user.getUserId() + "-" + user.getPhotoUpdate();
+        String originalFilename = createPhotoFilename(idPhoto, photo.getOriginalFilename());
 
         StoragePhotoUtils photoUtils = StoragePhotoUtils.builder()
                 .fileName(originalFilename)
@@ -196,9 +201,11 @@ public class UserService {
 
         if (user.getUrlPhoto() != null) {
 
+            String idPhoto = user.getUserId() + "-" + user.getPhotoUpdate();
+
             photoStorageService
                     .deletar(StoragePhotoUtils.builder()
-                            .fileName(createPhotoFilename(user.getSlug(), user.getUrlPhoto()))
+                            .fileName(createPhotoFilename(idPhoto, user.getUrlPhoto()))
                             .type(TypeEntityPhoto.User)
                             .build());
             user.removePhoto();

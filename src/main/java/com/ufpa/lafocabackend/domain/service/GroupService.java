@@ -36,6 +36,10 @@ public class GroupService {
         return groupRepository.findAll(pageable);
     }
 
+    public Page<Group> searchByName(String name, Pageable pageable) {
+        return groupRepository.findByNameContaining(name, pageable);
+    }
+
     public Group read (Long groupId) {
         return getOrFail(groupId);
     }

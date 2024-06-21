@@ -57,16 +57,17 @@ public class GroupController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Page<GroupDto>> list (Pageable pageable){
+    public ResponseEntity<Page<GroupDto>> list(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
+        Page<Group> list;
 
-        final Page<Group> list = groupService.list(pageable);
+        if (name != null && !name.isEmpty()) {
+            list = groupService.searchByName(name, pageable);
+        } else {
+            list = groupService.list(pageable);
+        }
 
-        Type listType = new TypeToken<List<GroupDto>>() {
-
-        }.getType();
-
-        final List<GroupDto> map = modelMapper.map(list.getContent(), listType);
-
+        Type listType = new TypeToken<List<GroupDto>>() {}.getType();
+        List<GroupDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<GroupDto> groupDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
         return ResponseEntity.ok(groupDtos);

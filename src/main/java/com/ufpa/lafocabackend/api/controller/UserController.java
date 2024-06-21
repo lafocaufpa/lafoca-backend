@@ -155,6 +155,10 @@ public class UserController {
 
         var customFile = new StandardCustomMultipartFile(file);
         User user = userService.read(userId);
+        if(user.getUrlPhoto() != null){
+            userService.removePhoto(user);
+        }
+
         String url = userService.addPhoto(customFile, user);
 
         return ResponseEntity.ok(url);

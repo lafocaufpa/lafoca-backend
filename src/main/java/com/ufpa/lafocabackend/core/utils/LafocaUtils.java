@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -138,6 +139,11 @@ public class LafocaUtils {
         }
 
         return stringBuilder.toString();
+    }
+
+    public static String formatOffsetDateTime(OffsetDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
+        return dateTime.format(formatter);
     }
 
 }
