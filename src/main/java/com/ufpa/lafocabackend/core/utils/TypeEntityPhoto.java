@@ -4,5 +4,6 @@ public enum TypeEntityPhoto {
     News,
     User,
     Project,
-    Member
+    Member,
+    Skill
 }

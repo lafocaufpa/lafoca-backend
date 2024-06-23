@@ -24,7 +24,6 @@ public class MemberPhotoService {
     private final MemberPhotoRepository memberPhotoRepository;
     private final ModelMapper modelMapper;
 
-
     public MemberPhotoService(PhotoStorageService photoStorageService, MemberPhotoRepository memberPhotoRepository, ModelMapper modelMapper) {
         this.memberPhotoRepository = memberPhotoRepository;
         this.photoStorageService = photoStorageService;

@@ -75,7 +75,7 @@ public class MemberService {
         }
 
         if (memberInputDto.getSkillsId() != null) {
-            for (Integer skillId : memberInputDto.getSkillsId()) {
+            for (Long skillId : memberInputDto.getSkillsId()) {
                 member.addSkill(skillService.getOrFail(skillId));
             }
         }
@@ -114,7 +114,7 @@ public class MemberService {
 
         if (memberInputDto.getSkillsId() != null) {
             Set<Skill> skills = new HashSet<>();
-            for (Integer skillId : memberInputDto.getSkillsId()) {
+            for (Long skillId : memberInputDto.getSkillsId()) {
                 skills.add(skillService.getOrFail(skillId));
             }
             member.setSkills(skills);
@@ -207,14 +207,14 @@ public class MemberService {
     }
 
     @Transactional
-    public void associateSkill(String memberId, Integer skillId) {
+    public void associateSkill(String memberId, Long skillId) {
         final Member member = read(memberId);
         final Skill skill = skillService.getOrFail(skillId);
         member.addSkill(skill);
     }
 
     @Transactional
-    public void disassociateSkill(String memberId, Integer skillId) {
+    public void disassociateSkill(String memberId, Long skillId) {
         final Member member = read(memberId);
         final Skill skill = skillService.getOrFail(skillId);
         member.removeSkill(skill);

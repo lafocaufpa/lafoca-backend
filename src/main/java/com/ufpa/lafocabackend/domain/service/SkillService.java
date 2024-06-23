@@ -45,11 +45,11 @@ public class SkillService {
         return new PageImpl<>(map, pageable, skills.getTotalElements());
     }
 
-    public SkillDto read (Integer skillId) {
+    public SkillDto read (Long skillId) {
         return modelMapper.map(getOrFail(skillId), SkillDto.class) ;
     }
 
-    public SkillDto update (Integer skillId, SkillDto newSkillDto) {
+    public SkillDto update (Long skillId, SkillDto newSkillDto) {
 
         final Skill currentSkill = getOrFail(skillId);
         modelMapper.map(newSkillDto, currentSkill);
@@ -57,7 +57,7 @@ public class SkillService {
         return modelMapper.map(skillRepository.save(currentSkill), SkillDto.class);
     }
 
-    public void delete (Integer skillsId) {
+    public void delete (Long skillsId) {
 
         try {
             skillRepository.deleteById(skillsId);
@@ -68,7 +68,7 @@ public class SkillService {
         }
     }
 
-    public Skill getOrFail(Integer skillsId) {
+    public Skill getOrFail(Long skillsId) {
         return skillRepository.findById(skillsId)
                 .orElseThrow( () -> new EntityNotFoundException(Skill.class.getSimpleName(), skillsId));
     }

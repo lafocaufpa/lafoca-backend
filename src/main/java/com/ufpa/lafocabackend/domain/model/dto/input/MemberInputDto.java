@@ -38,7 +38,7 @@ public class MemberInputDto {
 
     private Long yearClassId;
 
-    private List<@Positive @NotNull Integer> skillsId;
+    private List<@Positive @NotNull Long> skillsId;
 
     @Valid
     private TccInputDto tcc;
