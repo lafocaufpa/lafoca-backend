@@ -175,8 +175,10 @@ public class UserService {
     @Transactional
     public String addPhoto(CustomMultipartFile photo, User user) throws IOException {
 
+        removePhoto(user);
+
         user.setPhotoUpdate(LafocaUtils.getFormatedOffsetDateTime());
-        String idPhoto = user.getUserId() + user.getPhotoUpdate();
+        String idPhoto = user.getPhotoUpdate() + user.getUserId();
         String originalFilename = createPhotoFilename(idPhoto, photo.getOriginalFilename());
 
         StoragePhotoUtils photoUtils = StoragePhotoUtils.builder()
@@ -198,11 +200,22 @@ public class UserService {
 
         if (user.getUrlPhoto() != null) {
 
-            String idPhoto = user.getUserId() + "-" + user.getPhotoUpdate();
+            // Extrai a URL da foto
+            String urlPhoto = user.getUrlPhoto();
+
+            // Extrai a extensão do arquivo da URL
+            String fileExtension = "";
+            int lastDotIndex = urlPhoto.lastIndexOf(".");
+            if (lastDotIndex != -1 && lastDotIndex < urlPhoto.length() - 1) {
+                fileExtension = urlPhoto.substring(lastDotIndex);
+            }
+
+            // Constrói o idPhoto com a extensão
+            String idPhoto = user.getPhotoUpdate() + user.getUserId() + fileExtension;
 
             photoStorageService
                     .deletar(StoragePhotoUtils.builder()
-                            .fileName(createPhotoFilename(idPhoto, user.getUrlPhoto()))
+                            .fileName(idPhoto)
                             .type(TypeEntityPhoto.User)
                             .build());
             user.removePhoto();
