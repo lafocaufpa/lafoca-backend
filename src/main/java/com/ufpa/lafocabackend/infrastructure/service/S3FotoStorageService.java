@@ -54,6 +54,10 @@ public class S3FotoStorageService implements PhotoStorageService {
     @Override
     public void deletar(StoragePhotoUtils storagePhotoUtils) {
 
+        if(storagePhotoUtils.getFileName() == null){
+            return;
+        }
+
         final String bucket = storageProperties.getS3().getBucket();
 
         final String diretorio = getDiretorio(storagePhotoUtils.getType());

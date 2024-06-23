@@ -21,6 +21,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -124,11 +125,13 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @PostMapping(value = "/{memberId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
     public ResponseEntity<PhotoDto> addPhoto(Part file, @PathVariable String memberId) throws IOException {
 
         var customFile = new StandardCustomMultipartFile(file);
 
         Member member = memberService.read(memberId);
+
         return ResponseEntity.ok(memberPhotoService.save(member, customFile));
     }
 
@@ -147,7 +150,10 @@ public class MemberController {
     public ResponseEntity<Void> deletePhoto(@PathVariable String memberId) {
 
         Member member = memberService.read(memberId);
-        memberPhotoService.delete(member);
+
+        if(member.getMemberPhoto() != null){
+            memberPhotoService.delete(member);
+        }
 
         return ResponseEntity.noContent().build();
     }

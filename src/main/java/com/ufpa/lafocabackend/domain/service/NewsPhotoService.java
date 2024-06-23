@@ -1,8 +1,10 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.core.file.CustomMultipartFile;
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
+import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.NewsPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -23,24 +25,30 @@ public class NewsPhotoService {
     private final PhotoStorageService photoStorageService;
     private final NewsPhotoRepository newsPhotoRepository;
     private final ModelMapper modelMapper;
-    private final NewsService newsService;
-
-    public NewsPhotoService(PhotoStorageService photoStorageService, NewsPhotoRepository newsPhotoRepository, ModelMapper modelMapper, NewsService newsService) {
+    public NewsPhotoService(PhotoStorageService photoStorageService, NewsPhotoRepository newsPhotoRepository, ModelMapper modelMapper ) {
         this.newsPhotoRepository = newsPhotoRepository;
         this.photoStorageService = photoStorageService;
         this.modelMapper = modelMapper;
-        this.newsService = newsService;
     }
 
     @Transactional
     public PhotoDto save(News news, CustomMultipartFile photo) throws IOException {
 
-        String originalPhotoFilename = createPhotoFilename(news.getNewsId(), photo.getOriginalFilename());
+        String formatedOffsetDateTime = LafocaUtils.getFormatedOffsetDateTime();
 
+        String idPhoto = formatedOffsetDateTime + news.getNewsId();
+
+        String originalPhotoFilename = createPhotoFilename(idPhoto, photo.getOriginalFilename());
+
+        String oldPhotoName = null;
+        if(news.getNewsPhoto() != null){
+            oldPhotoName = getFileNamePhoto(news);
+        }
         NewsPhoto newsPhoto = new NewsPhoto();
         newsPhoto.setPhotoId(news.getNewsId());
         newsPhoto.setFileName(originalPhotoFilename);
         newsPhoto.setSize(photo.getSize());
+        newsPhoto.setDataUpdate(formatedOffsetDateTime);
         newsPhoto.setContentType(photo.getContentType());
 
         NewsPhoto newsPhotoSaved = newsPhotoRepository.save(newsPhoto);
@@ -53,6 +61,7 @@ public class NewsPhotoService {
                 .inputStream(photo.getInputStream())
                 .build();
 
+        photoStorageService.deletar(StoragePhotoUtils.builder().fileName(oldPhotoName).type(TypeEntityPhoto.News).build());
         final String url = photoStorageService.armazenar(newPhoto);
         newsPhotoSaved.setUrl(url);
 
@@ -76,4 +85,8 @@ public class NewsPhotoService {
 
         photoStorageService.deletar(storagePhotoUtils);
     }
+    public String getFileNamePhoto(News news) {
+        return news.getNewsPhoto().getFileName();
+    }
+
 }

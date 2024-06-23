@@ -1,6 +1,6 @@
 package com.ufpa.lafocabackend.core.utils;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.ufpa.lafocabackend.domain.model.Member;
 
 import java.text.Normalizer;
 import java.time.LocalDate;
@@ -141,9 +141,11 @@ public class LafocaUtils {
         return stringBuilder.toString();
     }
 
-    public static String formatOffsetDateTime(OffsetDateTime dateTime) {
+    public static String getFormatedOffsetDateTime() {
+        OffsetDateTime dateTime = OffsetDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
-        return dateTime.format(formatter);
+        String formatted = dateTime.format(formatter);
+        return formatted.concat("-");
     }
 
 }

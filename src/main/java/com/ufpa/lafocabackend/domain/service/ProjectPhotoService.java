@@ -1,8 +1,10 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.core.file.CustomMultipartFile;
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
+import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.ProjectPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -50,24 +52,34 @@ public class ProjectPhotoService {
     @Transactional
     public PhotoDto save(Project project, CustomMultipartFile photo) throws IOException {
 
-        String originalPhotoFilename = createPhotoFilename(project.getSlug(), photo.getOriginalFilename());
+        String formatedOffsetDateTime = LafocaUtils.getFormatedOffsetDateTime();
 
-        ProjectPhoto memberPhoto = new ProjectPhoto();
-        memberPhoto.setPhotoId(project.getProjectId());
-        memberPhoto.setFileName(originalPhotoFilename);
-        memberPhoto.setSize(photo.getSize());
-        memberPhoto.setContentType(photo.getContentType());
+        String idPhoto = formatedOffsetDateTime + project.getProjectId();
 
-        final ProjectPhoto memberPhotoSaved = projectPhotoRepository.save(memberPhoto);
+        String originalPhotoFilename = createPhotoFilename(idPhoto, photo.getOriginalFilename());
+
+        String oldPhotoName = null;
+        if(project.getProjectPhoto() != null){
+            oldPhotoName = getFileNamePhoto(project);
+        }
+        ProjectPhoto projectPhoto = new ProjectPhoto();
+        projectPhoto.setPhotoId(project.getProjectId());
+        projectPhoto.setFileName(originalPhotoFilename);
+        projectPhoto.setSize(photo.getSize());
+        projectPhoto.setDataUpdate(formatedOffsetDateTime);
+        projectPhoto.setContentType(photo.getContentType());
+
+        final ProjectPhoto memberPhotoSaved = projectPhotoRepository.save(projectPhoto);
 
         StoragePhotoUtils newPhoto = StoragePhotoUtils.builder()
-                .fileName(memberPhoto.getFileName())
-                .contentType(memberPhoto.getContentType())
-                .contentLength(memberPhoto.getSize())
+                .fileName(projectPhoto.getFileName())
+                .contentType(projectPhoto.getContentType())
+                .contentLength(projectPhoto.getSize())
                 .type(TypeEntityPhoto.Project)
                 .inputStream(photo.getInputStream())
                 .build();
 
+        photoStorageService.deletar(StoragePhotoUtils.builder().fileName(oldPhotoName).type(TypeEntityPhoto.Member).build());
         final String url = photoStorageService.armazenar(newPhoto);
         memberPhotoSaved.setUrl(url);
 
@@ -75,5 +87,8 @@ public class ProjectPhotoService {
         return modelMapper.map(memberPhotoSaved, PhotoDto.class);
     }
 
+    public String getFileNamePhoto(Project project) {
+        return project.getProjectPhoto().getFileName();
+    }
 
 }

@@ -28,6 +28,9 @@ public abstract class Photo {
     @Column(nullable = false, length = 225)
     private String fileName ;
 
+    @Column(length = 40)
+    private String dataUpdate;
+
     public Photo() {
     }
 }

@@ -25,4 +25,7 @@ public class PhotoDto {
     @JsonProperty(access = READ_ONLY)
     private String url;
 
+    @JsonProperty(access = READ_ONLY)
+    private String dataUpdate;
+
 }

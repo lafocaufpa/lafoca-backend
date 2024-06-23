@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.core.file.CustomMultipartFile;
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
 import com.ufpa.lafocabackend.domain.model.Member;
@@ -45,18 +46,27 @@ public class MemberPhotoService {
                 .type(TypeEntityPhoto.Member).build();
 
         photoStorageService.deletar(storagePhotoUtils);
-
     }
 
     @Transactional
     public PhotoDto save(Member member, CustomMultipartFile photo) throws IOException {
 
-        String originalPhotoFilename = createPhotoFilename(member.getMemberId(), photo.getOriginalFilename());
+        String formatedOffsetDateTime = LafocaUtils.getFormatedOffsetDateTime();
+
+        String idPhoto = formatedOffsetDateTime + member.getMemberId();
+
+        String originalPhotoFilename = createPhotoFilename(idPhoto, photo.getOriginalFilename());
+
+        String oldPhotoName = null;
+        if(member.getMemberPhoto() != null){
+            oldPhotoName = getFileNamePhoto(member);
+        }
 
         MemberPhoto memberPhoto = new MemberPhoto();
         memberPhoto.setPhotoId(member.getMemberId());
         memberPhoto.setFileName(originalPhotoFilename);
         memberPhoto.setSize(photo.getSize());
+        memberPhoto.setDataUpdate(formatedOffsetDateTime);
         memberPhoto.setContentType(photo.getContentType());
 
         final MemberPhoto memberPhotoSaved = memberPhotoRepository.save(memberPhoto);
@@ -70,6 +80,7 @@ public class MemberPhotoService {
                 .inputStream(photo.getInputStream())
                 .build();
 
+        photoStorageService.deletar(StoragePhotoUtils.builder().fileName(oldPhotoName).type(TypeEntityPhoto.Member).build());
         final String url = photoStorageService.armazenar(newPhoto);
         memberPhotoSaved.setUrl(url);
 
@@ -77,5 +88,8 @@ public class MemberPhotoService {
         return modelMapper.map(memberPhotoSaved, PhotoDto.class);
     }
 
+    public String getFileNamePhoto(Member member) {
+        return member.getMemberPhoto().getFileName();
+    }
 
 }
