@@ -94,7 +94,7 @@ public class StandardCustomMultipartFile implements CustomMultipartFile, Seriali
         }
 
         long size = file.getSize();
-        if (size < 20 * 1024 || size > 5 * 1024 * 2024) {
+        if (size <=  0|| size > 5 * 1024 * 2024) {
             throw new InvalidFileException(ErrorMessage.TAMANHO_INVALIDO.get());
         }
     }
