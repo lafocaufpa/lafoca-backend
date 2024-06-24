@@ -1,9 +1,11 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.dto.HostInfo;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +20,7 @@ public class HostCheckController {
     }
 
     @GetMapping("/host-check")
-    public HostInfo checkHost() throws UnknownHostException {
+    public ResponseEntity<HostInfo> checkHost() throws UnknownHostException {
         InetAddress localHost = InetAddress.getLocalHost();
 
         HostInfo hostInfo = new HostInfo();
@@ -42,6 +44,6 @@ public class HostCheckController {
         hostInfo.setSpringVersion(SpringVersion.getVersion());
         hostInfo.setSpringSecurityCoreVersion(SpringSecurityCoreVersion.getVersion());
 
-        return hostInfo;
+        return CacheUtil.createCachedResponse(hostInfo, 30);
     }
 }

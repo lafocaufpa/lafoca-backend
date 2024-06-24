@@ -30,9 +30,12 @@ public class LineOfResearchService {
         return lineOfResearchRepository.save(modelMapper.map(lineOfResearchDto, LineOfResearch.class));
     }
 
-    public Page<LineOfResearch> list (Pageable pageable){
-
+    public Page<LineOfResearch> list(Pageable pageable) {
         return lineOfResearchRepository.findAll(pageable);
+    }
+
+    public Page<LineOfResearch> searchByName(String name, Pageable pageable) {
+        return lineOfResearchRepository.findByNameContaining(name, pageable);
     }
 
     public LineOfResearch read (String lineOfResearchId) {

@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.RecordCount;
 import com.ufpa.lafocabackend.domain.model.dto.input.RecordCountDTO;
 import com.ufpa.lafocabackend.domain.service.RecordCountService;
@@ -30,9 +31,9 @@ public class RecordCountController {
                     dto.setTccs(recordCount.getTccs());
                     dto.setProjects(recordCount.getProjects());
                     dto.setMembers(recordCount.getMembers());
-                    return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60L, TimeUnit.SECONDS)).body(dto);
+                    return CacheUtil.createCachedResponseRecordCount(dto);
                 })
-                .orElse(ResponseEntity.noContent().cacheControl(CacheControl.maxAge(60L, TimeUnit.SECONDS)).build());
+                .orElse(CacheUtil.createCachedResponseNoContentRecordCount());
     }
 
     @CheckSecurityPermissionMethods.User.Level1

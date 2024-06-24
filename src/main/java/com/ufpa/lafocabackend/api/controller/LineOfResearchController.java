@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.LineOfResearchDto;
@@ -47,20 +48,22 @@ public class LineOfResearchController {
         return ResponseEntity.ok(lineOfResearchDto);
     }
 
+    @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Page<LineOfResearchDto>> list (Pageable pageable){
+    public ResponseEntity<Page<LineOfResearchDto>> list(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
+        Page<LineOfResearch> list;
 
-        Page<LineOfResearch> list = lineOfResearchService.list(pageable);
+        if (name != null && !name.isEmpty()) {
+            list = lineOfResearchService.searchByName(name, pageable);
+        } else {
+            list = lineOfResearchService.list(pageable);
+        }
 
-        Type listType = new TypeToken<List<LineOfResearchDto>>() {
-
-        }.getType();
-
-        final List<LineOfResearchDto> map = modelMapper.map(list.getContent(), listType);
-
+        Type listType = new TypeToken<List<LineOfResearchDto>>() {}.getType();
+        List<LineOfResearchDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<LineOfResearchDto> lineOfResearchDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return ResponseEntity.ok(lineOfResearchDtos);
+        return CacheUtil.createCachedResponseLineOfResearch(lineOfResearchDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

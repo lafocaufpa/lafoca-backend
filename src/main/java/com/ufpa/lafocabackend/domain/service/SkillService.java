@@ -34,15 +34,17 @@ public class SkillService {
         return modelMapper.map(skillRepository.save(skill), SkillDto.class);
     }
 
-    public Page<SkillDto> list (Pageable pageable){
+    public Page<SkillDto> list(String name, Pageable pageable) {
+        Page<Skill> skills;
+        if (name != null && !name.isEmpty()) {
+            skills = skillRepository.findByNameContaining(name, pageable);
+        } else {
+            skills = skillRepository.findAll(pageable);
+        }
 
-        final Type type = new TypeToken<List<SkillDto>>() {
-
-        }.getType();
-
-        Page<Skill> skills = skillRepository.findAll(pageable);
-        List<SkillDto> map = modelMapper.map(skills.getContent(), type);
-        return new PageImpl<>(map, pageable, skills.getTotalElements());
+        Type listType = new TypeToken<List<SkillDto>>() {}.getType();
+        List<SkillDto> skillDtos = modelMapper.map(skills.getContent(), listType);
+        return new PageImpl<>(skillDtos, pageable, skills.getTotalElements());
     }
 
     public SkillDto read (Long skillId) {

@@ -48,6 +48,10 @@ public class ProjectService {
         return projectRepository.findAll(pageable);
     }
 
+    public Page<Project> searchByTitle(String title, Pageable pageable) {
+        return projectRepository.findByTitleContaining(title, pageable);
+    }
+
     public Project read (String projectId) {
         return getOrFail(projectId);
     }

@@ -160,6 +160,10 @@ public class MemberService {
         return memberRepository.listMembers(pageable);
     }
 
+    public Page<MemberResumed> searchResumedMembersByFullName(String fullName, Pageable pageable) {
+        return memberRepository.findResumedMembersByFullNameContaining(fullName, pageable);
+    }
+
     public Member read(String memberId) {
         return getOrFail(memberId);
     }

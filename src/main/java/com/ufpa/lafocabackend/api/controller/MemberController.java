@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
@@ -98,11 +99,19 @@ public class MemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping("/resumed")
-    public ResponseEntity<Page<MemberResumed>> listResumedMembers(@PageableDefault(size = 10) Pageable pageable) {
-        Page<MemberResumed> memberResumeds = memberService.listResumedMembers(pageable);
-        Page<MemberResumed> memberResumedPage = new PageImpl<>(memberResumeds.getContent(), pageable, memberResumeds.getTotalElements());
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberResumedPage);
+    public ResponseEntity<Page<MemberResumed>> listResumedMembers(
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<MemberResumed> memberResumeds;
 
+        if (fullName != null && !fullName.isEmpty()) {
+            memberResumeds = memberService.searchResumedMembersByFullName(fullName, pageable);
+        } else {
+            memberResumeds = memberService.listResumedMembers(pageable);
+        }
+
+        Page<MemberResumed> memberResumedPage = new PageImpl<>(memberResumeds.getContent(), pageable, memberResumeds.getTotalElements());
+        return CacheUtil.createCachedResponseMember(memberResumedPage);
     }
 
     @CheckSecurityPermissionMethods.Level1

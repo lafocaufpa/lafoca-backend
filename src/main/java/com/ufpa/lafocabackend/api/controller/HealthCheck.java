@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,6 @@ public class HealthCheck {
 
     @GetMapping("/hello-world")
     public ResponseEntity<String> helloWorld() {
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES)).body("<h1>Hello World</h1>");
+        return CacheUtil.createCachedResponse("<h1>Hello World</h1>", 120);
     }
 }

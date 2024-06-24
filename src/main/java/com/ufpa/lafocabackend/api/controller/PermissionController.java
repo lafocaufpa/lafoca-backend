@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
@@ -53,19 +54,23 @@ public class PermissionController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Page<PermissionDto>> list (Pageable pageable){
+    public ResponseEntity<Page<PermissionDto>> list(
+            @RequestParam(value = "name", required = false) String name,
+            Pageable pageable) {
 
-        final Page<Permission> list = permissionService.list(pageable);
+        Page<Permission> permissionPage;
 
-        Type listType = new TypeToken<List<PermissionDto>>() {
+        if (name != null && !name.isEmpty()) {
+            permissionPage = permissionService.searchByName(name, pageable);
+        } else {
+            permissionPage = permissionService.list(pageable);
+        }
 
-        }.getType();
+        Type listType = new TypeToken<List<PermissionDto>>() {}.getType();
+        List<PermissionDto> map = modelMapper.map(permissionPage.getContent(), listType);
+        Page<PermissionDto> permissionDtos = new PageImpl<>(map, pageable, permissionPage.getTotalElements());
 
-        final List<PermissionDto> map = modelMapper.map(list.getContent(), listType);
-
-        PageImpl<PermissionDto> permissionDtos = new PageImpl<>(map, pageable, list.getTotalElements());
-
-        return ResponseEntity.ok(permissionDtos);
+        return CacheUtil.createCachedResponsePermission(permissionDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

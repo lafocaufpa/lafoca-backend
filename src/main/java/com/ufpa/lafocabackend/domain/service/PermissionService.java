@@ -33,6 +33,11 @@ public class PermissionService {
         return permissionRepository.findAll(pageable);
     }
 
+    public Page<Permission> searchByName(String name, Pageable pageable) {
+        return permissionRepository.findByNameContaining(name, pageable);
+    }
+
+
     public Permission read (Long permissionId) {
 
         return getOrFail(permissionId);

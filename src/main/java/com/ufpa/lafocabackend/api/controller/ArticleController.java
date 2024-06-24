@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.Article;
 import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
@@ -57,20 +58,22 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ArticleDto>>  list (Pageable pageable){
+    public ResponseEntity<Page<ArticleDto>> list(@RequestParam(value = "title", required = false) String title, Pageable pageable) {
+        Page<Article> list;
 
-        final Page<Article> list = articleService.list(pageable);
+        if (title != null && !title.isEmpty()) {
+            list = articleService.searchByTitle(title, pageable);
+        } else {
+            list = articleService.list(pageable);
+        }
 
-        Type listType = new TypeToken<List<ArticleDto>>() {
-
-        }.getType();
-
-        final List<ArticleDto> map = modelMapper.map(list.getContent(), listType);
-
+        Type listType = new TypeToken<List<ArticleDto>>() {}.getType();
+        List<ArticleDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<ArticleDto> articleDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(articleDtos);
+        return CacheUtil.createCachedResponseArticle(articleDtos);
     }
+
 
     @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{articleId}")

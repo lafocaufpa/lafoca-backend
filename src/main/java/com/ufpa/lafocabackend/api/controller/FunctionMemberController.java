@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.FunctionMember;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;
@@ -53,19 +54,20 @@ public class FunctionMemberController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Page<FunctionMemberDto>> list (Pageable pageable){
+    public ResponseEntity<Page<FunctionMemberDto>> list(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
+        Page<FunctionMember> list;
 
-        final Page<FunctionMember> list = functionMemberService.list(pageable);
+        if (name != null && !name.isEmpty()) {
+            list = functionMemberService.searchByName(name, pageable);
+        } else {
+            list = functionMemberService.list(pageable);
+        }
 
-        Type listType = new TypeToken<List<FunctionMemberDto>>() {
-
-        }.getType();
-
-        final List<FunctionMemberDto> map = modelMapper.map(list.getContent(), listType);
-
+        Type listType = new TypeToken<List<FunctionMemberDto>>() {}.getType();
+        List<FunctionMemberDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<FunctionMemberDto> functionMemberDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return ResponseEntity.ok(functionMemberDtos);
+        return CacheUtil.createCachedResponseFunctionMember(functionMemberDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

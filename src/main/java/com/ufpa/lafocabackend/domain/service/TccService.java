@@ -31,6 +31,14 @@ public class TccService {
         return tccRepository.findAll(pageable);
     }
 
+    public Page<Tcc> list(String name, Pageable pageable) {
+        if (name != null && !name.isEmpty()) {
+            return tccRepository.findByNameContaining(name, pageable);
+        } else {
+            return tccRepository.findAll(pageable);
+        }
+    }
+
     public Tcc read (Long tccId) {
         return getOrFail(tccId);
     }

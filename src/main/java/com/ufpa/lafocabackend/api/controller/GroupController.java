@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
@@ -70,7 +71,7 @@ public class GroupController {
         List<GroupDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<GroupDto> groupDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return ResponseEntity.ok(groupDtos);
+        return CacheUtil.createCachedResponseGroup(groupDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1
@@ -85,9 +86,7 @@ public class GroupController {
 
         final List<GroupDto> groupDtos = modelMapper.map(list, listType);
 
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
-                .body(groupDtos);
+        return CacheUtil.createCachedResponseGroup(groupDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

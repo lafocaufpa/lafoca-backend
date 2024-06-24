@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
-    Optional<Group> findGroupByName(String name);
-
     @Query("SELECT g FROM Group g WHERE g.name LIKE %:name%")
     Page<Group> findByNameContaining(@Param("name") String name, Pageable pageable);
 }

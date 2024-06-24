@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.api.controller;
 
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.dto.output.LafocaDto;
 import com.ufpa.lafocabackend.domain.service.LafocaService;
 import org.springframework.http.CacheControl;
@@ -23,6 +24,6 @@ public class LafocaController {
     @GetMapping
     public ResponseEntity<LafocaDto> read() {
         final LafocaDto lafocaDto = lafocaService.printCounts();
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(lafocaDto);
+        return CacheUtil.createCachedResponse(lafocaDto, 60);
     }
 }

@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.repository;
 
 import com.ufpa.lafocabackend.domain.model.Member;
+import com.ufpa.lafocabackend.domain.model.YearClass;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import org.springframework.data.domain.Page;
@@ -43,5 +44,16 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     boolean existsByEmail (String email);
 
     Optional<Member> findBySlug(String slug);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "WHERE m.fullName LIKE %:fullName%")
+    Page<MemberResumed> findResumedMembersByFullNameContaining(@Param("fullName") String fullName, Pageable pageable);
+
+    Page<Member> findByYearClass(YearClass yearClass, Pageable pageable);
+
+    @Query("SELECT m FROM Member m WHERE m.fullName LIKE %:name% AND m.yearClass = :yearClass")
+    Page<Member> findByFullNameContainingAndYearClass(@Param("name") String name, @Param("yearClass") YearClass yearClass, Pageable pageable);
+
 
 }

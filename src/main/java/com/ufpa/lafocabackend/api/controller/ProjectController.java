@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.input.ProjectInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -67,19 +68,23 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProjectDto>> list (Pageable pageable){
+    public ResponseEntity<Page<ProjectDto>> list(
+            @RequestParam(value = "title", required = false) String title,
+            Pageable pageable) {
 
-        final Page<Project> listProjects = projectService.list(pageable);
+        Page<Project> projectPage;
 
-        Type listType = new TypeToken<List<ProjectDto>>() {
+        if (title != null && !title.isEmpty()) {
+            projectPage = projectService.searchByTitle(title, pageable);
+        } else {
+            projectPage = projectService.list(pageable);
+        }
 
-        }.getType();
+        Type listType = new TypeToken<List<ProjectDto>>() {}.getType();
+        List<ProjectDto> map = modelMapper.map(projectPage.getContent(), listType);
+        Page<ProjectDto> projects = new PageImpl<>(map, pageable, projectPage.getTotalElements());
 
-        final List<ProjectDto> map = modelMapper.map(listProjects.getContent(), listType);
-
-        Page<ProjectDto> projects = new PageImpl<>(map, pageable, listProjects.getTotalElements());
-
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(projects);
+        return CacheUtil.createCachedResponseProject(projects);
     }
 
     @CheckSecurityPermissionMethods.Level1

@@ -26,9 +26,12 @@ public class FunctionMemberService {
         return functionMemberRepository.save(functionMember);
     }
 
-    public Page<FunctionMember> list (Pageable pageable){
-
+    public Page<FunctionMember> list(Pageable pageable) {
         return functionMemberRepository.findAll(pageable);
+    }
+
+    public Page<FunctionMember> searchByName(String name, Pageable pageable) {
+        return functionMemberRepository.findByNameContaining(name, pageable);
     }
 
     public FunctionMember read (Long functionMemberId) {

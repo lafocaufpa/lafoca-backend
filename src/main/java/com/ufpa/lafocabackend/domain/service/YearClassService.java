@@ -2,8 +2,11 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
+import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.YearClass;
 import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
+import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
+import com.ufpa.lafocabackend.repository.MemberRepository;
 import com.ufpa.lafocabackend.repository.YearClassRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -16,16 +19,19 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class YearClassService {
 
     private final YearClassRepository yearClassRepository;
     private final ModelMapper modelMapper;
+    private final MemberRepository memberRepository;
 
-    public YearClassService(YearClassRepository yearClassRepository, ModelMapper modelMapper) {
+    public YearClassService(YearClassRepository yearClassRepository, ModelMapper modelMapper, MemberRepository memberRepository) {
         this.yearClassRepository = yearClassRepository;
         this.modelMapper = modelMapper;
+        this.memberRepository = memberRepository;
     }
 
     public YearClassDTO save(YearClassDTO yearClassDto) {
@@ -70,5 +76,35 @@ public class YearClassService {
         List<YearClass> classes = yearClassRepository.findAll();
         final Type type = new TypeToken<List<YearClassDTO>>() {}.getType();
         return modelMapper.map(classes, type);
+    }
+
+    public Page<MemberDto> listMembersByYearClass(Long yearClassId, String name, Pageable pageable) {
+        // Busca pela YearClass específica
+        YearClass yearClass = yearClassRepository.findById(yearClassId)
+                .orElseThrow(() -> new EntityNotFoundException("Ano não encontrado", yearClassId));
+
+        // Se o parâmetro 'name' for fornecido, busca por membros pelo nome dentro da YearClass
+        if (name != null && !name.isEmpty()) {
+            return findMembersByNameAndYearClass(name, yearClass, pageable);
+        } else {
+            return findMembersByYearClass(yearClass, pageable);
+        }
+    }
+
+    private Page<MemberDto> findMembersByYearClass(YearClass yearClass, Pageable pageable) {
+        Page<Member> members = memberRepository.findByYearClass(yearClass, pageable);
+        return mapMemberPageToMemberDTOPage(members, pageable);
+    }
+
+    private Page<MemberDto> findMembersByNameAndYearClass(String name, YearClass yearClass, Pageable pageable) {
+        Page<Member> members = memberRepository.findByFullNameContainingAndYearClass(name, yearClass, pageable);
+        return mapMemberPageToMemberDTOPage(members, pageable);
+    }
+
+    private Page<MemberDto> mapMemberPageToMemberDTOPage(Page<Member> memberPage, Pageable pageable) {
+        List<MemberDto> memberDTOs = memberPage.getContent().stream()
+                .map(member -> modelMapper.map(member, MemberDto.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(memberDTOs, pageable, memberPage.getTotalElements());
     }
 }

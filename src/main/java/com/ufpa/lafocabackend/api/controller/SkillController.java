@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.Skill;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -52,12 +53,12 @@ public class SkillController {
 
     @CheckSecurityPermissionMethods.Level1
     @GetMapping
-    public ResponseEntity<Page<SkillDto>> list (Pageable pageable){
+    public ResponseEntity<Page<SkillDto>> list(
+            @RequestParam(value = "name", required = false) String name,
+            Pageable pageable) {
 
-        Page<SkillDto> list = skillService.list(pageable);
-
-
-        return ResponseEntity.ok(list);
+        Page<SkillDto> skillDtos = skillService.list(name, pageable);
+        return CacheUtil.createCachedResponseSkill(skillDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

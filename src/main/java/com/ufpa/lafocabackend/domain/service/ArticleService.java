@@ -41,9 +41,12 @@ public class ArticleService {
         return articleRepository.save(article);
     }
 
-    public Page<Article> list (Pageable pageable){
-
+    public Page<Article> list(Pageable pageable) {
         return articleRepository.findAll(pageable);
+    }
+
+    public Page<Article> searchByTitle(String title, Pageable pageable) {
+        return articleRepository.findByTitleContaining(title, pageable);
     }
 
     public Article read (Long articleId) {

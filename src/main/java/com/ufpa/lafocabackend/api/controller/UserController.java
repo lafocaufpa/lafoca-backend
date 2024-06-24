@@ -3,6 +3,7 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.core.security.dto.ResetPassword;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.domain.exception.CannotDeleteOnlyAdministratorException;
 import com.ufpa.lafocabackend.domain.model.Group;
@@ -69,9 +70,7 @@ public class UserController {
 
         PageImpl<UserDto> userDtos = new PageImpl<>(map, pageable, users.getTotalElements());
 
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
-                .body(userDtos);
+        return CacheUtil.createCachedResponseUser(userDtos);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
@@ -82,9 +81,7 @@ public class UserController {
 
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
-                .body(userDto);
+        return CacheUtil.createCachedResponseUser(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
@@ -94,9 +91,7 @@ public class UserController {
         final User user = userService.readBySlug(slug);
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
-                .body(userDto);
+        return CacheUtil.createCachedResponseUser(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
@@ -106,7 +101,7 @@ public class UserController {
         final User user = userService.readByEmail(userEmail);
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(userDto);
+        return CacheUtil.createCachedResponseUser(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1OrLevel2

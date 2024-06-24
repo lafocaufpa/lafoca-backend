@@ -54,6 +54,10 @@ public class NewsService {
     public Page<News> list(Pageable pageable){
         return newsRepository.findAll(pageable);
     }
+    public Page<News> searchByTitle(String title, Pageable pageable) {
+        return newsRepository.findByTitleContaining(title, pageable);
+    }
+
 
     @Transactional
     public News update(String newsSlug, NewsInputDto newNewsInputDto){

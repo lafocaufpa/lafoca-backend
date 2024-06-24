@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.CacheUtil;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.NewsDto;
@@ -17,6 +18,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -67,17 +69,23 @@ public class NewsController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<NewsOutput>> list (Pageable pageable){
+    public ResponseEntity<Page<NewsOutput>> list(
+            @RequestParam(value = "title", required = false) String title,
+            @PageableDefault(size = 10) Pageable pageable) {
 
-        final Page<News> list = newsService.list(pageable);
+        Page<News> newsPage;
+
+        if (title != null && !title.isEmpty()) {
+            newsPage = newsService.searchByTitle(title, pageable);
+        } else {
+            newsPage = newsService.list(pageable);
+        }
 
         Type listType = new TypeToken<List<NewsOutput>>() {}.getType();
+        List<NewsOutput> map = modelMapper.map(newsPage.getContent(), listType);
+        Page<NewsOutput> newsOutputs = new PageImpl<>(map, pageable, newsPage.getTotalElements());
 
-        final List<NewsOutput> map = modelMapper.map(list.getContent(), listType);
-
-        PageImpl<NewsOutput> newsOutputs = new PageImpl<>(map, pageable, list.getTotalElements());
-
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(newsOutputs);
+        return CacheUtil.createCachedResponseNews(newsOutputs);
     }
 
     @CheckSecurityPermissionMethods.Level1
