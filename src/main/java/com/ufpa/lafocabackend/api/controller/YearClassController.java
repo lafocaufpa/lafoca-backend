@@ -3,6 +3,7 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.service.YearClassService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -43,15 +44,14 @@ public class YearClassController {
     }
 
     @GetMapping("/{yearClassId}/members")
-    public ResponseEntity<Page<MemberDto>> listMembersByYearClass(
+    public ResponseEntity<Page<MemberResumed>> listMembersByYearClass(
             @PathVariable Long yearClassId,
             @RequestParam(value = "name", required = false) String name,
             Pageable pageable) {
 
-        Page<MemberDto> members = yearClassService.listMembersByYearClass(yearClassId, name, pageable);
+        Page<MemberResumed> members = yearClassService.listMembersByYearClass(yearClassId, name, pageable);
         return ResponseEntity.ok(members);
     }
-
     @CheckSecurityPermissionMethods.Level1
     @GetMapping("/list")
     public ResponseEntity<List<YearClassDTO>> listWithoutPage() {

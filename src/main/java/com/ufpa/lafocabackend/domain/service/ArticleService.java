@@ -89,10 +89,6 @@ public class ArticleService {
         }
 
     }
-//
-//    public Boolean addLineOfResearchByArticleSlug(String articleSlug, String lineOfResearch){
-//        readBySlug(articleSlug).addLineOfResearch(lineOfResearch);
-//    }
 
     private Article getOrFail(Long articleId) {
         return articleRepository.findById(articleId)

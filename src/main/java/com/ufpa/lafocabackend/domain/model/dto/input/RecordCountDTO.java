@@ -7,7 +7,6 @@ public class RecordCountDTO {
     private int projects;
     private int members;
 
-    // Getters and Setters
     public int getArticles() {
         return articles;
     }

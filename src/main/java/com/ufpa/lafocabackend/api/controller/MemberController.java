@@ -54,7 +54,6 @@ public class MemberController {
             return ResponseEntity.ok(memberSaved);
         }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberDto> read(@PathVariable String memberId) {
 
@@ -71,9 +70,9 @@ public class MemberController {
             return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(memberDto);
         }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     @Deprecated
+    @CheckSecurityPermissionMethods.Level1
     public ResponseEntity<Page<MemberDto>> list(@PageableDefault(size = 10) Pageable pageable) {
 
         final Page<Member> list = memberService.list(pageable);
@@ -97,15 +96,16 @@ public class MemberController {
 
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping("/resumed")
     public ResponseEntity<Page<MemberResumed>> listResumedMembers(
             @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "yearClassId", required = false) Long yearClassId,
             @PageableDefault(size = 10) Pageable pageable) {
+
         Page<MemberResumed> memberResumeds;
 
-        if (fullName != null && !fullName.isEmpty()) {
-            memberResumeds = memberService.searchResumedMembersByFullName(fullName, pageable);
+        if ((fullName != null && !fullName.isEmpty()) || yearClassId != null) {
+            memberResumeds = memberService.searchResumedMembersByFullNameAndYearClassId(fullName, yearClassId, pageable);
         } else {
             memberResumeds = memberService.listResumedMembers(pageable);
         }

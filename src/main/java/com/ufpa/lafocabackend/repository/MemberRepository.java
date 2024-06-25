@@ -50,10 +50,21 @@ public interface MemberRepository extends JpaRepository<Member, String> {
             "WHERE m.fullName LIKE %:fullName%")
     Page<MemberResumed> findResumedMembersByFullNameContaining(@Param("fullName") String fullName, Pageable pageable);
 
-    Page<Member> findByYearClass(YearClass yearClass, Pageable pageable);
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "WHERE m.yearClass = :yearClass")
+    Page<MemberResumed> findResumedMembersByYearClass(@Param("yearClass") YearClass yearClass, Pageable pageable);
 
-    @Query("SELECT m FROM Member m WHERE m.fullName LIKE %:name% AND m.yearClass = :yearClass")
-    Page<Member> findByFullNameContainingAndYearClass(@Param("name") String name, @Param("yearClass") YearClass yearClass, Pageable pageable);
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "WHERE m.fullName LIKE %:name% AND m.yearClass = :yearClass")
+    Page<MemberResumed> findResumedMembersByFullNameContainingAndYearClass(@Param("name") String name, @Param("yearClass") YearClass yearClass, Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "WHERE (:fullName IS NULL OR m.fullName LIKE %:fullName%) " +
+            "AND (:yearClassId IS NULL OR m.yearClass.yearClassId = :yearClassId)")
+    Page<MemberResumed> findResumedMembersByFullNameAndYearClassId(@Param("fullName") String fullName, @Param("yearClassId") Long yearClassId, Pageable pageable);
 
 
 }

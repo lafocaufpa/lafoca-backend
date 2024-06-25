@@ -164,6 +164,10 @@ public class MemberService {
         return memberRepository.findResumedMembersByFullNameContaining(fullName, pageable);
     }
 
+    public Page<MemberResumed> searchResumedMembersByFullNameAndYearClassId(String fullName, Long yearClassId, Pageable pageable) {
+        return memberRepository.findResumedMembersByFullNameAndYearClassId(fullName, yearClassId, pageable);
+    }
+
     public Member read(String memberId) {
         return getOrFail(memberId);
     }

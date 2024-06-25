@@ -6,6 +6,7 @@ import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.YearClass;
 import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.repository.MemberRepository;
 import com.ufpa.lafocabackend.repository.YearClassRepository;
 import org.modelmapper.ModelMapper;
@@ -78,7 +79,7 @@ public class YearClassService {
         return modelMapper.map(classes, type);
     }
 
-    public Page<MemberDto> listMembersByYearClass(Long yearClassId, String name, Pageable pageable) {
+    public Page<MemberResumed> listMembersByYearClass(Long yearClassId, String name, Pageable pageable) {
         // Busca pela YearClass específica
         YearClass yearClass = yearClassRepository.findById(yearClassId)
                 .orElseThrow(() -> new EntityNotFoundException("Ano não encontrado", yearClassId));
@@ -91,20 +92,12 @@ public class YearClassService {
         }
     }
 
-    private Page<MemberDto> findMembersByYearClass(YearClass yearClass, Pageable pageable) {
-        Page<Member> members = memberRepository.findByYearClass(yearClass, pageable);
-        return mapMemberPageToMemberDTOPage(members, pageable);
+    private Page<MemberResumed> findMembersByYearClass(YearClass yearClass, Pageable pageable) {
+        return memberRepository.findResumedMembersByYearClass(yearClass, pageable);
     }
 
-    private Page<MemberDto> findMembersByNameAndYearClass(String name, YearClass yearClass, Pageable pageable) {
-        Page<Member> members = memberRepository.findByFullNameContainingAndYearClass(name, yearClass, pageable);
-        return mapMemberPageToMemberDTOPage(members, pageable);
+    private Page<MemberResumed> findMembersByNameAndYearClass(String name, YearClass yearClass, Pageable pageable) {
+        return memberRepository.findResumedMembersByFullNameContainingAndYearClass(name, yearClass, pageable);
     }
 
-    private Page<MemberDto> mapMemberPageToMemberDTOPage(Page<Member> memberPage, Pageable pageable) {
-        List<MemberDto> memberDTOs = memberPage.getContent().stream()
-                .map(member -> modelMapper.map(member, MemberDto.class))
-                .collect(Collectors.toList());
-        return new PageImpl<>(memberDTOs, pageable, memberPage.getTotalElements());
-    }
 }
