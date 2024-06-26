@@ -1,9 +1,8 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.FunctionMember;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;
 import com.ufpa.lafocabackend.domain.service.FunctionMemberService;
 import jakarta.validation.Valid;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -67,7 +65,7 @@ public class FunctionMemberController {
         List<FunctionMemberDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<FunctionMemberDto> functionMemberDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return CacheUtil.createCachedResponseFunctionMember(functionMemberDtos);
+        return LafocaCacheUtil.createCachedResponseFunctionMember(functionMemberDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.concurrent.TimeUnit;
 
-public class CacheUtil {
+public class LafocaCacheUtil {
     private static final long CACHE_MAX_AGE_GROUP = 30;
     private static final long CACHE_MAX_AGE_USER = 60;
     private static final long CACHE_MAX_AGE_ARTICLE = 60;
@@ -19,7 +19,7 @@ public class CacheUtil {
     private static final long CACHE_MAX_AGE_RECORD_COUNT = 60;
     private static final long CACHE_MAX_AGE_SKILL = 60;
     private static final long CACHE_MAX_AGE_TCC = 60;
-
+    private static final long CACHE_MAX_AGE_LOGIN_SESSION = 5;
 
     public static <T> ResponseEntity<T> createCachedResponse(T body, long maxAge) {
         return ResponseEntity.ok()
@@ -74,6 +74,11 @@ public class CacheUtil {
     public static <T> ResponseEntity<T> createCachedResponseTcc(T body) {
         return createCachedResponse(body, CACHE_MAX_AGE_TCC);
     }
+
+    public static <T> ResponseEntity<T> createCachedResponseLoginSession(T body) {
+        return createCachedResponse(body, CACHE_MAX_AGE_LOGIN_SESSION);
+    }
+
 
     public static ResponseEntity<RecordCountDTO> createCachedResponseNoContentRecordCount() {
         return ResponseEntity.noContent()

@@ -2,7 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.input.ProjectInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -16,7 +16,6 @@ import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -84,7 +82,7 @@ public class ProjectController {
         List<ProjectDto> map = modelMapper.map(projectPage.getContent(), listType);
         Page<ProjectDto> projects = new PageImpl<>(map, pageable, projectPage.getTotalElements());
 
-        return CacheUtil.createCachedResponseProject(projects);
+        return LafocaCacheUtil.createCachedResponseProject(projects);
     }
 
     @CheckSecurityPermissionMethods.Level1

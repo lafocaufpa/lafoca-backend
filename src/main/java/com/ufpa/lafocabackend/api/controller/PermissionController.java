@@ -1,9 +1,8 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Permission;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.PermissionService;
 import jakarta.validation.Valid;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -70,7 +68,7 @@ public class PermissionController {
         List<PermissionDto> map = modelMapper.map(permissionPage.getContent(), listType);
         Page<PermissionDto> permissionDtos = new PageImpl<>(map, pageable, permissionPage.getTotalElements());
 
-        return CacheUtil.createCachedResponsePermission(permissionDtos);
+        return LafocaCacheUtil.createCachedResponsePermission(permissionDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

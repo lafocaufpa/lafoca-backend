@@ -1,11 +1,10 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Article;
 import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
-import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
 import com.ufpa.lafocabackend.domain.service.ArticleService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -13,13 +12,11 @@ import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +68,7 @@ public class ArticleController {
         List<ArticleDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<ArticleDto> articleDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return CacheUtil.createCachedResponseArticle(articleDtos);
+        return LafocaCacheUtil.createCachedResponseArticle(articleDtos);
     }
 
 

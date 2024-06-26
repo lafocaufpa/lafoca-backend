@@ -1,10 +1,9 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.Permission;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.GroupService;
@@ -14,7 +13,6 @@ import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +20,6 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/groups")
@@ -71,7 +68,7 @@ public class GroupController {
         List<GroupDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<GroupDto> groupDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return CacheUtil.createCachedResponseGroup(groupDtos);
+        return LafocaCacheUtil.createCachedResponseGroup(groupDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1
@@ -86,7 +83,7 @@ public class GroupController {
 
         final List<GroupDto> groupDtos = modelMapper.map(list, listType);
 
-        return CacheUtil.createCachedResponseGroup(groupDtos);
+        return LafocaCacheUtil.createCachedResponseGroup(groupDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

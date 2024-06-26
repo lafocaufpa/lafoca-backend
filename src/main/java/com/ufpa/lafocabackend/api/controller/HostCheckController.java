@@ -1,10 +1,9 @@
 package com.ufpa.lafocabackend.api.controller;
 
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.dto.HostInfo;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.SpringVersion;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +43,6 @@ public class HostCheckController {
         hostInfo.setSpringVersion(SpringVersion.getVersion());
         hostInfo.setSpringSecurityCoreVersion(SpringSecurityCoreVersion.getVersion());
 
-        return CacheUtil.createCachedResponse(hostInfo, 30);
+        return LafocaCacheUtil.createCachedResponse(hostInfo, 30);
     }
 }

@@ -2,8 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
-import com.ufpa.lafocabackend.domain.model.Member;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Skill;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.SkillDto;
@@ -11,7 +10,6 @@ import com.ufpa.lafocabackend.domain.service.SkillPictureService;
 import com.ufpa.lafocabackend.domain.service.SkillService;
 import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -20,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/skills")
@@ -58,7 +54,7 @@ public class SkillController {
             Pageable pageable) {
 
         Page<SkillDto> skillDtos = skillService.list(name, pageable);
-        return CacheUtil.createCachedResponseSkill(skillDtos);
+        return LafocaCacheUtil.createCachedResponseSkill(skillDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

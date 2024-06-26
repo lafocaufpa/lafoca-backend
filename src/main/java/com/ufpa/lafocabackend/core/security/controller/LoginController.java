@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.core.security.dto.JwtUtil;
 import com.ufpa.lafocabackend.core.security.dto.LoginRequest;
 import com.ufpa.lafocabackend.core.security.dto.Session;
 import com.ufpa.lafocabackend.core.security.dto.Token;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class LoginController {
 
         Session session = jwtUtil.encodeJwtToken(user.get());
 
-        return ResponseEntity.ok(session);
+        return LafocaCacheUtil.createCachedResponseLoginSession(session);
     }
 
     @PostMapping("/check-token")
@@ -47,7 +48,7 @@ public class LoginController {
 
         Session session = jwtUtil.decodeJwtToken(token.token());
 
-        return ResponseEntity.ok(session);
+        return LafocaCacheUtil.createCachedResponseLoginSession(session);
     }
 
 }

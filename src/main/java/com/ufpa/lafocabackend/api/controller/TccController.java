@@ -1,10 +1,9 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Tcc;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.service.TccService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -66,7 +64,7 @@ public class TccController {
         List<TccInputDto> tccInputDtoList = modelMapper.map(tccList.getContent(), listType);
         Page<TccInputDto> tccInputDtos = new PageImpl<>(tccInputDtoList, pageable, tccList.getTotalElements());
 
-        return CacheUtil.createCachedResponseTcc(tccInputDtos);
+        return LafocaCacheUtil.createCachedResponseTcc(tccInputDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

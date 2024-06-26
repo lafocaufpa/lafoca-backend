@@ -1,16 +1,12 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.RecordCount;
 import com.ufpa.lafocabackend.domain.model.dto.input.RecordCountDTO;
 import com.ufpa.lafocabackend.domain.service.RecordCountService;
-import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/record-count")
@@ -31,9 +27,9 @@ public class RecordCountController {
                     dto.setTccs(recordCount.getTccs());
                     dto.setProjects(recordCount.getProjects());
                     dto.setMembers(recordCount.getMembers());
-                    return CacheUtil.createCachedResponseRecordCount(dto);
+                    return LafocaCacheUtil.createCachedResponseRecordCount(dto);
                 })
-                .orElse(CacheUtil.createCachedResponseNoContentRecordCount());
+                .orElse(LafocaCacheUtil.createCachedResponseNoContentRecordCount());
     }
 
     @CheckSecurityPermissionMethods.User.Level1

@@ -2,9 +2,8 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.News;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.NewsDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.NewsOutput;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -85,7 +83,7 @@ public class NewsController {
         List<NewsOutput> map = modelMapper.map(newsPage.getContent(), listType);
         Page<NewsOutput> newsOutputs = new PageImpl<>(map, pageable, newsPage.getTotalElements());
 
-        return CacheUtil.createCachedResponseNews(newsOutputs);
+        return LafocaCacheUtil.createCachedResponseNews(newsOutputs);
     }
 
     @CheckSecurityPermissionMethods.Level1

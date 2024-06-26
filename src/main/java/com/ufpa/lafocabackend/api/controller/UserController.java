@@ -3,13 +3,12 @@ package com.ufpa.lafocabackend.api.controller;
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
 import com.ufpa.lafocabackend.core.security.dto.ResetPassword;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.enums.ErrorMessage;
 import com.ufpa.lafocabackend.domain.exception.CannotDeleteOnlyAdministratorException;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.User;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserPersonalInputDto;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.UserDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
@@ -19,7 +18,6 @@ import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -70,7 +68,7 @@ public class UserController {
 
         PageImpl<UserDto> userDtos = new PageImpl<>(map, pageable, users.getTotalElements());
 
-        return CacheUtil.createCachedResponseUser(userDtos);
+        return LafocaCacheUtil.createCachedResponseUser(userDtos);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
@@ -81,7 +79,7 @@ public class UserController {
 
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        return CacheUtil.createCachedResponseUser(userDto);
+        return LafocaCacheUtil.createCachedResponseUser(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
@@ -91,7 +89,7 @@ public class UserController {
         final User user = userService.readBySlug(slug);
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        return CacheUtil.createCachedResponseUser(userDto);
+        return LafocaCacheUtil.createCachedResponseUser(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1
@@ -101,7 +99,7 @@ public class UserController {
         final User user = userService.readByEmail(userEmail);
         final UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        return CacheUtil.createCachedResponseUser(userDto);
+        return LafocaCacheUtil.createCachedResponseUser(userDto);
     }
 
     @CheckSecurityPermissionMethods.User.UserHimselfOrLevel1OrLevel2

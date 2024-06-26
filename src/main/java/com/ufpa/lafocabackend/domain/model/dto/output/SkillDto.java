@@ -17,4 +17,7 @@ public class SkillDto {
     @NotBlank
     private String name;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String skillPictureUrl  ;
+
 }

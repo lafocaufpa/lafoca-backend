@@ -1,9 +1,8 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
-import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.LineOfResearchDto;
 import com.ufpa.lafocabackend.domain.service.LineOfResearchService;
 import jakarta.validation.Valid;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -63,7 +61,7 @@ public class LineOfResearchController {
         List<LineOfResearchDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<LineOfResearchDto> lineOfResearchDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return CacheUtil.createCachedResponseLineOfResearch(lineOfResearchDtos);
+        return LafocaCacheUtil.createCachedResponseLineOfResearch(lineOfResearchDtos);
     }
 
     @CheckSecurityPermissionMethods.Level1

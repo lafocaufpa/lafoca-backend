@@ -2,7 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
-import com.ufpa.lafocabackend.core.utils.CacheUtil;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
@@ -111,7 +111,7 @@ public class MemberController {
         }
 
         Page<MemberResumed> memberResumedPage = new PageImpl<>(memberResumeds.getContent(), pageable, memberResumeds.getTotalElements());
-        return CacheUtil.createCachedResponseMember(memberResumedPage);
+        return LafocaCacheUtil.createCachedResponseMember(memberResumedPage);
     }
 
     @CheckSecurityPermissionMethods.Level1
