@@ -48,6 +48,7 @@ public class ModelMapperConfig {
                 skip(destination.getSkills());
                 skip(destination.getProjects());
                 skip(destination.getArticles());
+                skip(destination.getYearClass());
             }
         });
 

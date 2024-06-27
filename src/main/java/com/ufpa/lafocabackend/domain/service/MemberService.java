@@ -141,7 +141,12 @@ public class MemberService {
             member.setTcc(null);
         }
 
-        return memberRepository.save(member);
+        if(memberInputDto.getYearClassId() != null) {
+            YearClass yearClass = yearClassService.getOrFail(memberInputDto.getYearClassId());
+            member.setYearClass(yearClass);
+        }
+
+        return member;
     }
 
     @Deprecated
@@ -160,9 +165,6 @@ public class MemberService {
         return memberRepository.listMembers(pageable);
     }
 
-    public Page<MemberResumed> searchResumedMembersByFullName(String fullName, Pageable pageable) {
-        return memberRepository.findResumedMembersByFullNameContaining(fullName, pageable);
-    }
 
     public Page<MemberResumed> searchResumedMembersByFullNameAndYearClassId(String fullName, Long yearClassId, Pageable pageable) {
         return memberRepository.findResumedMembersByFullNameAndYearClassId(fullName, yearClassId, pageable);
