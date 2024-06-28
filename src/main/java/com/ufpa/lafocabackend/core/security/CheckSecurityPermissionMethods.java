@@ -29,14 +29,14 @@ public @interface CheckSecurityPermissionMethods {
 
         }
 
-        @PreAuthorize("@lafocaSecurity.userHimself(#userId) or hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1, @lafocaSecurity.ADMIN_LEVEL_2)")
+        @PreAuthorize("@lafocaSecurity.userHimself(#userId, #userEmail) or hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1, @lafocaSecurity.ADMIN_LEVEL_2)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface UserHimselfOrLevel1OrLevel2 {
 
         }
 
-        @PreAuthorize("@lafocaSecurity.userHimself(#userId) or hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1)")
+        @PreAuthorize("@lafocaSecurity.userHimself(#userId, #userEmail) or hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface UserHimselfOrLevel1 {

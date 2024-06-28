@@ -26,9 +26,28 @@ public class LafocaSecurity {
         return jwt.getClaimAsString("user_id");
     }
 
-    public boolean userHimself(String userId){
+    public String getEmail(){
 
-        return getUserId().equals(userId);
+        final Object userAutheticated = getAuthentication().getPrincipal();
+        if(userAutheticated.equals("anonymousUser"))
+            return "anonymousUser";
+
+        Jwt jwt = (Jwt) userAutheticated;
+
+        return jwt.getClaimAsString("sub");
+    }
+
+    public boolean userHimself(String userId, String userEmail){
+
+        boolean equals = getUserId().equals(userId);
+        if(!equals) {
+            equals = userHimselfWithEmail(userEmail);
+        }
+        return equals;
+    }
+
+    public boolean userHimselfWithEmail(String email){
+        return getEmail().equals(email);
     }
 
 }
