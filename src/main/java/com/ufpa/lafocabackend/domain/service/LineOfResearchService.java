@@ -64,8 +64,14 @@ public class LineOfResearchService {
 
     }
 
-    private LineOfResearch getOrFail(String lineOfResearchId) {
+    public LineOfResearch getOrFail(String lineOfResearchId) {
         return lineOfResearchRepository.findById(lineOfResearchId)
                 .orElseThrow( () -> new EntityNotFoundException(LineOfResearch.class.getSimpleName(), lineOfResearchId));
+    }
+
+    public void exist(String id){
+        if(!lineOfResearchRepository.existsById(id)){
+            throw new EntityNotFoundException(LineOfResearch.class.getSimpleName(), id);
+        }
     }
 }

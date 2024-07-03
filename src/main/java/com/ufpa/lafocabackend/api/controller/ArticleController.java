@@ -6,6 +6,7 @@ import com.ufpa.lafocabackend.domain.model.Article;
 import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.ArticleDto;
 import com.ufpa.lafocabackend.domain.service.ArticleService;
+import com.ufpa.lafocabackend.domain.service.LineOfResearchService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -26,7 +27,7 @@ public class ArticleController {
     private final ArticleService articleService;
     private final ModelMapper modelMapper;
 
-    public ArticleController(ArticleService articleService, ModelMapper modelMapper) {
+    public ArticleController(ArticleService articleService, ModelMapper modelMapper, LineOfResearchService lineOfResearchService) {
         this.articleService = articleService;
         this.modelMapper = modelMapper;
     }
@@ -55,11 +56,18 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ArticleDto>> list(@RequestParam(value = "title", required = false) String title, Pageable pageable) {
+    public ResponseEntity<Page<ArticleDto>> list(
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "lineOfResearchId", required = false) String lineOfResearchId,
+            Pageable pageable) {
         Page<Article> list;
 
-        if (title != null && !title.isEmpty()) {
-            list = articleService.searchByTitle(title, pageable);
+        if ((title != null && !title.isEmpty()) || lineOfResearchId != null) {
+            if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+                list = articleService.searchByLineOfResearchId(lineOfResearchId, pageable);
+            } else {
+                list = articleService.searchByTitle(title, pageable);
+            }
         } else {
             list = articleService.list(pageable);
         }
@@ -68,9 +76,8 @@ public class ArticleController {
         List<ArticleDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<ArticleDto> articleDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
-        return LafocaCacheUtil.createCachedResponseArticle(articleDtos);
+        return ResponseEntity.ok(articleDtos);
     }
-
 
     @CheckSecurityPermissionMethods.Level1
     @PutMapping("/{articleId}")

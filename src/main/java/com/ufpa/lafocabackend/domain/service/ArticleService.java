@@ -49,6 +49,13 @@ public class ArticleService {
         return articleRepository.findByTitleContaining(title, pageable);
     }
 
+    public Page<Article> searchByLineOfResearchId(String lineOfResearchId, Pageable pageable) {
+
+        lineOfResearchService.exist(lineOfResearchId);
+
+        return articleRepository.findByLineOfResearchId(lineOfResearchId, pageable);
+    }
+
     public Article read (Long articleId) {
         return getOrFail(articleId);
     }

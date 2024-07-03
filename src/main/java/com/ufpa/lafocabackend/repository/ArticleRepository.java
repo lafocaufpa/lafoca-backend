@@ -16,4 +16,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("SELECT a FROM Article a WHERE a.title LIKE %:title%")
     Page<Article> findByTitleContaining(@Param("title") String title, Pageable pageable);
+
+    @Query("SELECT a FROM Article a JOIN a.linesOfResearch lor WHERE lor.lineOfResearchId = :lineOfResearchId")
+    Page<Article> findByLineOfResearchId(@Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
 }

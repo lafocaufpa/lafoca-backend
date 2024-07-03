@@ -6,6 +6,7 @@ import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.SkillDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
@@ -59,6 +60,14 @@ public class ModelMapperConfig {
                 skip(destination.getSlug());
                 skip(destination.getDateRegister());
                 skip(destination.getGroups());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<SkillDto, Skill>() {
+
+            @Override
+            protected void configure() {
+                skip(destination.getSkillPicture());
             }
         });
 
