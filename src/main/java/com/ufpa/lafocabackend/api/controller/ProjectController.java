@@ -2,7 +2,6 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
-import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.input.ProjectInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -68,12 +67,17 @@ public class ProjectController {
     @GetMapping
     public ResponseEntity<Page<ProjectDto>> list(
             @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "lineOfResearchId", required = false) String lineOfResearchId,
             Pageable pageable) {
 
         Page<Project> projectPage;
 
-        if (title != null && !title.isEmpty()) {
-            projectPage = projectService.searchByTitle(title, pageable);
+        if ((title != null && !title.isEmpty()) || (lineOfResearchId != null && !lineOfResearchId.isEmpty())) {
+            if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+                projectPage = projectService.searchByLineOfResearchId(lineOfResearchId, pageable);
+            } else {
+                projectPage = projectService.searchByTitle(title, pageable);
+            }
         } else {
             projectPage = projectService.list(pageable);
         }
@@ -82,7 +86,7 @@ public class ProjectController {
         List<ProjectDto> map = modelMapper.map(projectPage.getContent(), listType);
         Page<ProjectDto> projects = new PageImpl<>(map, pageable, projectPage.getTotalElements());
 
-        return LafocaCacheUtil.createCachedResponseProject(projects);
+        return ResponseEntity.ok(projects);
     }
 
     @CheckSecurityPermissionMethods.Level1

@@ -52,6 +52,10 @@ public class ProjectService {
         return projectRepository.findByTitleContaining(title, pageable);
     }
 
+    public Page<Project> searchByLineOfResearchId(String lineOfResearchId, Pageable pageable) {
+        return projectRepository.findByLineOfResearchId(lineOfResearchId, pageable);
+    }
+
     public Project read (String projectId) {
         return getOrFail(projectId);
     }
