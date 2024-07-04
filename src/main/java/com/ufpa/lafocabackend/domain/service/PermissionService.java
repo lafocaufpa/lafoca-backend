@@ -43,6 +43,11 @@ public class PermissionService {
         return getOrFail(permissionId);
     }
 
+    public Optional<Permission> readByName (String name) {
+
+        return permissionRepository.findByName(name);
+    }
+
     public Permission update (Permission permission) {
 
         return save(permission);

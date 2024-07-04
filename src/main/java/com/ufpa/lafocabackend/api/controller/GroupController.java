@@ -106,6 +106,7 @@ public class GroupController {
             permissions.add(permission);
         }
 
+
         group.setPermissions(permissions);
 
         final Group groupUpdated = groupService.update(group);

@@ -5,6 +5,7 @@ import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Group;
 import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.repository.GroupRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,15 @@ import java.util.Optional;
 
 @Service
 public class GroupService {
+
+    @Value("${group.admin.name}")
+    private String adminGroupName;
+
+    @Value("${permission.admin.name}")
+    private String permissionFullAccessName;
+
+    @Value("${permission.admin.description}")
+    private String permissionFullAccessDescription;
     
     private final GroupRepository groupRepository;
     private final PermissionService permissionService;
@@ -46,8 +56,21 @@ public class GroupService {
     }
 
     public Group update (Group group) {
-
+        ensureAdminHasFullAccess(group);
         return save(group);
+    }
+
+    private void ensureAdminHasFullAccess(Group group) {
+        if (group.getName().equals(adminGroupName)) {
+            boolean hasFullAccess = group.getPermissions().stream()
+                    .anyMatch(permission -> permission.getName().equals(permissionFullAccessName));
+
+            if (!hasFullAccess) {
+                Optional<Permission> permission = permissionService.readByName(permissionFullAccessName);
+
+                group.getPermissions().add(permission.get());
+            }
+        }
     }
 
     public void delete (Long groupId) {

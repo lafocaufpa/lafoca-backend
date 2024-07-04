@@ -25,20 +25,15 @@ public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
 
-    @Value("${group.admin.id}")
-    private Long adminGroupId;
 
     @Value("${group.admin.name}")
     private String adminGroupName;
 
-    @Value("${permission.admin.level1.id}")
-    private Long adminLevel1Id;
+    @Value("${permission.admin.name}")
+    private String permissionFullAccessName;
 
-    @Value("${permission.admin.level1.name}")
-    private String adminLevel1Name;
-
-    @Value("${permission.admin.level1.description}")
-    private String adminLevel1Description;
+    @Value("${permission.admin.description}")
+    private String permissionFullAccessDescription;
 
     @Value("${default.admin.user.email}")
     private String defaultAdminEmail;
@@ -59,16 +54,15 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Permission adminLevel1 = getOrCreatePermission(adminLevel1Id, adminLevel1Name, adminLevel1Description);
+        Permission permissionFullAccess = getOrCreatePermission(permissionFullAccessName, permissionFullAccessDescription);
 
-        Optional<Group> group = groupService.existsByName(adminGroupName);
+        Optional<Group> groupAdmin = groupService.existsByName(adminGroupName);
 
-        if (group.isEmpty()) {
+        if (groupAdmin.isEmpty()) {
             Set<Permission> permissions = new HashSet<>();
-            permissions.add(adminLevel1);
+            permissions.add(permissionFullAccess);
 
             Group admin = new Group();
-            admin.setGroupId(adminGroupId);
             admin.setName(adminGroupName);
             admin.setPermissions(permissions);
 
@@ -85,10 +79,9 @@ public class DataLoader implements CommandLineRunner {
         }
     }
 
-    private Permission getOrCreatePermission(Long id, String name, String description) {
-        return permissionService.orElseGet(id).orElseGet(() -> {
+    private Permission getOrCreatePermission(String name, String description) {
+        return permissionService.readByName(name).orElseGet(() -> {
             Permission permission = new Permission();
-            permission.setPermissionId(id);
             permission.setName(name);
             permission.setDescription(description);
             return permissionService.save(permission);
