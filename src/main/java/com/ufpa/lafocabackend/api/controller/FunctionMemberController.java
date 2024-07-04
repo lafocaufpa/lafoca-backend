@@ -30,7 +30,7 @@ public class FunctionMemberController {
     }
 
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @PostMapping
     public ResponseEntity<FunctionMemberDto> add (@RequestBody @Valid FunctionMemberDto functionMemberDto) {
 
@@ -41,7 +41,7 @@ public class FunctionMemberController {
         return ResponseEntity.ok(functionMemberSaved);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping("/{functionMemberId}")
     public ResponseEntity<FunctionMemberDto> read (@PathVariable Long functionMemberId){
 
@@ -50,7 +50,7 @@ public class FunctionMemberController {
         return ResponseEntity.ok(functionMemberDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping
     public ResponseEntity<Page<FunctionMemberDto>> list(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
         Page<FunctionMember> list;
@@ -68,7 +68,7 @@ public class FunctionMemberController {
         return LafocaCacheUtil.createCachedResponseFunctionMember(functionMemberDtos);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{functionMemberId}")
     public ResponseEntity<FunctionMemberDto> update (@PathVariable Long functionMemberId, @RequestBody FunctionMemberDto functionMemberDto){
 
@@ -81,7 +81,7 @@ public class FunctionMemberController {
         return ResponseEntity.ok(groupDtoUpdated);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{functionMemberId}")
     public ResponseEntity<Void> delete (@PathVariable Long functionMemberId){
 

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -39,15 +40,6 @@ public class DataLoader implements CommandLineRunner {
     @Value("${permission.admin.level1.description}")
     private String adminLevel1Description;
 
-    @Value("${permission.admin.level2.id}")
-    private Long adminLevel2Id;
-
-    @Value("${permission.admin.level2.name}")
-    private String adminLevel2Name;
-
-    @Value("${permission.admin.level2.description}")
-    private String adminLevel2Description;
-
     @Value("${default.admin.user.email}")
     private String defaultAdminEmail;
 
@@ -68,12 +60,12 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Permission adminLevel1 = getOrCreatePermission(adminLevel1Id, adminLevel1Name, adminLevel1Description);
-        Permission adminLevel2 = getOrCreatePermission(adminLevel2Id, adminLevel2Name, adminLevel2Description);
 
-        if (!groupService.existsById(adminGroupId)) {
+        Optional<Group> group = groupService.existsByName(adminGroupName);
+
+        if (group.isEmpty()) {
             Set<Permission> permissions = new HashSet<>();
             permissions.add(adminLevel1);
-            permissions.add(adminLevel2);
 
             Group admin = new Group();
             admin.setGroupId(adminGroupId);
@@ -88,7 +80,7 @@ public class DataLoader implements CommandLineRunner {
             defaultAdmin.setEmail(defaultAdminEmail);
             defaultAdmin.setName(defaultAdminName);
             defaultAdmin.setPassword(encoder.encode(defaultAdminPassword));
-            defaultAdmin.getGroups().add(groupService.read(adminGroupId));
+            defaultAdmin.getGroups().add(groupService.existsByName(adminGroupName).get());
             userRepository.save(defaultAdmin);
         }
     }

@@ -39,7 +39,7 @@ public class ProjectController {
         this.projectPhotoService = projectPhotoService;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @PostMapping
     public ResponseEntity<ProjectDto> add (@RequestBody @Valid ProjectInputDto projectInputDto) {
 
@@ -89,7 +89,7 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{projectId}")
     public ResponseEntity<ProjectDto> update (@PathVariable String projectId, @RequestBody @Valid ProjectInputDto newProject){
 
@@ -97,7 +97,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectUpdated);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{projectId}")
     public ResponseEntity<Void> delete (@PathVariable String projectId){
 
@@ -106,7 +106,7 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PostMapping(value = "/{projectId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto(Part file, @PathVariable String projectId) throws IOException {
 
@@ -115,7 +115,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectPhotoService.save(member, customFile));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PostMapping(value = "/read/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String memberSlug) throws IOException {
 
@@ -124,7 +124,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectPhotoService.save(member, customFile));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @DeleteMapping(value = "/{projectId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String projectId) {
 
@@ -134,7 +134,7 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @DeleteMapping(value = "/read/{projectSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String projectSlug) {
 

@@ -1,14 +1,14 @@
 package com.ufpa.lafocabackend.api.controller;
 
-import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Member;
+import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
-import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
-import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
+import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
 import com.ufpa.lafocabackend.domain.service.MemberPhotoService;
 import com.ufpa.lafocabackend.domain.service.MemberService;
 import jakarta.servlet.http.Part;
@@ -19,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 @RestController
@@ -45,8 +43,8 @@ public class MemberController {
         this.memberPhotoService = memberPhotoService;
     }
 
-        @CheckSecurityPermissionMethods.Level1
-        @PostMapping
+    @CheckSecurityPermissionMethods.AdminOrEditor
+    @PostMapping
         public ResponseEntity<MemberDto> add(@RequestBody @Valid MemberInputDto memberInputDto) {
     
             final MemberDto memberSaved = modelMapper.map(memberService.save(memberInputDto), MemberDto.class);
@@ -72,7 +70,7 @@ public class MemberController {
 
     @GetMapping
     @Deprecated
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     public ResponseEntity<Page<MemberDto>> list(@PageableDefault(size = 10) Pageable pageable) {
 
         final Page<Member> list = memberService.list(pageable);
@@ -114,7 +112,7 @@ public class MemberController {
         return LafocaCacheUtil.createCachedResponseMember(memberResumedPage);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{memberId}")
     public ResponseEntity<MemberDto> update(@PathVariable String memberId, @RequestBody MemberInputDto memberInputDto) {
 
@@ -123,7 +121,7 @@ public class MemberController {
         return ResponseEntity.ok(memberDtoUpdated);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{memberId}")
     public ResponseEntity<Void> delete(@PathVariable String memberId) {
 
@@ -132,7 +130,7 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PostMapping(value = "/{memberId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional
     public ResponseEntity<PhotoDto> addPhoto(Part file, @PathVariable String memberId) throws IOException {
@@ -144,7 +142,7 @@ public class MemberController {
         return ResponseEntity.ok(memberPhotoService.save(member, customFile));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PostMapping(value = "/read/{memberSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String memberSlug) throws IOException {
 
@@ -154,7 +152,7 @@ public class MemberController {
         return ResponseEntity.ok(memberPhotoService.save(member, customFile));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @DeleteMapping(value = "/{memberId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String memberId) {
 
@@ -167,7 +165,7 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @DeleteMapping(value = "/read/{memberSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String memberSlug) {
 
@@ -177,7 +175,7 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{memberId}/functions-member/{functionMemberId}")
     public ResponseEntity<Void> associateFunction(@PathVariable String memberId, @PathVariable Long functionMemberId) {
 
@@ -186,7 +184,7 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{memberId}/skills/{skillId}")
     public ResponseEntity<Void> associateSkill(@PathVariable String memberId, @PathVariable Long skillId) {
 
@@ -195,7 +193,7 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @DeleteMapping("/{memberId}/skills/{skillId}")
     public ResponseEntity<Void> disassociateSkill(@PathVariable String memberId, @PathVariable Long skillId) {
 

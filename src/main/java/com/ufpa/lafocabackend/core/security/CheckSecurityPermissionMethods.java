@@ -10,6 +10,21 @@ import java.lang.annotation.Target;
 public @interface CheckSecurityPermissionMethods {
 
 
+    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.FULL_ACCESS, @lafocaSecurity.MANAGE_USERS, @lafocaSecurity.MANAGE_GROUPS)")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface AdminOrManagerUsersGroups {}
+
+    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.FULL_ACCESS, @lafocaSecurity.MANAGE_USERS, @lafocaSecurity.MANAGE_GROUPS)")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface AdminOrEditor {}
+
+    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.FULL_ACCESS, @lafocaSecurity.MANAGE_USERS, @lafocaSecurity.MANAGE_GROUPS)")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface AdminOrEditorOrModerator {}
+
     @PreAuthorize("hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1)")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)

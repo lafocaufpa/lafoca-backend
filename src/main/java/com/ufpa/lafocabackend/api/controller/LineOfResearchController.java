@@ -30,7 +30,7 @@ public class LineOfResearchController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @PostMapping
     public ResponseEntity<LineOfResearchDto> add (@RequestBody @Valid LineOfResearchDto lineOfResearchDto) {
 
@@ -39,6 +39,7 @@ public class LineOfResearchController {
         return ResponseEntity.ok(lineOfResearchSaved);
     }
 
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping("/{lineOfResearchId}")
     public ResponseEntity<LineOfResearchDto> read (@PathVariable String lineOfResearchId){
 
@@ -46,7 +47,6 @@ public class LineOfResearchController {
         return ResponseEntity.ok(lineOfResearchDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
     @GetMapping
     public ResponseEntity<Page<LineOfResearchDto>> list(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
         Page<LineOfResearch> list;
@@ -64,7 +64,7 @@ public class LineOfResearchController {
         return LafocaCacheUtil.createCachedResponseLineOfResearch(lineOfResearchDtos);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{lineOfResearchId}")
     public ResponseEntity<LineOfResearchDto> update (@PathVariable String lineOfResearchId, @RequestBody @Valid LineOfResearchDto newArticle){
         
@@ -72,7 +72,7 @@ public class LineOfResearchController {
         return ResponseEntity.ok(articletUpdated);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{lineOfResearchId}")
     public ResponseEntity<Void> delete (@PathVariable String lineOfResearchId){
 

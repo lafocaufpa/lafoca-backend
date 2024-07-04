@@ -48,8 +48,9 @@ public class UserService {
     private final PhotoStorageService photoStorageService;
     private final SmtpEmailService smtpSendEmailService;
     private final ModelMapper modelMapper;
-    @Value("${group.admin.id}")
-    private Long adminGroupId;
+
+    @Value("${group.admin.name}")
+    private String adminGroupName;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupService groupService, PhotoStorageService photoStorageService, SmtpEmailService smtpSendEmailService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
@@ -223,11 +224,11 @@ public class UserService {
     }
 
     public boolean existsAdminUser() {
-        return userRepository.countUsersInGroup(adminGroupId) >= 1;
+        return userRepository.countUsersInGroup(adminGroupName) >= 1;
     }
 
     public boolean existsMoreThanOneAdministrator() {
-        long usersAdm = userRepository.countUsersInGroup(adminGroupId);
+        long usersAdm = userRepository.countUsersInGroup(adminGroupName);
 
 
         return usersAdm > 1;

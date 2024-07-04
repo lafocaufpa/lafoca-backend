@@ -42,7 +42,7 @@ public class NewsController {
         this.newsPhotoService = newsPhotoService;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @PostMapping
     public ResponseEntity<NewsDto> add (@RequestBody @Valid NewsInputDto newsInputDto) {
 
@@ -50,6 +50,7 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping("/read/{newsSlug}")
     public ResponseEntity<NewsDto> readBySlug(@PathVariable String newsSlug ){
 
@@ -58,6 +59,7 @@ public class NewsController {
         return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(newsDto);
     }
 
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping("/{newsId}")
     public ResponseEntity<NewsDto> read(@PathVariable String newsId ){
 
@@ -67,6 +69,7 @@ public class NewsController {
     }
 
     @GetMapping
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     public ResponseEntity<Page<NewsOutput>> list(
             @RequestParam(value = "title", required = false) String title,
             @PageableDefault(size = 10) Pageable pageable) {
@@ -86,7 +89,7 @@ public class NewsController {
         return LafocaCacheUtil.createCachedResponseNews(newsOutputs);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{newsId}")
     public ResponseEntity<NewsDto> update (@PathVariable String newsId, @RequestBody NewsInputDto newsInputDto){
         final News news = newsService.read(newsId);
@@ -97,7 +100,7 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/read/{newsSlug}")
     public ResponseEntity<NewsDto> updateBySlug (@PathVariable String newsSlug, @RequestBody NewsInputDto newsInputDto){
 
@@ -106,7 +109,7 @@ public class NewsController {
         return ResponseEntity.ok(newsDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/read/{newsSlug}")
     public ResponseEntity<Void> deleteBySlug(@PathVariable String newsSlug){
 
@@ -117,7 +120,7 @@ public class NewsController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{newsId}")
     public ResponseEntity<Void> delete (@PathVariable String newsId){
 
@@ -129,7 +132,7 @@ public class NewsController {
     }
 
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PostMapping(value = "/read/{newsSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhotoBySlug(Part file, @PathVariable String newsSlug) throws IOException {
 
@@ -140,7 +143,7 @@ public class NewsController {
         return ResponseEntity.ok(photoDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PostMapping(value = "/{newsId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PhotoDto> addPhoto (Part file, @PathVariable String newsId) throws IOException {
 
@@ -151,7 +154,7 @@ public class NewsController {
         return ResponseEntity.ok(photoDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @DeleteMapping(value = "/read/{newsSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String newsSlug) {
 
@@ -160,7 +163,7 @@ public class NewsController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @DeleteMapping(value = "{newsId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String newsId) {
 

@@ -21,6 +21,6 @@ public class LafocaController {
     @GetMapping
     public ResponseEntity<LafocaDto> read() {
         final LafocaDto lafocaDto = lafocaService.printCounts();
-        return LafocaCacheUtil.createCachedResponse(lafocaDto, 60);
+        return LafocaCacheUtil.createCachedResponseLafocaInfo(lafocaDto);
     }
 }

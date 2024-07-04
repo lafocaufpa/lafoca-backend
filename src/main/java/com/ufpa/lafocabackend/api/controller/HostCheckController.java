@@ -43,6 +43,6 @@ public class HostCheckController {
         hostInfo.setSpringVersion(SpringVersion.getVersion());
         hostInfo.setSpringSecurityCoreVersion(SpringSecurityCoreVersion.getVersion());
 
-        return LafocaCacheUtil.createCachedResponse(hostInfo, 30);
+        return LafocaCacheUtil.createCachedResponseHostCheck(hostInfo);
     }
 }

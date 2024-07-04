@@ -31,7 +31,7 @@ public class TccController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @PostMapping
     public ResponseEntity<TccInputDto> add (@RequestBody @Valid TccInputDto tccInputDto) {
 
@@ -67,7 +67,7 @@ public class TccController {
         return LafocaCacheUtil.createCachedResponseTcc(tccInputDtos);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{tccId}")
     public ResponseEntity<TccInputDto> update (@PathVariable Long tccId, @RequestBody TccInputDto newTcc){
 
@@ -80,7 +80,7 @@ public class TccController {
         return ResponseEntity.ok(tccInputDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{tccId}")
     public ResponseEntity<Void> delete (@PathVariable Long tccId){
 

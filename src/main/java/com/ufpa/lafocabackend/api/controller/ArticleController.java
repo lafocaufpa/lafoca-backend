@@ -32,7 +32,7 @@ public class ArticleController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @PostMapping
     public ResponseEntity<ArticleDto> add (@RequestBody @Valid ArticleInputDto articleDto) {
 
@@ -79,7 +79,7 @@ public class ArticleController {
         return ResponseEntity.ok(articleDtos);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{articleId}")
     public ResponseEntity<ArticleDto> update (@PathVariable Long articleId, @RequestBody ArticleInputDto newArticle){
         
@@ -87,7 +87,7 @@ public class ArticleController {
         return ResponseEntity.ok(articletUpdated);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{articleId}")
     public ResponseEntity<Void> delete (@PathVariable Long articleId){
 

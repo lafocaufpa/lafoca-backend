@@ -7,6 +7,7 @@ import com.ufpa.lafocabackend.domain.model.Permission;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PermissionDto;
 import com.ufpa.lafocabackend.domain.service.GroupService;
+import com.ufpa.lafocabackend.domain.service.PermissionService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -27,15 +29,17 @@ public class GroupController {
 
     private final ModelMapper modelMapper;
     private final GroupService groupService;
+    private final PermissionService permissionService;
 
-    public GroupController(ModelMapper modelMapper, GroupService groupService) {
+    public GroupController(ModelMapper modelMapper, GroupService groupService, PermissionService permissionService) {
         this.modelMapper = modelMapper;
         this.groupService = groupService;
+        this.permissionService = permissionService;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @PostMapping
-    public ResponseEntity<GroupDto> add (@RequestBody @Valid GroupDto groupDto) {
+    public ResponseEntity<GroupDto> add(@RequestBody @Valid GroupDto groupDto) {
 
         final Group group = modelMapper.map(groupDto, Group.class);
 
@@ -44,16 +48,16 @@ public class GroupController {
         return ResponseEntity.ok(groupSaved);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @GetMapping("/{groupId}")
-    public ResponseEntity<GroupDto> read (@PathVariable Long groupId){
+    public ResponseEntity<GroupDto> read(@PathVariable Long groupId) {
 
         final Group group = groupService.read(groupId);
         final GroupDto groupDto = modelMapper.map(group, GroupDto.class);
         return ResponseEntity.ok(groupDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @GetMapping
     public ResponseEntity<Page<GroupDto>> list(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
         Page<Group> list;
@@ -64,16 +68,17 @@ public class GroupController {
             list = groupService.list(pageable);
         }
 
-        Type listType = new TypeToken<List<GroupDto>>() {}.getType();
+        Type listType = new TypeToken<List<GroupDto>>() {
+        }.getType();
         List<GroupDto> map = modelMapper.map(list.getContent(), listType);
         PageImpl<GroupDto> groupDtos = new PageImpl<>(map, pageable, list.getTotalElements());
 
         return LafocaCacheUtil.createCachedResponseGroup(groupDtos);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @GetMapping("/list")
-    public ResponseEntity<List<GroupDto>> listWithoutPagination (){
+    public ResponseEntity<List<GroupDto>> listWithoutPagination() {
 
         List<Group> list = groupService.listWithoutPagination();
 
@@ -86,31 +91,40 @@ public class GroupController {
         return LafocaCacheUtil.createCachedResponseGroup(groupDtos);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @PutMapping("/{groupId}")
-    public ResponseEntity<GroupDto> update (@PathVariable Long groupId, @RequestBody GroupDto groupDto){
+    public ResponseEntity<GroupDto> update(@PathVariable Long groupId, @RequestBody GroupDto groupDto) {
 
         final Group group = groupService.read(groupId);
 
         modelMapper.map(groupDto, group);
+
+        Set<Permission> permissions = new java.util.HashSet<>(Collections.emptySet());
+
+        for(Long permissionId: groupDto.getPermissionsId()){
+            Permission permission = permissionService.read(permissionId);
+            permissions.add(permission);
+        }
+
+        group.setPermissions(permissions);
 
         final Group groupUpdated = groupService.update(group);
         final GroupDto groupDtoUpdated = modelMapper.map(groupUpdated, GroupDto.class);
         return ResponseEntity.ok(groupDtoUpdated);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<Void> delete (@PathVariable Long groupId){
+    public ResponseEntity<Void> delete(@PathVariable Long groupId) {
 
         groupService.delete(groupId);
 
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @GetMapping("/{groupId}/permissions")
-    public ResponseEntity<Collection<PermissionDto>> listPermissions(@PathVariable Long groupId){
+    public ResponseEntity<Collection<PermissionDto>> listPermissions(@PathVariable Long groupId) {
 
         final Group group = groupService.read(groupId);
 
@@ -125,19 +139,19 @@ public class GroupController {
         return ResponseEntity.ok(permissionsDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @PutMapping("/{groupId}/permissions/{permissionId}")
     public ResponseEntity<Void> associatePermission(@PathVariable Long groupId,
-                                                  @PathVariable Long permissionId){
+                                                    @PathVariable Long permissionId) {
         groupService.addPermission(groupId, permissionId);
 
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @DeleteMapping("/{groupId}/permissions/{permissionId}")
     public ResponseEntity<Void> disassociatePermission(@PathVariable Long groupId,
-                                                     @PathVariable Long permissionId){
+                                                       @PathVariable Long permissionId) {
         groupService.removePermission(groupId, permissionId);
 
         return ResponseEntity.noContent().build();

@@ -23,20 +23,20 @@ public class YearClassController {
         this.yearClassService = yearClassService;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @PostMapping
     public ResponseEntity<YearClassDTO> add(@RequestBody @Valid YearClassDTO yearClassDto) {
         final YearClassDTO yearClassSaved = yearClassService.save(yearClassDto);
         return ResponseEntity.ok(yearClassSaved);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping("/{yearClassId}")
     public ResponseEntity<YearClassDTO> read(@PathVariable Long yearClassId) {
         return ResponseEntity.ok(yearClassService.read(yearClassId));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping
     public ResponseEntity<Page<YearClassDTO>> list(Pageable pageable) {
         Page<YearClassDTO> list = yearClassService.list(pageable);
@@ -52,20 +52,21 @@ public class YearClassController {
         Page<MemberResumed> members = yearClassService.listMembersByYearClass(yearClassId, name, pageable);
         return ResponseEntity.ok(members);
     }
-    @CheckSecurityPermissionMethods.Level1
+
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping("/list")
     public ResponseEntity<List<YearClassDTO>> listWithoutPage() {
         List<YearClassDTO> list = yearClassService.listWithoutPagination();
         return ResponseEntity.ok(list);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{yearClassId}")
     public ResponseEntity<YearClassDTO> update(@PathVariable Long yearClassId, @RequestBody YearClassDTO newYearClass) {
         return ResponseEntity.ok(yearClassService.update(yearClassId, newYearClass));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{yearClassId}")
     public ResponseEntity<Void> delete(@PathVariable Long yearClassId) {
         yearClassService.delete(yearClassId);

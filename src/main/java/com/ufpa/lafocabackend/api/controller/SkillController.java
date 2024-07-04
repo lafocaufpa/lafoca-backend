@@ -31,7 +31,7 @@ public class SkillController {
         this.skillPictureService = skillPictureService;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @PostMapping
     public ResponseEntity<SkillDto> add (@RequestBody @Valid SkillDto skillDto) {
 
@@ -40,14 +40,14 @@ public class SkillController {
         return ResponseEntity.ok(skillSaved);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping("/{skillId}")
     public ResponseEntity<SkillDto> read (@PathVariable Long skillId){
 
         return ResponseEntity.ok(skillService.read(skillId));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping
     public ResponseEntity<Page<SkillDto>> list(
             @RequestParam(value = "name", required = false) String name,
@@ -57,7 +57,7 @@ public class SkillController {
         return LafocaCacheUtil.createCachedResponseSkill(skillDtos);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{skillId}")
     public ResponseEntity<SkillDto> update (@PathVariable Long skillId, @RequestBody SkillDto newSkill){
 
@@ -65,7 +65,7 @@ public class SkillController {
         return ResponseEntity.ok(skillService.update(skillId, newSkill));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditor
     @DeleteMapping("/{skillId}")
     public ResponseEntity<Void> delete (@PathVariable Long skillId){
 
@@ -73,8 +73,8 @@ public class SkillController {
 
         return ResponseEntity.noContent().build();
     }
-    
-    @CheckSecurityPermissionMethods.Level1
+
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PostMapping(value = "/{skillId}/pic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional
     public ResponseEntity<PhotoDto> addPic(Part file, @PathVariable Long skillId) throws IOException {
@@ -86,7 +86,7 @@ public class SkillController {
         return ResponseEntity.ok(skillPictureService.save(skill, customFile));
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @DeleteMapping(value = "/{skillId}/pic")
     public ResponseEntity<Void> deletePhoto(@PathVariable Long skillId) {
 

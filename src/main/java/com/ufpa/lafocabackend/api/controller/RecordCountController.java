@@ -32,7 +32,7 @@ public class RecordCountController {
                 .orElse(LafocaCacheUtil.createCachedResponseNoContentRecordCount());
     }
 
-    @CheckSecurityPermissionMethods.User.Level1
+    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping
     public ResponseEntity<RecordCountDTO> updateRecordCount(@RequestBody RecordCountDTO recordCountDTO) {
         RecordCount updatedRecordCount = recordCountService.updateRecordCount(recordCountDTO);

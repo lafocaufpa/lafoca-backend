@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GroupService {
@@ -68,6 +69,10 @@ public class GroupService {
 
     public boolean existsById(Long groupId) {
         return groupRepository.existsById(groupId);
+    }
+
+    public Optional<Group> existsByName(String name) {
+        return groupRepository.findByName(name);
     }
 
     @Transactional

@@ -30,7 +30,7 @@ public class PermissionController {
         this.modelMapper = modelMapper;
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @PostMapping
     public ResponseEntity<PermissionDto> add (@RequestBody @Valid PermissionDto permissionDto) {
 
@@ -41,7 +41,7 @@ public class PermissionController {
         return ResponseEntity.ok(permissionSaved);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @GetMapping("/{permissionId}")
     public ResponseEntity<PermissionDto> read (@PathVariable Long permissionId ){
 
@@ -50,7 +50,7 @@ public class PermissionController {
         return ResponseEntity.ok(permissionDto);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @GetMapping
     public ResponseEntity<Page<PermissionDto>> list(
             @RequestParam(value = "name", required = false) String name,
@@ -71,7 +71,7 @@ public class PermissionController {
         return LafocaCacheUtil.createCachedResponsePermission(permissionDtos);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @PutMapping("/{permissionId}")
     public ResponseEntity<PermissionDto> update (@PathVariable Long permissionId, @RequestBody PermissionDto permissionDto){
         final Permission permission = permissionService.read(permissionId);
@@ -83,7 +83,7 @@ public class PermissionController {
         return ResponseEntity.ok(permissionDtoUpdate);
     }
 
-    @CheckSecurityPermissionMethods.Level1
+    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
     @DeleteMapping("/{permissionId}")
     public ResponseEntity<Void> delete (@PathVariable Long permissionId){
 

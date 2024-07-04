@@ -12,6 +12,6 @@ public class HealthCheck {
 
     @GetMapping("/hello-world")
     public ResponseEntity<String> helloWorld() {
-        return LafocaCacheUtil.createCachedResponse("<h1>Hello World</h1>", 120);
+        return LafocaCacheUtil.createCachedResponseHealthCheck("<h1>Hello World</h1>");
     }
 }

@@ -15,4 +15,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Query("SELECT g FROM Group g WHERE g.name LIKE %:name%")
     Page<Group> findByNameContaining(@Param("name") String name, Pageable pageable);
+
+    Optional<Group> findByName(String name);
 }

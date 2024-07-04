@@ -1,6 +1,8 @@
 package com.ufpa.lafocabackend.core.utils;
 
+import com.ufpa.lafocabackend.domain.model.dto.HostInfo;
 import com.ufpa.lafocabackend.domain.model.dto.input.RecordCountDTO;
+import com.ufpa.lafocabackend.domain.model.dto.output.LafocaDto;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 
@@ -20,6 +22,9 @@ public class LafocaCacheUtil {
     private static final long CACHE_MAX_AGE_SKILL = 60;
     private static final long CACHE_MAX_AGE_TCC = 60;
     private static final long CACHE_MAX_AGE_LOGIN_SESSION = 5;
+    private static final long CACHE_MAX_AGE_HEALTH_CHECK = 30;
+    private static final long CACHE_MAX_AGE_HOST_CHECK = 30;
+    private static final long CACHE_MAX_AGE_LAFOCA_INFO = 30;
 
     public static <T> ResponseEntity<T> createCachedResponse(T body, long maxAge) {
         return ResponseEntity.ok()
@@ -86,4 +91,21 @@ public class LafocaCacheUtil {
                 .build();
     }
 
+    public static ResponseEntity<String> createCachedResponseHealthCheck(String s) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(CACHE_MAX_AGE_HEALTH_CHECK, TimeUnit.SECONDS))
+                .body(s);
+    }
+
+    public static <T> ResponseEntity<T> createCachedResponseHostCheck(T body) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(CACHE_MAX_AGE_HOST_CHECK, TimeUnit.SECONDS))
+                .body(body);
+    }
+
+    public static <T> ResponseEntity<T> createCachedResponseLafocaInfo(T body) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(CACHE_MAX_AGE_LAFOCA_INFO, TimeUnit.SECONDS))
+                .body(body);
+    }
 }

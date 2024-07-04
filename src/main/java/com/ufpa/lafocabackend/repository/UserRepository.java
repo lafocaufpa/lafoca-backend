@@ -15,8 +15,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Boolean existsUserByEmail(String email);
 
-    @Query("SELECT COUNT(u) FROM User u JOIN u.groups g WHERE g.groupId = :groupId")
-    long countUsersInGroup(Long groupId);
+    @Query("SELECT COUNT(u) FROM User u JOIN u.groups g WHERE g.name = :adminGroupName")
+    long countUsersInGroup(String adminGroupName);
 
     Optional<User> findBySlug(String slug);
 }

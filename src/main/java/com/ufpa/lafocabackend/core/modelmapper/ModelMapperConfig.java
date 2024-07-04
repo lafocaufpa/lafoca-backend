@@ -30,6 +30,7 @@ public class ModelMapperConfig {
             @Override
             protected void configure() {
                 skip(destination.getGroupId());
+                skip(destination.getPermissions());
             }
         });
 
