@@ -13,4 +13,7 @@ public interface TccRepository extends JpaRepository<Tcc, Long> {
 
     @Query("SELECT t FROM Tcc t WHERE t.name LIKE %:name%")
     Page<Tcc> findByNameContaining(@Param("name") String name, Pageable pageable);
+
+    @Query("SELECT t FROM Tcc t JOIN t.linesOfResearch l WHERE l.lineOfResearchId = :lineOfResearchId")
+    Page<Tcc> findByLineOfResearchId(@Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
 }

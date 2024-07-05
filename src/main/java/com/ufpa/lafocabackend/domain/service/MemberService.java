@@ -94,8 +94,7 @@ public class MemberService {
 
         if (memberInputDto.getTcc() != null) {
             final TccInputDto tccInputDto = memberInputDto.getTcc();
-            final Tcc tcc = modelMapper.map(tccInputDto, Tcc.class);
-            final Tcc tccSaved = tccService.save(tcc);
+            final Tcc tccSaved = tccService.save(tccInputDto);
             member.setTcc(tccSaved);
         }
 

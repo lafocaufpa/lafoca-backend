@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.core.modelmapper;
 
 import com.ufpa.lafocabackend.domain.model.*;
+import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.GroupDto;
@@ -38,6 +39,13 @@ public class ModelMapperConfig {
             @Override
             protected void configure() {
                 skip(destination.getFunctionMemberId());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<TccInputDto, Tcc>() {
+            @Override
+            protected void configure() {
+                skip(destination.getLinesOfResearch());
             }
         });
 

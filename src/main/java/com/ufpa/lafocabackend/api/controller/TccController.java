@@ -35,9 +35,9 @@ public class TccController {
     @PostMapping
     public ResponseEntity<TccInputDto> add (@RequestBody @Valid TccInputDto tccInputDto) {
 
-        final Tcc tcc = modelMapper.map(tccInputDto, Tcc.class);
 
-        final Tcc tccSaved = tccService.save(tcc);
+        final Tcc tccSaved = tccService.save(tccInputDto);
+
         final TccInputDto map = modelMapper.map(tccSaved, TccInputDto.class);
 
         return ResponseEntity.ok(map);
@@ -56,9 +56,10 @@ public class TccController {
     @GetMapping
     public ResponseEntity<Page<TccInputDto>> list(
             @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "lineOfResearchId", required = false) String lineOfResearchId,
             Pageable pageable) {
 
-        Page<Tcc> tccList = tccService.list(name, pageable);
+        Page<Tcc> tccList = tccService.list(name, lineOfResearchId, pageable);
 
         Type listType = new TypeToken<List<TccInputDto>>() {}.getType();
         List<TccInputDto> tccInputDtoList = modelMapper.map(tccList.getContent(), listType);
@@ -71,11 +72,7 @@ public class TccController {
     @PutMapping("/{tccId}")
     public ResponseEntity<TccInputDto> update (@PathVariable Long tccId, @RequestBody TccInputDto newTcc){
 
-        final Tcc currentTcc = tccService.read(tccId);
-        modelMapper.map(newTcc, currentTcc);
-        currentTcc.setTccId(tccId);
-
-        final Tcc tccUpdated = tccService.update(currentTcc);
+        final Tcc tccUpdated = tccService.update(tccId, newTcc);
         final TccInputDto tccInputDto = modelMapper.map(tccUpdated, TccInputDto.class);
         return ResponseEntity.ok(tccInputDto);
     }

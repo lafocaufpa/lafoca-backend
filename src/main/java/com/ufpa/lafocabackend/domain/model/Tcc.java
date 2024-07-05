@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
@@ -30,6 +32,12 @@ public class Tcc {
 
     @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(700)")
     private String url;
+
+    @ManyToMany
+    @JoinTable(name = "tcc_line_of_research",
+            joinColumns = @JoinColumn(name = "tcc_id", foreignKey = @ForeignKey(name = "fk_tcc_research_id")),
+            inverseJoinColumns = @JoinColumn(name = "line_of_research_id", foreignKey = @ForeignKey(name = "fk_research_article_id")))
+    private List<LineOfResearch> linesOfResearch = new ArrayList<>();
 
     @PreUpdate
     @PrePersist
