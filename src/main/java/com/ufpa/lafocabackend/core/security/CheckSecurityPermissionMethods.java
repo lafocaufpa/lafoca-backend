@@ -9,53 +9,29 @@ import java.lang.annotation.Target;
 
 public @interface CheckSecurityPermissionMethods {
 
-
-    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.FULL_ACCESS, @lafocaSecurity.MANAGE_USERS, @lafocaSecurity.MANAGE_GROUPS)")
+    @PreAuthorize("@lafocaSecurity.isUserManager() or @lafocaSecurity.isAdmin()")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface AdminOrManagerUsersGroups {}
-
-    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.FULL_ACCESS, @lafocaSecurity.MANAGE_USERS, @lafocaSecurity.MANAGE_GROUPS)")
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    public @interface AdminOrEditor {}
-
-    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.FULL_ACCESS, @lafocaSecurity.MANAGE_USERS, @lafocaSecurity.MANAGE_GROUPS)")
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    public @interface AdminOrEditorOrModerator {}
-
-    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1)")
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    public @interface Level1 {}
-
-    @PreAuthorize("hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1, @lafocaSecurity.ADMIN_LEVEL_2) ")
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    public @interface Level1OrLevel2 {}
-
-    @interface User {
-
-        @PreAuthorize("hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1) ")
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        public @interface Level1 {
-
-        }
-
-        @PreAuthorize("@lafocaSecurity.userHimself(#userId, #userEmail) or hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1, @lafocaSecurity.ADMIN_LEVEL_2)")
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        public @interface UserHimselfOrLevel1OrLevel2 {
-
-        }
-
-        @PreAuthorize("@lafocaSecurity.userHimself(#userId, #userEmail) or hasAnyAuthority(@lafocaSecurity.ADMIN_LEVEL_1)")
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        public @interface UserHimselfOrLevel1 {
-
-        }
+    public @interface AdminOrManagerUsersGroups {
     }
+
+    @PreAuthorize("@lafocaSecurity.isEditor() or @lafocaSecurity.isAdmin()")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface AdminOrEditor {
+    }
+
+    @PreAuthorize("@lafocaSecurity.isEditor() or @lafocaSecurity.isModerator() or @lafocaSecurity.isAdmin()")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface AdminOrEditorOrModerator {
+    }
+
+    @PreAuthorize("@lafocaSecurity.userHimself(#userId, #userEmail) or @lafocaSecurity.isUserManager() or @lafocaSecurity.isAdmin()")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface UserHimselfOrManagerUsersGroupsOrAdmin {
+
+    }
+
 }

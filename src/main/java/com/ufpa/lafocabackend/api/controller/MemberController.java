@@ -90,7 +90,7 @@ public class MemberController {
     public ResponseEntity<Page<MemberSummaryDto>> listMembersSummarized(@PageableDefault(size = 7) Pageable pageable) {
         Page<MemberSummaryDto> memberSummaryDtos = memberService.listSummaryMember(pageable);
         Page<MemberSummaryDto> memberSummaryDtoPage = new PageImpl<>(memberSummaryDtos.getContent(), pageable, memberSummaryDtos.getTotalElements());
-        return LafocaCacheUtil.createCachedResponse(memberSummaryDtoPage, 86400L);
+        return LafocaCacheUtil.createCachedResponseMember(memberSummaryDtoPage);
 
     }
 

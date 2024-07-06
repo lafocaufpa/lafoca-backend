@@ -71,7 +71,7 @@ public class UserController {
         return LafocaCacheUtil.createCachedResponseUser(userDtos);
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> read(@PathVariable String userId) {
 
@@ -82,7 +82,7 @@ public class UserController {
         return LafocaCacheUtil.createCachedResponseUser(userDto);
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @GetMapping("/read/{slug}")
     public ResponseEntity<UserDto> readBySlug(@PathVariable String slug) {
 
@@ -92,7 +92,7 @@ public class UserController {
         return LafocaCacheUtil.createCachedResponseUser(userDto);
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @GetMapping("/read-by-email/{userEmail}")
     public ResponseEntity<UserDto> readByEmail (@PathVariable String userEmail) {
 
@@ -102,7 +102,7 @@ public class UserController {
         return LafocaCacheUtil.createCachedResponseUser(userDto);
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> update(@RequestBody @Valid UserPersonalInputDto userInputDto, @PathVariable String userId) {
 
@@ -110,7 +110,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> delete(@PathVariable String userId) {
 
@@ -128,7 +128,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/password")
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     public ResponseEntity<Void> updatePassword(@RequestBody @Valid UserInputPasswordDTO passwordDTO, @PathVariable String userId) {
 
         userService.changePassword(passwordDTO, userId);
@@ -142,7 +142,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @PostMapping(value = "/{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhoto(Part file, @PathVariable String userId) throws IOException {
 
@@ -157,7 +157,7 @@ public class UserController {
         return ResponseEntity.ok(url);
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @PostMapping(value = "/read/{userSlug}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhotoBySlug(Part file, @PathVariable String userSlug) throws IOException {
 
@@ -168,7 +168,7 @@ public class UserController {
         return ResponseEntity.ok(url);
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @DeleteMapping(value = "/{userId}/photo")
     public ResponseEntity<Void> deletePhoto(@PathVariable String userId) {
 
@@ -178,7 +178,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurityPermissionMethods.AdminOrManagerUsersGroups
+    @CheckSecurityPermissionMethods.UserHimselfOrManagerUsersGroupsOrAdmin
     @DeleteMapping(value = "/read/{userSlug}/photo")
     public ResponseEntity<Void> deletePhotoBySlug(@PathVariable String userSlug) {
 

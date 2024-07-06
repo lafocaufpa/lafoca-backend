@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createPhotoFilename;
 
@@ -99,6 +100,17 @@ public class UserService {
                 throw new EntityAlreadyRegisteredException(User.class.getSimpleName(), userInputDto.getEmail());
             }
         }
+
+//        Set<Long> existingGroupIds = user.getGroups().stream()
+//                .map(Group::getGroupId)
+//                .collect(Collectors.toSet());
+//
+//        // Comparar com a lista de IDs dos grupos do DTO
+//        Set<Long> inputGroupIds = new HashSet<>(userInputDto.getGroups());
+//
+//        if (!existingGroupIds.equals(inputGroupIds)) {
+//            throw new IllegalArgumentException("User groups cannot be changed.");
+//        }
 
         modelMapper.map(userInputDto, user);
 

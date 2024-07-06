@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
@@ -40,7 +41,7 @@ public class YearClassController {
     @GetMapping
     public ResponseEntity<Page<YearClassDTO>> list(Pageable pageable) {
         Page<YearClassDTO> list = yearClassService.list(pageable);
-        return ResponseEntity.ok(list);
+        return LafocaCacheUtil.createCachedResponseClasses(list);
     }
 
     @GetMapping("/{yearClassId}/members")
@@ -50,14 +51,14 @@ public class YearClassController {
             Pageable pageable) {
 
         Page<MemberResumed> members = yearClassService.listMembersByYearClass(yearClassId, name, pageable);
-        return ResponseEntity.ok(members);
+        return LafocaCacheUtil.createCachedResponseClasses(members);
     }
 
     @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping("/list")
     public ResponseEntity<List<YearClassDTO>> listWithoutPage() {
         List<YearClassDTO> list = yearClassService.listWithoutPagination();
-        return ResponseEntity.ok(list);
+        return LafocaCacheUtil.createCachedResponseClasses(list);
     }
 
     @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
