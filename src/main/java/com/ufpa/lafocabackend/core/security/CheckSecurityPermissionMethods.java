@@ -9,25 +9,25 @@ import java.lang.annotation.Target;
 
 public @interface CheckSecurityPermissionMethods {
 
-    @PreAuthorize("@lafocaSecurity.isUserManager() or @lafocaSecurity.isAdmin()")
+    @PreAuthorize("@lafocaSecurity.isAdminOrUserGroupManager()")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface AdminOrManagerUsersGroups {
     }
 
-    @PreAuthorize("@lafocaSecurity.isEditor() or @lafocaSecurity.isAdmin()")
+    @PreAuthorize("@lafocaSecurity.isAdminOrEditor()")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface AdminOrEditor {
     }
 
-    @PreAuthorize("@lafocaSecurity.isEditor() or @lafocaSecurity.isModerator() or @lafocaSecurity.isAdmin()")
+    @PreAuthorize("@lafocaSecurity.isAdminOrEditorOrModerator()")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface AdminOrEditorOrModerator {
     }
 
-    @PreAuthorize("@lafocaSecurity.userHimself(#userId, #userEmail) or @lafocaSecurity.isUserManager() or @lafocaSecurity.isAdmin()")
+    @PreAuthorize("@lafocaSecurity.checkUserHimselfOrManagerOrAdmin(#userId, #userEmail)")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface UserHimselfOrManagerUsersGroupsOrAdmin {

@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.core.file.CustomMultipartFile;
+import com.ufpa.lafocabackend.core.security.LafocaSecurity;
 import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
@@ -48,17 +49,19 @@ public class UserService {
     private final PhotoStorageService photoStorageService;
     private final SmtpEmailService smtpSendEmailService;
     private final ModelMapper modelMapper;
+    private final LafocaSecurity lafocaSecurity;
 
     @Value("${group.admin.name}")
     private String adminGroupName;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupService groupService, PhotoStorageService photoStorageService, SmtpEmailService smtpSendEmailService, ModelMapper modelMapper) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupService groupService, PhotoStorageService photoStorageService, SmtpEmailService smtpSendEmailService, ModelMapper modelMapper, LafocaSecurity lafocaSecurity) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.groupService = groupService;
         this.photoStorageService = photoStorageService;
         this.smtpSendEmailService = smtpSendEmailService;
         this.modelMapper = modelMapper;
+        this.lafocaSecurity = lafocaSecurity;
     }
 
     @Transactional
@@ -101,16 +104,16 @@ public class UserService {
             }
         }
 
-//        Set<Long> existingGroupIds = user.getGroups().stream()
-//                .map(Group::getGroupId)
-//                .collect(Collectors.toSet());
-//
-//        // Comparar com a lista de IDs dos grupos do DTO
-//        Set<Long> inputGroupIds = new HashSet<>(userInputDto.getGroups());
-//
-//        if (!existingGroupIds.equals(inputGroupIds)) {
-//            throw new IllegalArgumentException("User groups cannot be changed.");
-//        }
+        Set<Long> existingGroupIds = user.getGroups().stream()
+                .map(Group::getGroupId)
+                .collect(Collectors.toSet());
+
+        Set<Long> inputGroupIds = new HashSet<>(userInputDto.getGroups());
+
+        if (!existingGroupIds.equals(inputGroupIds) && !(lafocaSecurity.isAdminOrUserGroupManager())) {
+            throw new IllegalArgumentException("Você não tem permissão para alterar o grupo de segurança.");
+        }
+
 
         modelMapper.map(userInputDto, user);
 
@@ -274,10 +277,10 @@ public class UserService {
         smtpSendEmailService.send(message);
     }
 
-    public String getAuthentication()  {
+    public String getAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Object userAutheticated = authentication.getPrincipal();
-        if(userAutheticated.equals("anonymousUser"))
+        if (userAutheticated.equals("anonymousUser"))
             return "anonymousUser";
 
         Jwt jwt = (Jwt) userAutheticated;

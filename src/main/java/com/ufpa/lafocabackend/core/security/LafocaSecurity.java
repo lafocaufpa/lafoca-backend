@@ -13,20 +13,18 @@ import java.util.stream.Collectors;
 @Component
 public class LafocaSecurity {
 
-    public final String ADMIN_LEVEL_1 = "ADMIN_LEVEL_1";
-    public final String ADMIN_LEVEL_2 = "ADMIN_LEVEL_2";
-    public static final String VIEW_CONTENT = "VIEW_CONTENT";
-    public static final String EDIT_CONTENT = "EDIT_CONTENT";
-    public static final String DELETE_CONTENT = "DELETE_CONTENT";
-    public static final String MANAGE_USERS = "MANAGE_USERS";
-    public static final String MANAGE_GROUPS = "MANAGE_GROUPS";
-    public static final String FULL_ACCESS = "FULL_ACCESS";
+    private static final String VIEW_CONTENT = "VIEW_CONTENT";
+    private static final String EDIT_CONTENT = "EDIT_CONTENT";
+    private static final String DELETE_CONTENT = "DELETE_CONTENT";
+    private static final String MANAGE_USERS = "MANAGE_USERS";
+    private static final String MANAGE_GROUPS = "MANAGE_GROUPS";
+    private static final String FULL_ACCESS = "FULL_ACCESS";
 
     private Authentication getAuthentication()  {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    public String getUserId(){
+    private String getUserId(){
 
         final Object userAutheticated = getAuthentication().getPrincipal();
         if(userAutheticated.equals("anonymousUser"))
@@ -37,7 +35,7 @@ public class LafocaSecurity {
         return jwt.getClaimAsString("user_id");
     }
 
-    public String getEmail(){
+    private String getEmail(){
 
         final Object userAutheticated = getAuthentication().getPrincipal();
         if(userAutheticated.equals("anonymousUser"))
@@ -48,7 +46,7 @@ public class LafocaSecurity {
         return jwt.getClaimAsString("sub");
     }
 
-    public boolean userHimself(String userId, String userEmail){
+    private boolean userHimself(String userId, String userEmail){
 
         boolean equals = getUserId().equals(userId);
         if(!equals) {
@@ -57,11 +55,11 @@ public class LafocaSecurity {
         return equals;
     }
 
-    public boolean userHimselfWithEmail(String email){
+    private boolean userHimselfWithEmail(String email){
         return getEmail().equals(email);
     }
 
-    public boolean isAdmin() {
+    private boolean isAdmin() {
         Collection<? extends GrantedAuthority> authorities = getAuthentication().getAuthorities();
         if (authorities != null) {
             return authorities.stream()
@@ -70,7 +68,7 @@ public class LafocaSecurity {
         return false;
     }
 
-    public boolean isEditor() {
+    private boolean isEditor() {
         Collection<? extends GrantedAuthority> authorities = getAuthentication().getAuthorities();
         if (authorities != null) {
             return authorities.stream()
@@ -81,7 +79,7 @@ public class LafocaSecurity {
         return false;
     }
 
-    public boolean isModerator() {
+    private boolean isModerator() {
         Collection<? extends GrantedAuthority> authorities = getAuthentication().getAuthorities();
         if (authorities != null) {
             return authorities.stream()
@@ -92,7 +90,7 @@ public class LafocaSecurity {
         return false;
     }
 
-    public boolean isUserManager() {
+    private boolean isUserGroupManager() {
         Collection<? extends GrantedAuthority> authorities = getAuthentication().getAuthorities();
         if (authorities != null) {
             return authorities.stream()
@@ -101,6 +99,21 @@ public class LafocaSecurity {
                     .containsAll(Arrays.asList(MANAGE_GROUPS, MANAGE_USERS));
         }
         return false;
+    }
+
+    public boolean checkUserHimselfOrManagerOrAdmin(String userId, String userEmail) {
+        return userHimself(userId, userEmail) || isUserGroupManager() || isAdmin();
+    }
+
+    public boolean isAdminOrEditorOrModerator() {
+        return isAdmin() || isEditor() || isModerator();
+    }
+
+    public boolean isAdminOrEditor() {
+        return isAdmin() || isEditor();
+    }
+    public boolean isAdminOrUserGroupManager() {
+        return isAdmin() || isUserGroupManager();
     }
 
 }
