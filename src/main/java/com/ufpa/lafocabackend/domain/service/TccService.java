@@ -52,7 +52,9 @@ public class TccService {
     }
 
     public Page<Tcc> list(String name, String lineOfResearchId, Pageable pageable) {
-        if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+        if (name != null && !name.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+            return tccRepository.findByNameContainingAndLineOfResearchId(name, lineOfResearchId, pageable);
+        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
             lineOfResearchService.exist(lineOfResearchId);
             return tccRepository.findByLineOfResearchId(lineOfResearchId, pageable);
         } else if (name != null && !name.isEmpty()) {

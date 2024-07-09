@@ -38,6 +38,9 @@ public class Article {
     @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(700)")
     private String url;
 
+    @Column(columnDefinition = "TEXT")
+    private String articleAbstract;
+
     @ManyToMany
     @JoinTable(name = "article_line_of_research",
             joinColumns = @JoinColumn(name = "article_id", foreignKey = @ForeignKey(name = "fk_article_research_id")),

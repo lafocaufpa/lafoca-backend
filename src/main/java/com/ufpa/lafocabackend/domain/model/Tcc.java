@@ -33,6 +33,9 @@ public class Tcc {
     @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(700)")
     private String url;
 
+    @Column(columnDefinition = "TEXT")
+    private String tccAbstract;
+
     @ManyToMany
     @JoinTable(name = "tcc_line_of_research",
             joinColumns = @JoinColumn(name = "tcc_id", foreignKey = @ForeignKey(name = "fk_tcc_research_id")),

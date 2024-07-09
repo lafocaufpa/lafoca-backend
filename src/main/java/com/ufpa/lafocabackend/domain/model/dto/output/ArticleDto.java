@@ -23,6 +23,8 @@ public class ArticleDto {
     @NotBlank
     private String journal;
 
+    private String articleAbstract;
+
     @NotBlank
     private String url;
 

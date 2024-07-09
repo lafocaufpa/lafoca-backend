@@ -21,4 +21,7 @@ public interface ProjectRepository extends JpaRepository<Project, String> {
     @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE l.lineOfResearchId = :lineOfResearchId")
     Page<Project> findByLineOfResearchId(@Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
 
+    @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE p.title LIKE %:title% AND l.lineOfResearchId = :lineOfResearchId")
+    Page<Project> findByTitleContainingAndLineOfResearchId(@Param("title") String title, @Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
+
 }

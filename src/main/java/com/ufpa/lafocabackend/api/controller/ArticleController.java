@@ -60,23 +60,24 @@ public class ArticleController {
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "lineOfResearchId", required = false) String lineOfResearchId,
             Pageable pageable) {
-        Page<Article> list;
 
-        if ((title != null && !title.isEmpty()) || lineOfResearchId != null) {
-            if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
-                list = articleService.searchByLineOfResearchId(lineOfResearchId, pageable);
-            } else {
-                list = articleService.searchByTitle(title, pageable);
-            }
+        Page<Article> articlePage;
+
+        if ((title != null && !title.isEmpty()) && (lineOfResearchId != null && !lineOfResearchId.isEmpty())) {
+            articlePage = articleService.searchByTitleAndLineOfResearchId(title, lineOfResearchId, pageable);
+        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+            articlePage = articleService.searchByLineOfResearchId(lineOfResearchId, pageable);
+        } else if (title != null && !title.isEmpty()) {
+            articlePage = articleService.searchByTitle(title, pageable);
         } else {
-            list = articleService.list(pageable);
+            articlePage = articleService.list(pageable);
         }
 
         Type listType = new TypeToken<List<ArticleDto>>() {}.getType();
-        List<ArticleDto> map = modelMapper.map(list.getContent(), listType);
-        PageImpl<ArticleDto> articleDtos = new PageImpl<>(map, pageable, list.getTotalElements());
+        List<ArticleDto> map = modelMapper.map(articlePage.getContent(), listType);
+        Page<ArticleDto> articles = new PageImpl<>(map, pageable, articlePage.getTotalElements());
 
-        return ResponseEntity.ok(articleDtos);
+        return ResponseEntity.ok(articles);
     }
 
     @CheckSecurityPermissionMethods.AdminOrEditorOrModerator

@@ -72,12 +72,12 @@ public class ProjectController {
 
         Page<Project> projectPage;
 
-        if ((title != null && !title.isEmpty()) || (lineOfResearchId != null && !lineOfResearchId.isEmpty())) {
-            if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
-                projectPage = projectService.searchByLineOfResearchId(lineOfResearchId, pageable);
-            } else {
-                projectPage = projectService.searchByTitle(title, pageable);
-            }
+        if ((title != null && !title.isEmpty()) && (lineOfResearchId != null && !lineOfResearchId.isEmpty())) {
+            projectPage = projectService.searchByTitleAndLineOfResearchId(title, lineOfResearchId, pageable);
+        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+            projectPage = projectService.searchByLineOfResearchId(lineOfResearchId, pageable);
+        } else if (title != null && !title.isEmpty()) {
+            projectPage = projectService.searchByTitle(title, pageable);
         } else {
             projectPage = projectService.list(pageable);
         }

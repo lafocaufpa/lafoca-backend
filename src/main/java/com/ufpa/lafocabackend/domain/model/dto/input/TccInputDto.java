@@ -33,6 +33,8 @@ public class TccInputDto {
     @ValidDate
     private LocalDate date;
 
+    private String tccAbstract;
+
     @NotNull
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<@NotNull String> lineOfResearchIds;

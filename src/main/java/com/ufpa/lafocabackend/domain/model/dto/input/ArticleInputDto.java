@@ -21,6 +21,8 @@ public class ArticleInputDto {
     @NotBlank
     private String url;
 
+    private String articleAbstract;
+
     @NotNull
     private List<@NotNull String> lineOfResearchIds;
 }
