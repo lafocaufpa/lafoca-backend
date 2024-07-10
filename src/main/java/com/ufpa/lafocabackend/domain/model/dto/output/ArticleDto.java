@@ -25,6 +25,8 @@ public class ArticleDto {
 
     private String articleAbstract;
 
+    private String year;
+
     @NotBlank
     private String url;
 

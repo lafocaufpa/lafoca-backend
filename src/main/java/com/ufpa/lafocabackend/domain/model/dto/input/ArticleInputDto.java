@@ -23,6 +23,8 @@ public class ArticleInputDto {
 
     private String articleAbstract;
 
+    private String year;
+
     @NotNull
     private List<@NotNull String> lineOfResearchIds;
 }
