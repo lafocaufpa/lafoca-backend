@@ -35,6 +35,9 @@ public class Article {
     @Column(nullable = false, length = 225)
     private String journal;
 
+    @Column(length = 4)
+    private String year;
+
     @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(700)")
     private String url;
 
