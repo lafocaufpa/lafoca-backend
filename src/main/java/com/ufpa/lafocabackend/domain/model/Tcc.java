@@ -39,7 +39,7 @@ public class Tcc {
     @ManyToMany
     @JoinTable(name = "tcc_line_of_research",
             joinColumns = @JoinColumn(name = "tcc_id", foreignKey = @ForeignKey(name = "fk_tcc_research_id")),
-            inverseJoinColumns = @JoinColumn(name = "line_of_research_id", foreignKey = @ForeignKey(name = "fk_research_article_id")))
+            inverseJoinColumns = @JoinColumn(name = "line_of_research_id", foreignKey = @ForeignKey(name = "fk_research_tcc_id")))
     private List<LineOfResearch> linesOfResearch = new ArrayList<>();
 
     @PreUpdate
