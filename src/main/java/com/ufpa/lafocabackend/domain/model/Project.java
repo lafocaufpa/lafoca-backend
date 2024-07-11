@@ -34,7 +34,7 @@ public class Project {
     @Column(nullable = false, length = 255)
     private String title;
     
-    @Column(nullable = false, length = 1000)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)
