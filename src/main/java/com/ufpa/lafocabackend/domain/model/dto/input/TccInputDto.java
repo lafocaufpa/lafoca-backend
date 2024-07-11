@@ -11,7 +11,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -20,7 +19,7 @@ public class TccInputDto {
     private Long id;
 
     @NotBlank
-    private String name;
+    private String title;
 
     @NotBlank
     private String url;
@@ -33,7 +32,7 @@ public class TccInputDto {
     @ValidDate
     private LocalDate date;
 
-    private String tccAbstract;
+    private String abstractText;
 
     @NotNull
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

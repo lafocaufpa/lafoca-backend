@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.domain.model;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
@@ -36,13 +33,13 @@ public class Article {
     private String journal;
 
     @Column(length = 4)
-    private String year;
+    private String date;
 
     @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(700)")
     private String url;
 
     @Column(columnDefinition = "TEXT")
-    private String articleAbstract;
+    private String abstractText;
 
     @ManyToMany
     @JoinTable(name = "article_line_of_research",

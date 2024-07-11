@@ -22,7 +22,7 @@ public class Tcc {
     private Long tccId;
 
     @Column(nullable = false, length = 255)
-    private String name;
+    private String title;
 
     @Column(nullable = false, length = 500, unique = true)
     private String slug;
@@ -34,7 +34,7 @@ public class Tcc {
     private String url;
 
     @Column(columnDefinition = "TEXT")
-    private String tccAbstract;
+    private String abstractText;
 
     @ManyToMany
     @JoinTable(name = "tcc_line_of_research",
@@ -44,9 +44,19 @@ public class Tcc {
 
     @PreUpdate
     @PrePersist
-    public void generateSlug() {
+    public void preprocess() {
+        generateSlug();
+        normalizeUrl();
+    }
 
-        this.slug = createSlug(this.name, date.toString());
+    private void generateSlug() {
+        this.slug = createSlug(this.title, date.toString());
+    }
+
+    private void normalizeUrl() {
+        if (this.url != null && !this.url.startsWith("http://") && !this.url.startsWith("https://")) {
+            this.url = "https://" + this.url;
+        }
     }
 
 }

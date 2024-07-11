@@ -15,13 +15,13 @@ public class ProjectInputDto {
     private String title;
 
     @NotBlank
-    private String description;
+    private String abstractText;
 
     @NotNull
     private Boolean completed;
 
     @NotNull
-    private String year;
+    private String date;
     
     private String urlPhoto;
 

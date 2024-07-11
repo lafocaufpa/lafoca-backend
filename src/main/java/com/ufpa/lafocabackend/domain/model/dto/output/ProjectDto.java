@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -23,13 +22,13 @@ public class ProjectDto {
     private String slug;
 
     @NotBlank
-    private String description;
+    private String abstractText;
 
     @NotNull
     private Boolean completed;
 
     @NotNull
-    private String year;
+    private String date;
 
     private String urlPhoto;
 

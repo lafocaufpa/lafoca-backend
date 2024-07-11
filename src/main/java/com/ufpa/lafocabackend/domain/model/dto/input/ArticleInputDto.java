@@ -2,7 +2,6 @@ package com.ufpa.lafocabackend.domain.model.dto.input;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,9 +20,9 @@ public class ArticleInputDto {
     @NotBlank
     private String url;
 
-    private String articleAbstract;
+    private String abstractText;
 
-    private String year;
+    private String date;
 
     @NotNull
     private List<@NotNull String> lineOfResearchIds;

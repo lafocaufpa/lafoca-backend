@@ -23,9 +23,9 @@ public class ArticleDto {
     @NotBlank
     private String journal;
 
-    private String articleAbstract;
+    private String abstractText;
 
-    private String year;
+    private String date;
 
     @NotBlank
     private String url;

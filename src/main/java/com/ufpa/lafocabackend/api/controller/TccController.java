@@ -50,16 +50,16 @@ public class TccController {
 
         final TccInputDto map = modelMapper.map(tcc, TccInputDto.class);
 
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(map);
+        return LafocaCacheUtil.createCachedResponseTcc(map);
     }
 
     @GetMapping
     public ResponseEntity<Page<TccInputDto>> list(
-            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "lineOfResearchId", required = false) String lineOfResearchId,
             Pageable pageable) {
 
-        Page<Tcc> tccList = tccService.list(name, lineOfResearchId, pageable);
+        Page<Tcc> tccList = tccService.list(title, lineOfResearchId, pageable);
 
         Type listType = new TypeToken<List<TccInputDto>>() {}.getType();
         List<TccInputDto> tccInputDtoList = modelMapper.map(tccList.getContent(), listType);

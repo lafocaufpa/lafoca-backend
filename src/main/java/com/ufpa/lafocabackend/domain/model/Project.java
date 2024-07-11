@@ -35,13 +35,13 @@ public class Project {
     private String title;
     
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String abstractText;
 
     @Column(nullable = false)
     private Boolean completed;
 
     @Column(nullable = false, length = 4)
-    private String year;
+    private String date;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "photo_id", foreignKey = @ForeignKey(name = "fk_project_photo_id"))

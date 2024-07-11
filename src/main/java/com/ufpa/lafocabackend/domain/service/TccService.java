@@ -51,14 +51,14 @@ public class TccService {
         return tccRepository.findAll(pageable);
     }
 
-    public Page<Tcc> list(String name, String lineOfResearchId, Pageable pageable) {
-        if (name != null && !name.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
-            return tccRepository.findByNameContainingAndLineOfResearchId(name, lineOfResearchId, pageable);
+    public Page<Tcc> list(String title, String lineOfResearchId, Pageable pageable) {
+        if (title != null && !title.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+            return tccRepository.findByNameContainingAndLineOfResearchId(title, lineOfResearchId, pageable);
         } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
             lineOfResearchService.exist(lineOfResearchId);
             return tccRepository.findByLineOfResearchId(lineOfResearchId, pageable);
-        } else if (name != null && !name.isEmpty()) {
-            return tccRepository.findByNameContaining(name, pageable);
+        } else if (title != null && !title.isEmpty()) {
+            return tccRepository.findByNameContaining(title, pageable);
         } else {
             return tccRepository.findAll(pageable);
         }
