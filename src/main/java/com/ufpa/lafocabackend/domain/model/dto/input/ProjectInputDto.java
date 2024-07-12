@@ -18,10 +18,13 @@ public class ProjectInputDto {
     private String abstractText;
 
     @NotNull
-    private Boolean completed;
-
-    @NotNull
     private String date;
+
+    private String endDate;
+
+    private String modality;
+
+    private String collaborators;
     
     private String urlPhoto;
 

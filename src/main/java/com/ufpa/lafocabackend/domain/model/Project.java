@@ -37,11 +37,13 @@ public class Project {
     @Column(columnDefinition = "TEXT")
     private String abstractText;
 
-    @Column(nullable = false)
-    private Boolean completed;
-
     @Column(nullable = false, length = 4)
     private String date;
+
+    private String modality;
+
+    @Column(length = 4)
+    private String endDate;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "photo_id", foreignKey = @ForeignKey(name = "fk_project_photo_id"))
@@ -52,19 +54,37 @@ public class Project {
         return getLinesOfResearch().add(lineOfResearch);
     }
 
-    public Boolean removeLineOfResearch(LineOfResearch lineOfResearch) {
-        return getLinesOfResearch().remove(lineOfResearch);
-    }
-
     @PreUpdate
     public void generateSlug() {
         this.slug = createSlug(this.title, this.projectId);
+        sanitizeFields();
     }
 
     @PrePersist
-    private void generateUUID() {
+    private void prePersist() {
         this.projectId = UUID.randomUUID().toString();
         generateSlug();
+        sanitizeFields();
     }
 
+    private void sanitizeFields() {
+        sanitizeEndDate();
+        sanitizeModality();
+    }
+
+    private void sanitizeEndDate() {
+        if (this.endDate != null && this.endDate.trim().isEmpty()) {
+            this.endDate = null;
+        }
+    }
+
+    private void sanitizeModality() {
+        if (this.modality != null) {
+            if (this.modality.trim().isEmpty()) {
+                this.modality = null;
+            } else {
+                this.modality = this.modality.toUpperCase();
+            }
+        }
+    }
 }

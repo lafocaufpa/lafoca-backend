@@ -24,8 +24,11 @@ public class ProjectDto {
     @NotBlank
     private String abstractText;
 
-    @NotNull
-    private Boolean completed;
+    private String endDate;
+
+    private String modality;
+
+    private String collaborators;
 
     @NotNull
     private String date;
