@@ -72,6 +72,7 @@ public class Project {
     private void sanitizeFields() {
         sanitizeEndDate();
         sanitizeModality();
+        sanitizeMembers();
     }
 
     private void sanitizeEndDate() {
@@ -87,6 +88,12 @@ public class Project {
             } else {
                 this.modality = this.modality.toUpperCase();
             }
+        }
+    }
+
+    private void sanitizeMembers() {
+        for (MemberInfo member : this.members) {
+            member.sanitize();
         }
     }
 }

@@ -14,4 +14,10 @@ public class MemberInfo implements Serializable {
     public MemberInfo() {
     }
 
+    public void sanitize() {
+        if (this.slug != null && this.slug.trim().isEmpty()) {
+            this.slug = null;
+        }
+    }
+
 }
