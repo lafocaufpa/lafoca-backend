@@ -7,9 +7,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
@@ -49,6 +47,10 @@ public class Project {
     @JoinColumn(name = "photo_id", foreignKey = @ForeignKey(name = "fk_project_photo_id"))
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private ProjectPhoto projectPhoto;
+
+    @ElementCollection
+    @CollectionTable(name = "project_members", joinColumns = @JoinColumn(name = "project_id"))
+    private Set<MemberInfo> members = new HashSet<>();
 
     public Boolean addLineOfResearch(LineOfResearch lineOfResearch) {
         return getLinesOfResearch().add(lineOfResearch);

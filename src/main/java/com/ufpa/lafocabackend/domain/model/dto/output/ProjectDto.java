@@ -1,11 +1,13 @@
 package com.ufpa.lafocabackend.domain.model.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ufpa.lafocabackend.domain.model.MemberInfo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -28,7 +30,7 @@ public class ProjectDto {
 
     private String modality;
 
-    private String collaborators;
+    private Set<MemberInfo> members = new HashSet<>();
 
     @NotNull
     private String date;

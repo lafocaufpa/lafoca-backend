@@ -1,11 +1,14 @@
 package com.ufpa.lafocabackend.domain.model.dto.input;
 
+import com.ufpa.lafocabackend.domain.model.MemberInfo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,8 +27,8 @@ public class ProjectInputDto {
 
     private String modality;
 
-    private String collaborators;
-    
+    private Set<MemberInfo> members = new HashSet<>();
+
     private String urlPhoto;
 
     @NotNull
