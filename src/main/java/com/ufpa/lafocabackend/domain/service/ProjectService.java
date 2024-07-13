@@ -45,21 +45,53 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Page<Project> list (Pageable pageable){
+    public Page<Project> list(String title, String lineOfResearchId, Integer year, Pageable pageable, boolean onGoing) {
+        if (Boolean.TRUE.equals(onGoing)) {
+            return filterOngoingProjects(title, lineOfResearchId, year, pageable);
+        } else {
+            return filterAllProjects(title, lineOfResearchId, year, pageable);
+        }
 
-        return projectRepository.findAll(pageable);
     }
 
-    public Page<Project> searchByTitle(String title, Pageable pageable) {
-        return projectRepository.findByTitleContaining(title, pageable);
+    public Page<Project> filterAllProjects(String title, String lineOfResearchId, Integer year, Pageable pageable) {
+        if (title != null && !title.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty() && year != null) {
+            return projectRepository.findByTitleContainingAndLineOfResearchIdAndDate(title, lineOfResearchId, String.valueOf(year), pageable);
+        } else if (title != null && !title.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+            return projectRepository.findByTitleContainingAndLineOfResearchId(title, lineOfResearchId, pageable);
+        } else if (title != null && !title.isEmpty() && year != null) {
+            return projectRepository.findByTitleContainingAndDate(title, String.valueOf(year), pageable);
+        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty() && year != null) {
+            return projectRepository.findByLineOfResearchIdAndDate(lineOfResearchId, String.valueOf(year), pageable);
+        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+            return projectRepository.findByLineOfResearchId(lineOfResearchId, pageable);
+        } else if (title != null && !title.isEmpty()) {
+            return projectRepository.findByTitleContaining(title, pageable);
+        } else if (year != null) {
+            return projectRepository.findByDate(String.valueOf(year), pageable);
+        } else {
+            return projectRepository.findAll(pageable);
+        }
     }
 
-    public Page<Project> searchByLineOfResearchId(String lineOfResearchId, Pageable pageable) {
-        return projectRepository.findByLineOfResearchId(lineOfResearchId, pageable);
-    }
-
-    public Page<Project> searchByTitleAndLineOfResearchId(String title, String lineOfResearchId, Pageable pageable) {
-        return projectRepository.findByTitleContainingAndLineOfResearchId(title, lineOfResearchId, pageable);
+    private Page<Project> filterOngoingProjects(String title, String lineOfResearchId, Integer year, Pageable pageable) {
+        if (title != null && !title.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty() && year != null) {
+            return projectRepository.findOngoingByTitleContainingAndLineOfResearchIdAndDate(title, lineOfResearchId, String.valueOf(year), pageable);
+        } else if (title != null && !title.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+            return projectRepository.findOngoingByTitleContainingAndLineOfResearchId(title, lineOfResearchId, pageable);
+        } else if (title != null && !title.isEmpty() && year != null) {
+            return projectRepository.findOngoingByTitleContainingAndDate(title, String.valueOf(year), pageable);
+        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty() && year != null) {
+            return projectRepository.findOngoingByLineOfResearchIdAndDate(lineOfResearchId, String.valueOf(year), pageable);
+        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+            return projectRepository.findOngoingByLineOfResearchId(lineOfResearchId, pageable);
+        } else if (title != null && !title.isEmpty()) {
+            return projectRepository.findOngoingByTitleContaining(title, pageable);
+        } else if (year != null) {
+            return projectRepository.findOngoingByDate(String.valueOf(year), pageable);
+        } else {
+            return projectRepository.findOngoingAll(pageable);
+        }
     }
 
     public Project read (String projectId) {

@@ -51,14 +51,21 @@ public class TccService {
         return tccRepository.findAll(pageable);
     }
 
-    public Page<Tcc> list(String title, String lineOfResearchId, Pageable pageable) {
-        if (title != null && !title.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
+    public Page<Tcc> list(String title, String lineOfResearchId, Integer year, Pageable pageable) {
+        if (title != null && !title.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty() && year != null) {
+            return tccRepository.findByNameContainingAndLineOfResearchIdAndYear(title, lineOfResearchId, year, pageable);
+        } else if (title != null && !title.isEmpty() && lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
             return tccRepository.findByNameContainingAndLineOfResearchId(title, lineOfResearchId, pageable);
+        } else if (title != null && !title.isEmpty() && year != null) {
+            return tccRepository.findByNameContainingAndYear(title, year, pageable);
+        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty() && year != null) {
+            return tccRepository.findByLineOfResearchIdAndYear(lineOfResearchId, year, pageable);
         } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
-            lineOfResearchService.exist(lineOfResearchId);
             return tccRepository.findByLineOfResearchId(lineOfResearchId, pageable);
         } else if (title != null && !title.isEmpty()) {
             return tccRepository.findByNameContaining(title, pageable);
+        } else if (year != null) {
+            return tccRepository.findByYear(year, pageable);
         } else {
             return tccRepository.findAll(pageable);
         }

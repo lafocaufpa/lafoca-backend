@@ -57,9 +57,10 @@ public class TccController {
     public ResponseEntity<Page<TccInputDto>> list(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "lineOfResearchId", required = false) String lineOfResearchId,
+            @RequestParam(value = "year", required = false) Integer year,
             Pageable pageable) {
 
-        Page<Tcc> tccList = tccService.list(title, lineOfResearchId, pageable);
+        Page<Tcc> tccList = tccService.list(title, lineOfResearchId, year, pageable);
 
         Type listType = new TypeToken<List<TccInputDto>>() {}.getType();
         List<TccInputDto> tccInputDtoList = modelMapper.map(tccList.getContent(), listType);
@@ -67,6 +68,7 @@ public class TccController {
 
         return LafocaCacheUtil.createCachedResponseTcc(tccInputDtos);
     }
+
 
     @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{tccId}")

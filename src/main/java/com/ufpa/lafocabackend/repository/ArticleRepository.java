@@ -20,7 +20,20 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("SELECT a FROM Article a JOIN a.linesOfResearch lor WHERE lor.lineOfResearchId = :lineOfResearchId")
     Page<Article> findByLineOfResearchId(@Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
 
+    @Query("SELECT a FROM Article a WHERE a.date = :year")
+    Page<Article> findByDate(@Param("year") String year, Pageable pageable);
+
     @Query("SELECT a FROM Article a JOIN a.linesOfResearch lor WHERE a.title LIKE %:title% AND lor.lineOfResearchId = :lineOfResearchId")
     Page<Article> findByTitleContainingAndLineOfResearchId(@Param("title") String title, @Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
 
+    @Query("SELECT a FROM Article a WHERE a.title LIKE %:title% AND a.date = :year")
+    Page<Article> findByTitleContainingAndDate(@Param("title") String title, @Param("year") String year, Pageable pageable);
+
+    @Query("SELECT a FROM Article a JOIN a.linesOfResearch lor WHERE lor.lineOfResearchId = :lineOfResearchId AND a.date = :year")
+    Page<Article> findByLineOfResearchIdAndDate(@Param("lineOfResearchId") String lineOfResearchId, @Param("year") String year, Pageable pageable);
+
+    @Query("SELECT a FROM Article a JOIN a.linesOfResearch lor WHERE a.title LIKE %:title% AND lor.lineOfResearchId = :lineOfResearchId AND a.date = :year")
+    Page<Article> findByTitleContainingAndLineOfResearchIdAndDate(@Param("title") String title, @Param("lineOfResearchId") String lineOfResearchId, @Param("year") String year, Pageable pageable);
+
 }
+

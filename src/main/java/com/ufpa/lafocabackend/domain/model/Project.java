@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import jakarta.persistence.*;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -86,7 +87,7 @@ public class Project {
             if (this.modality.trim().isEmpty()) {
                 this.modality = null;
             } else {
-                this.modality = this.modality.toUpperCase();
+                this.modality = StringUtils.capitalize(this.modality);
             }
         }
     }
@@ -95,5 +96,9 @@ public class Project {
         for (MemberInfo member : this.members) {
             member.sanitize();
         }
+    }
+
+    public boolean isOngoing() {
+        return this.endDate == null || this.endDate.trim().isEmpty();
     }
 }

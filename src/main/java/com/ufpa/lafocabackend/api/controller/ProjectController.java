@@ -70,26 +70,19 @@ public class ProjectController {
     public ResponseEntity<Page<ProjectDto>> list(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "lineOfResearchId", required = false) String lineOfResearchId,
+            @RequestParam(value = "year", required = false) Integer year,
+            @RequestParam(value = "onGoing", required = false) boolean onGoing,
             Pageable pageable) {
 
-        Page<Project> projectPage;
-
-        if ((title != null && !title.isEmpty()) && (lineOfResearchId != null && !lineOfResearchId.isEmpty())) {
-            projectPage = projectService.searchByTitleAndLineOfResearchId(title, lineOfResearchId, pageable);
-        } else if (lineOfResearchId != null && !lineOfResearchId.isEmpty()) {
-            projectPage = projectService.searchByLineOfResearchId(lineOfResearchId, pageable);
-        } else if (title != null && !title.isEmpty()) {
-            projectPage = projectService.searchByTitle(title, pageable);
-        } else {
-            projectPage = projectService.list(pageable);
-        }
+        Page<Project> projectPage = projectService.list(title, lineOfResearchId, year, pageable, onGoing);
 
         Type listType = new TypeToken<List<ProjectDto>>() {}.getType();
-        List<ProjectDto> map = modelMapper.map(projectPage.getContent(), listType);
-        Page<ProjectDto> projects = new PageImpl<>(map, pageable, projectPage.getTotalElements());
+        List<ProjectDto> projectDtos = modelMapper.map(projectPage.getContent(), listType);
+        Page<ProjectDto> projects = new PageImpl<>(projectDtos, pageable, projectPage.getTotalElements());
 
         return LafocaCacheUtil.createCachedResponseProject(projects);
     }
+
 
     @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{projectId}")

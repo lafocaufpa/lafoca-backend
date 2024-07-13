@@ -21,7 +21,44 @@ public interface ProjectRepository extends JpaRepository<Project, String> {
     @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE l.lineOfResearchId = :lineOfResearchId")
     Page<Project> findByLineOfResearchId(@Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
 
+    @Query("SELECT p FROM Project p WHERE p.date = :year")
+    Page<Project> findByDate(@Param("year") String year, Pageable pageable);
+
     @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE p.title LIKE %:title% AND l.lineOfResearchId = :lineOfResearchId")
     Page<Project> findByTitleContainingAndLineOfResearchId(@Param("title") String title, @Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
 
+    @Query("SELECT p FROM Project p WHERE p.title LIKE %:title% AND p.date = :year")
+    Page<Project> findByTitleContainingAndDate(@Param("title") String title, @Param("year") String year, Pageable pageable);
+
+    @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE l.lineOfResearchId = :lineOfResearchId AND p.date = :year")
+    Page<Project> findByLineOfResearchIdAndDate(@Param("lineOfResearchId") String lineOfResearchId, @Param("year") String year, Pageable pageable);
+
+    @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE p.title LIKE %:title% AND l.lineOfResearchId = :lineOfResearchId AND p.date = :year")
+    Page<Project> findByTitleContainingAndLineOfResearchIdAndDate(@Param("title") String title, @Param("lineOfResearchId") String lineOfResearchId, @Param("year") String year, Pageable pageable);
+
+    // Novas consultas para projetos em andamento
+
+    @Query("SELECT p FROM Project p WHERE p.title LIKE %:title% AND p.endDate IS NULL")
+    Page<Project> findOngoingByTitleContaining(@Param("title") String title, Pageable pageable);
+
+    @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE l.lineOfResearchId = :lineOfResearchId AND p.endDate IS NULL")
+    Page<Project> findOngoingByLineOfResearchId(@Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
+
+    @Query("SELECT p FROM Project p WHERE p.date = :year AND p.endDate IS NULL")
+    Page<Project> findOngoingByDate(@Param("year") String year, Pageable pageable);
+
+    @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE p.title LIKE %:title% AND l.lineOfResearchId = :lineOfResearchId AND p.endDate IS NULL")
+    Page<Project> findOngoingByTitleContainingAndLineOfResearchId(@Param("title") String title, @Param("lineOfResearchId") String lineOfResearchId, Pageable pageable);
+
+    @Query("SELECT p FROM Project p WHERE p.title LIKE %:title% AND p.date = :year AND p.endDate IS NULL")
+    Page<Project> findOngoingByTitleContainingAndDate(@Param("title") String title, @Param("year") String year, Pageable pageable);
+
+    @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE l.lineOfResearchId = :lineOfResearchId AND p.date = :year AND p.endDate IS NULL")
+    Page<Project> findOngoingByLineOfResearchIdAndDate(@Param("lineOfResearchId") String lineOfResearchId, @Param("year") String year, Pageable pageable);
+
+    @Query("SELECT p FROM Project p JOIN p.linesOfResearch l WHERE p.title LIKE %:title% AND l.lineOfResearchId = :lineOfResearchId AND p.date = :year AND p.endDate IS NULL")
+    Page<Project> findOngoingByTitleContainingAndLineOfResearchIdAndDate(@Param("title") String title, @Param("lineOfResearchId") String lineOfResearchId, @Param("year") String year, Pageable pageable);
+
+    @Query("SELECT p FROM Project p WHERE p.endDate IS NULL")
+    Page<Project> findOngoingAll(Pageable pageable);
 }
