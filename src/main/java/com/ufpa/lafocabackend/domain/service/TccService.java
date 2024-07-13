@@ -76,7 +76,7 @@ public class TccService {
         modelMapper.map(tccInputDto, currentTcc);
         currentTcc.setTccId(tccId);
 
-        List<LineOfResearch> linesOfResearches = Collections.emptyList();
+        List<LineOfResearch> linesOfResearches = new ArrayList<>(Collections.emptyList());
         if(tccInputDto.getLineOfResearchIds() != null) {
             for (String lineOfResearchId : tccInputDto.getLineOfResearchIds()) {
                 LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);

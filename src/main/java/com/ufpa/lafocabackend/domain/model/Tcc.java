@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.ufpa.lafocabackend.core.utils.LafocaUtils.createSlug;
 
@@ -35,6 +37,10 @@ public class Tcc {
 
     @Column(columnDefinition = "TEXT")
     private String abstractText;
+
+    private String nameMember;
+
+    private String slugMember;
 
     @ManyToMany
     @JoinTable(name = "tcc_line_of_research",

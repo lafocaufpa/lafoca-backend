@@ -80,7 +80,7 @@ public class Member {
     @JoinColumn(name = "function_member_id", foreignKey = @ForeignKey(name = "fk_member_function_member_id"))
     private FunctionMember functionMember;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tcc_id", foreignKey = @ForeignKey(name = "fk_member_tcc_id"))
     private Tcc tcc;
 

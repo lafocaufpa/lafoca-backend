@@ -40,8 +40,7 @@ public class MemberInputDto {
 
     private List<@Positive @NotNull Long> skillsId;
 
-    @Valid
-    private TccInputDto tcc;
+    private Long tccId;
 
     private List<@NotNull Long> articlesId;
 

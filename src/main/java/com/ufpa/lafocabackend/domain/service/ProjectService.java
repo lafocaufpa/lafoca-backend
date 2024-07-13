@@ -3,6 +3,7 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
+import com.ufpa.lafocabackend.domain.model.MemberInfo;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.input.ProjectInputDto;
 import com.ufpa.lafocabackend.repository.ProjectRepository;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ProjectService {
@@ -77,6 +79,9 @@ public class ProjectService {
             LineOfResearch lineOfResearch = lineOfResearchService.read(id);
             linesOfResearch.add(lineOfResearch);
         }
+
+        Set<MemberInfo> members = newProject.getMembers();
+        currentProject.setMembers(members);
 
         currentProject.setLinesOfResearch(linesOfResearch);
 

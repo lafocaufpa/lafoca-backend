@@ -2,6 +2,7 @@ package com.ufpa.lafocabackend.api.controller;
 
 import com.ufpa.lafocabackend.core.security.CheckSecurityPermissionMethods;
 import com.ufpa.lafocabackend.core.file.StandardCustomMultipartFile;
+import com.ufpa.lafocabackend.core.utils.LafocaCacheUtil;
 import com.ufpa.lafocabackend.domain.model.Project;
 import com.ufpa.lafocabackend.domain.model.dto.input.ProjectInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
@@ -10,6 +11,7 @@ import com.ufpa.lafocabackend.domain.service.ProjectPhotoService;
 import com.ufpa.lafocabackend.domain.service.ProjectService;
 import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
+import org.hibernate.cache.spi.support.CacheUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
@@ -86,7 +88,7 @@ public class ProjectController {
         List<ProjectDto> map = modelMapper.map(projectPage.getContent(), listType);
         Page<ProjectDto> projects = new PageImpl<>(map, pageable, projectPage.getTotalElements());
 
-        return ResponseEntity.ok(projects);
+        return LafocaCacheUtil.createCachedResponseProject(projects);
     }
 
     @CheckSecurityPermissionMethods.AdminOrEditorOrModerator

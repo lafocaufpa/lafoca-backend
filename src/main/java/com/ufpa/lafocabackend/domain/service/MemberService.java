@@ -36,12 +36,11 @@ public class MemberService {
     private final TccService tccService;
     private final ArticleService articleService;
     private final ProjectService projectService;
-    private final TccRepository tccRepository;
     private final MemberPhotoRepository memberPhotoRepository;
     private final PhotoStorageService photoStorageService;
     private final YearClassService yearClassService;
 
-    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, TccRepository tccRepository, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService, YearClassService yearClassService) {
+    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService, YearClassService yearClassService) {
         this.memberRepository = memberRepository;
         this.functionMemberService = functionMemberService;
         this.skillService = skillService;
@@ -49,7 +48,6 @@ public class MemberService {
         this.tccService = tccService;
         this.articleService = articleService;
         this.projectService = projectService;
-        this.tccRepository = tccRepository;
         this.memberPhotoRepository = memberPhotoRepository;
         this.photoStorageService = photoStorageService;
         this.yearClassService = yearClassService;
@@ -92,10 +90,10 @@ public class MemberService {
             }
         }
 
-        if (memberInputDto.getTcc() != null) {
-            final TccInputDto tccInputDto = memberInputDto.getTcc();
-            final Tcc tccSaved = tccService.save(tccInputDto);
-            member.setTcc(tccSaved);
+        if(memberInputDto.getTccId() != null){
+            Long tccId = memberInputDto.getTccId();
+            Tcc read = tccService.read(tccId);
+            member.setTcc(read);
         }
 
         final Member memberSaved = memberRepository.save(member);
@@ -135,9 +133,10 @@ public class MemberService {
             member.setArticles(articles);
         }
 
-        if (member.getTcc() != null && memberInputDto.getTcc() == null) {
-            tccRepository.deleteById(member.getTcc().getTccId());
-            member.setTcc(null);
+        if(memberInputDto.getTccId() != null){
+            Long tccId = memberInputDto.getTccId();
+            Tcc read = tccService.read(tccId);
+            member.setTcc(read);
         }
 
         if(memberInputDto.getYearClassId() != null) {

@@ -30,6 +30,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -80,7 +81,7 @@ public class LafocaSecurityConfig {
             List<String> authorities = jwt.getClaimAsStringList("authorities");
 
             if (authorities == null) {
-                return Collections.emptyList();
+                return new ArrayList<>(Collections.emptyList());
             }
 
             JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();

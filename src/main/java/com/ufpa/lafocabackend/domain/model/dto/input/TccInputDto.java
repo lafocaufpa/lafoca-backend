@@ -41,4 +41,8 @@ public class TccInputDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<LineOfResearchDto> linesOfResearch;
 
+    private String nameMember;
+
+    private String slugMember;
+
 }
