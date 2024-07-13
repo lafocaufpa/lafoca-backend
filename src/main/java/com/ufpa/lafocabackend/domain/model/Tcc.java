@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -60,8 +61,8 @@ public class Tcc {
     }
 
     private void normalizeUrl() {
-        if (this.url != null && !this.url.startsWith("http://") && !this.url.startsWith("https://")) {
-            this.url = "https://" + this.url;
+        if (this.url != null) {
+            this.url = LafocaUtils.normalizeUrl(this.url);
         }
     }
 

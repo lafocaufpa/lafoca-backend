@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -61,6 +62,10 @@ public class Article {
     public void generateSlug() {
 
         this.slug = createSlug(this.title, null);
+        if(this.url != null){
+            this.url = LafocaUtils.normalizeUrl(this.url);
+        }
+
     }
 
 }

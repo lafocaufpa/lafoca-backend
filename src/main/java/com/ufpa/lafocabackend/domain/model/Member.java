@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.domain.model;
 
+import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -96,16 +97,22 @@ public class Member {
             inverseJoinColumns = @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "fk_member_project_project_id")))
     private Set<Project> projects = new HashSet<>();
 
-    @PreUpdate
-    public void generateSlug() {
-        this.slug = createSlug(this.fullName, this.memberId);
-
+    @PrePersist
+    private void prePersist() {
+        this.memberId = UUID.randomUUID().toString();
+        preUpdate();
     }
 
-    @PrePersist
-    private void generateUUID() {
-        this.memberId = UUID.randomUUID().toString();
-        generateSlug();
+    @PreUpdate
+    private void preUpdate() {
+        this.slug = createSlug(this.fullName, this.memberId);
+        if(this.linkLinkedin != null){
+            this.linkLinkedin = normalizeUrl(this.linkLinkedin);
+        }
+
+        if(this.linkPortifolio != null){
+            this.linkPortifolio = normalizeUrl(this.linkPortifolio);
+        }
     }
 
     public boolean addSkill(Skill skill) {
@@ -124,5 +131,10 @@ public class Member {
 
         return articles.add(article);
     }
+
+    private String normalizeUrl(String url) {
+        return LafocaUtils.normalizeUrl(url);
+    }
+
 
 }

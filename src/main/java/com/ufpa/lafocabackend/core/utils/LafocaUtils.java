@@ -89,7 +89,6 @@ public class LafocaUtils {
         return currentDateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
     }
 
-
     /**
      * Esse método cria o nome da foto a ser armazenada na nuvem, concatenando o id e o formato de arquivo
      * @param id             id da entidade (project, user, member). ex: john-doe-yue83j
@@ -146,6 +145,14 @@ public class LafocaUtils {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
         String formatted = dateTime.format(formatter);
         return formatted.concat("-");
+    }
+
+    public static String normalizeUrl(String url) {
+
+        if (url != null && !url.startsWith("http://") && !url.startsWith("https://")) {
+            return "https://" + url;
+        }
+        return url;
     }
 
 }
