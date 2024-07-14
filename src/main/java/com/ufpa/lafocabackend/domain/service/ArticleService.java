@@ -4,6 +4,7 @@ import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.Article;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
+import com.ufpa.lafocabackend.domain.model.MemberInfo;
 import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
 import com.ufpa.lafocabackend.repository.ArticleRepository;
 import org.modelmapper.ModelMapper;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ArticleService {
@@ -33,9 +35,11 @@ public class ArticleService {
 
         Article article = modelMapper.map(articleDto, Article.class);
 
-        for (String lineOfResearchId : articleDto.getLineOfResearchIds()) {
-            LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
-            article.addLineOfResearch(lineOfResearch);
+        if(articleDto.getLineOfResearchIds() != null){
+            for (String lineOfResearchId : articleDto.getLineOfResearchIds()) {
+                LineOfResearch lineOfResearch = lineOfResearchService.read(lineOfResearchId);
+                article.addLineOfResearch(lineOfResearch);
+            }
         }
 
         return articleRepository.save(article);
@@ -84,6 +88,9 @@ public class ArticleService {
                 linesOfResearches.add(lineOfResearch);
             }
         }
+
+        Set<MemberInfo> members = newArticle.getMembers();
+        currentArticle.setMembers(members);
 
         currentArticle.setLinesOfResearch(linesOfResearches);
 

@@ -36,12 +36,12 @@ public class Project {
     @Column(columnDefinition = "TEXT")
     private String abstractText;
 
-    @Column(nullable = false, length = 4)
+    @Column(nullable = false, length = 10)
     private String date;
 
     private String modality;
 
-    @Column(length = 4)
+    @Column(length = 10)
     private String endDate;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
