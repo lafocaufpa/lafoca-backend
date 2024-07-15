@@ -47,7 +47,7 @@ public class YearClassController {
     @GetMapping("/{yearClassId}/members")
     public ResponseEntity<Page<MemberResumed>> listMembersByYearClass(
             @PathVariable Long yearClassId,
-            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "fullName", required = false) String name,
             Pageable pageable) {
 
         Page<MemberResumed> members = yearClassService.listMembersByYearClass(yearClassId, name, pageable);
