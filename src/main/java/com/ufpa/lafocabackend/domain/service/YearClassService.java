@@ -86,17 +86,17 @@ public class YearClassService {
 
         // Se o parâmetro 'name' for fornecido, busca por membros pelo nome dentro da YearClass
         if (name != null && !name.isEmpty()) {
-            return findMembersByNameAndYearClass(name, yearClass, pageable);
+            return findMembersByNameAndYearClass(name, yearClassId, pageable);
         } else {
-            return findMembersByYearClass(yearClass, pageable);
+            return findMembersByYearClass(yearClassId, pageable);
         }
     }
 
-    private Page<MemberResumed> findMembersByYearClass(YearClass yearClass, Pageable pageable) {
+    private Page<MemberResumed> findMembersByYearClass(Long yearClass, Pageable pageable) {
         return memberRepository.findResumedMembersByYearClass(yearClass, pageable);
     }
 
-    private Page<MemberResumed> findMembersByNameAndYearClass(String name, YearClass yearClass, Pageable pageable) {
+    private Page<MemberResumed> findMembersByNameAndYearClass(String name, Long yearClass, Pageable pageable) {
         return memberRepository.findResumedMembersByFullNameContainingAndYearClass(name, yearClass, pageable);
     }
 

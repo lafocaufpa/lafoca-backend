@@ -163,9 +163,24 @@ public class MemberService {
         return memberRepository.listMembers(pageable);
     }
 
-
-    public Page<MemberResumed> searchResumedMembersByFullNameAndYearClassId(String fullName, Long yearClassId, Pageable pageable) {
-        return memberRepository.findResumedMembersByFullNameAndYearClassId(fullName, yearClassId, pageable);
+    public Page<MemberResumed> searchResumedMembersByFullNameYearClassIdAndFunctionId(String fullName, Long yearClassId, Long functionId, Pageable pageable) {
+        if (fullName != null && !fullName.isEmpty() && yearClassId != null && functionId != null) {
+            return memberRepository.findResumedMembersByFullNameAndYearClassIdAndFunctionId(fullName, yearClassId, functionId, pageable);
+        } else if (fullName != null && !fullName.isEmpty() && yearClassId != null) {
+            return memberRepository.findResumedMembersByFullNameContainingAndYearClass(fullName, yearClassId, pageable);
+        } else if (fullName != null && !fullName.isEmpty() && functionId != null) {
+            return memberRepository.findResumedMembersByFullNameAndFunctionId(fullName, functionId, pageable);
+        } else if (yearClassId != null && functionId != null) {
+            return memberRepository.findResumedMembersByYearClassAndFunctionId(yearClassId, functionId, pageable);
+        } else if (fullName != null && !fullName.isEmpty()) {
+            return memberRepository.findResumedMembersByFullName(fullName, pageable);
+        } else if (yearClassId != null) {
+            return memberRepository.findResumedMembersByYearClass(yearClassId, pageable);
+        } else if (functionId != null) {
+            return memberRepository.findResumedMembersByFunctionId(functionId, pageable);
+        } else {
+            return memberRepository.listMembers(pageable);
+        }
     }
 
     public Member read(String memberId) {

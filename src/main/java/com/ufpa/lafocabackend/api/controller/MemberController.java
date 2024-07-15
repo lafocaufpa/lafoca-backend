@@ -98,12 +98,13 @@ public class MemberController {
     public ResponseEntity<Page<MemberResumed>> listResumedMembers(
             @RequestParam(value = "fullName", required = false) String fullName,
             @RequestParam(value = "yearClassId", required = false) Long yearClassId,
+            @RequestParam(value = "functionId", required = false) Long functionId,
             @PageableDefault(size = 10) Pageable pageable) {
 
         Page<MemberResumed> memberResumeds;
 
-        if ((fullName != null && !fullName.isEmpty()) || yearClassId != null) {
-            memberResumeds = memberService.searchResumedMembersByFullNameAndYearClassId(fullName, yearClassId, pageable);
+        if ((fullName != null && !fullName.isEmpty()) || yearClassId != null || functionId != null) {
+            memberResumeds = memberService.searchResumedMembersByFullNameYearClassIdAndFunctionId(fullName, yearClassId, functionId, pageable);
         } else {
             memberResumeds = memberService.listResumedMembers(pageable);
         }
@@ -111,6 +112,7 @@ public class MemberController {
         Page<MemberResumed> memberResumedPage = new PageImpl<>(memberResumeds.getContent(), pageable, memberResumeds.getTotalElements());
         return LafocaCacheUtil.createCachedResponseMember(memberResumedPage);
     }
+
 
     @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{memberId}")
