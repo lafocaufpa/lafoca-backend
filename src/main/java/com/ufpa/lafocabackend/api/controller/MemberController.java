@@ -99,12 +99,13 @@ public class MemberController {
             @RequestParam(value = "fullName", required = false) String fullName,
             @RequestParam(value = "yearClassId", required = false) Long yearClassId,
             @RequestParam(value = "functionId", required = false) Long functionId,
+            @RequestParam(value = "skillId", required = false) Long skillId,
             @PageableDefault(size = 10) Pageable pageable) {
 
         Page<MemberResumed> memberResumeds;
 
-        if ((fullName != null && !fullName.isEmpty()) || yearClassId != null || functionId != null) {
-            memberResumeds = memberService.searchResumedMembersByFullNameYearClassIdAndFunctionId(fullName, yearClassId, functionId, pageable);
+        if ((fullName != null && !fullName.isEmpty()) || yearClassId != null || functionId != null || skillId != null) {
+            memberResumeds = memberService.searchResumedMembersByFullNameYearClassIdFunctionIdAndSkillId(fullName, yearClassId, functionId, skillId, pageable);
         } else {
             memberResumeds = memberService.listResumedMembers(pageable);
         }

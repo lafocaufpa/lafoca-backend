@@ -163,21 +163,37 @@ public class MemberService {
         return memberRepository.listMembers(pageable);
     }
 
-    public Page<MemberResumed> searchResumedMembersByFullNameYearClassIdAndFunctionId(String fullName, Long yearClassId, Long functionId, Pageable pageable) {
-        if (fullName != null && !fullName.isEmpty() && yearClassId != null && functionId != null) {
+    public Page<MemberResumed> searchResumedMembersByFullNameYearClassIdFunctionIdAndSkillId(String fullName, Long yearClassId, Long functionId, Long skillId, Pageable pageable) {
+        if (fullName != null && !fullName.isEmpty() && yearClassId != null && functionId != null && skillId != null) {
+            return memberRepository.findResumedMembersByFullNameAndYearClassIdAndFunctionIdAndSkillId(fullName, yearClassId, functionId, skillId, pageable);
+        } else if (fullName != null && !fullName.isEmpty() && yearClassId != null && functionId != null) {
             return memberRepository.findResumedMembersByFullNameAndYearClassIdAndFunctionId(fullName, yearClassId, functionId, pageable);
+        } else if (fullName != null && !fullName.isEmpty() && yearClassId != null && skillId != null) {
+            return memberRepository.findResumedMembersByFullNameAndYearClassIdAndSkillId(fullName, yearClassId, skillId, pageable);
+        } else if (fullName != null && !fullName.isEmpty() && functionId != null && skillId != null) {
+            return memberRepository.findResumedMembersByFullNameAndFunctionIdAndSkillId(fullName, functionId, skillId, pageable);
+        } else if (yearClassId != null && functionId != null && skillId != null) {
+            return memberRepository.findResumedMembersByYearClassIdAndFunctionIdAndSkillId(yearClassId, functionId, skillId, pageable);
         } else if (fullName != null && !fullName.isEmpty() && yearClassId != null) {
             return memberRepository.findResumedMembersByFullNameContainingAndYearClass(fullName, yearClassId, pageable);
         } else if (fullName != null && !fullName.isEmpty() && functionId != null) {
             return memberRepository.findResumedMembersByFullNameAndFunctionId(fullName, functionId, pageable);
+        } else if (fullName != null && !fullName.isEmpty() && skillId != null) {
+            return memberRepository.findResumedMembersByFullNameAndSkillId(fullName, skillId, pageable);
         } else if (yearClassId != null && functionId != null) {
             return memberRepository.findResumedMembersByYearClassAndFunctionId(yearClassId, functionId, pageable);
+        } else if (yearClassId != null && skillId != null) {
+            return memberRepository.findResumedMembersByYearClassIdAndSkillId(yearClassId, skillId, pageable);
+        } else if (functionId != null && skillId != null) {
+            return memberRepository.findResumedMembersByFunctionIdAndSkillId(functionId, skillId, pageable);
         } else if (fullName != null && !fullName.isEmpty()) {
             return memberRepository.findResumedMembersByFullName(fullName, pageable);
         } else if (yearClassId != null) {
             return memberRepository.findResumedMembersByYearClass(yearClassId, pageable);
         } else if (functionId != null) {
             return memberRepository.findResumedMembersByFunctionId(functionId, pageable);
+        } else if (skillId != null) {
+            return memberRepository.findResumedMembersBySkillId(skillId, pageable);
         } else {
             return memberRepository.listMembers(pageable);
         }

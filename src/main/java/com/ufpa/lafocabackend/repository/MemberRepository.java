@@ -41,6 +41,7 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 //    Page<MemberResumed> findResumedMembersByFullNameContaining(@Param("fullName") String fullName, Pageable pageable);
 
     Optional<Member> findBySlug(String slug);
+
     boolean existsByEmail(String email);
 
     @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto(m.memberId, m.displayName, m.slug, m.functionMember.name, m.memberPhoto.url) FROM Member m ORDER BY RAND()")
@@ -87,5 +88,87 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
             "FROM Member m ORDER BY RAND()")
     Page<MemberResumed> listMembers(Pageable pageable);
+
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "LEFT JOIN m.skills s " +
+            "WHERE (:fullName IS NULL OR m.fullName LIKE %:fullName%) " +
+            "AND (:yearClassId IS NULL OR m.yearClass.yearClassId = :yearClassId) " +
+            "AND (:functionId IS NULL OR m.functionMember.functionMemberId = :functionId) " +
+            "AND (:skillId IS NULL OR s.SkillId IN :skillIds)")
+    Page<MemberResumed> findResumedMembersByFullNameAndYearClassIdAndFunctionIdAndSkillId(@Param("fullName") String fullName,
+                                                                                          @Param("yearClassId") Long yearClassId,
+                                                                                          @Param("functionId") Long functionId,
+                                                                                          @Param("skillId") Long skillId,
+                                                                                          Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "LEFT JOIN m.skills s " +
+            "WHERE (:fullName IS NULL OR m.fullName LIKE %:fullName%) " +
+            "AND (:yearClassId IS NULL OR m.yearClass.yearClassId = :yearClassId) " +
+            "AND (:skillId IS NULL OR s.SkillId = :skillId)")
+    Page<MemberResumed> findResumedMembersByFullNameAndYearClassIdAndSkillId(@Param("fullName") String fullName,
+                                                                             @Param("yearClassId") Long yearClassId,
+                                                                             @Param("skillId") Long skillId,
+                                                                             Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "LEFT JOIN m.skills s " +
+            "WHERE (:fullName IS NULL OR m.fullName LIKE %:fullName%) " +
+            "AND (:functionId IS NULL OR m.functionMember.functionMemberId = :functionId) " +
+            "AND (:skillId IS NULL OR s.SkillId = :skillId)")
+    Page<MemberResumed> findResumedMembersByFullNameAndFunctionIdAndSkillId(@Param("fullName") String fullName,
+                                                                            @Param("functionId") Long functionId,
+                                                                            @Param("skillId") Long skillId,
+                                                                            Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "LEFT JOIN m.skills s " +
+            "WHERE (:yearClassId IS NULL OR m.yearClass.yearClassId = :yearClassId) " +
+            "AND (:functionId IS NULL OR m.functionMember.functionMemberId = :functionId) " +
+            "AND (:skillId IS NULL OR s.SkillId = :skillId)")
+    Page<MemberResumed> findResumedMembersByYearClassIdAndFunctionIdAndSkillId(@Param("yearClassId") Long yearClassId,
+                                                                               @Param("functionId") Long functionId,
+                                                                               @Param("skillId") Long skillId,
+                                                                               Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "LEFT JOIN m.skills s " +
+            "WHERE (:skillId IS NULL OR s.SkillId = :skillId)")
+    Page<MemberResumed> findResumedMembersBySkillId(@Param("skillId") Long skillId, Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "LEFT JOIN m.skills s " +
+            "WHERE (:fullName IS NULL OR m.fullName LIKE %:fullName%) " +
+            "AND (:skillId IS NULL OR s.SkillId = :skillId)")
+    Page<MemberResumed> findResumedMembersByFullNameAndSkillId(@Param("fullName") String fullName,
+                                                               @Param("skillId") Long skillId,
+                                                               Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "LEFT JOIN m.skills s " +
+            "WHERE (:yearClassId IS NULL OR m.yearClass.yearClassId = :yearClassId) " +
+            "AND (:skillId IS NULL OR s.SkillId = :skillId)")
+    Page<MemberResumed> findResumedMembersByYearClassIdAndSkillId(@Param("yearClassId") Long yearClassId,
+                                                                  @Param("skillId") Long skillId,
+                                                                  Pageable pageable);
+
+    @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
+            "FROM Member m " +
+            "LEFT JOIN m.skills s " +
+            "WHERE (:functionId IS NULL OR m.functionMember.functionMemberId = :functionId) " +
+            "AND (:skillId IS NULL OR s.SkillId = :skillId)")
+    Page<MemberResumed> findResumedMembersByFunctionIdAndSkillId(@Param("functionId") Long functionId,
+                                                                 @Param("skillId") Long skillId,
+                                                                 Pageable pageable);
+
+
 
 }
