@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Objects;
@@ -16,9 +17,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
-
-    @Value("${lafoca.jwt.token-expiration-time}")
-    private long tokenExpirationTime;
 
     private final JwtDecoder jwtDecoder;
     private final JwtEncoder jwtEncoder;
@@ -64,7 +62,7 @@ public class JwtUtil {
 
 
         var now = Instant.now();
-        var expiresIn = now.plusSeconds(tokenExpirationTime); //15d * 24h * 60m * 60s = 1296000s/15 dias
+        var expiresIn = now.plus(Duration.ofDays(15)); //15d * 24h * 60m * 60s = 1296000s/15 dias
 
         Collection<GrantedAuthority> authorities = getAuthorities(user);
         Set<String> roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());

@@ -13,8 +13,8 @@ services:
       - lafoca-network
 
   lafoca-backend:
-    image: lafocaufpa/backend:1.0.0
-    command: ["/wait-for-it.sh", "algafodd-mysql:3306", "-t", "30", "--", "java", "-jar", "api.jar"]
+    image: lafoca/backend:1.0.0
+    command: ["/wait-for-it.sh", "lafoca-mysql:3306", "-t", "30", "--", "java", "-jar", "lafoca-backend.jar"]
     environment:
       DB_HOST: lafoca-mysql
       DEFAULT_ADMIN_USER_EMAIL: ${DEFAULT_ADMIN_USER_EMAIL}
@@ -22,9 +22,15 @@ services:
       DEFAULT_ADMIN_USER_PASSWORD: ${DEFAULT_ADMIN_USER_PASSWORD}
       LAFOCA_STORAGE_S3_CHAVE_ACESSO_SECRETA: ${LAFOCA_STORAGE_S3_CHAVE_ACESSO_SECRETA}
       LAFOCA_STORAGE_S3_ID_CHAVE_ACESSO: ${LAFOCA_STORAGE_S3_ID_CHAVE_ACESSO}
-      LAFOCA_STORAGE_TIPO_STORAGE: ${LAFOCA_STORAGE_TIPO_STORAGE}
+      LAFOCA_STORAGE_S3_BUCKET: ${LAFOCA_STORAGE_S3_BUCKET}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST}
+      LAFOCA_MAIL_SENDER: ${LAFOCA_MAIL_SENDER}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      LAFOCA_JWT_KEYSTORE_JKS_LOCATION: ${LAFOCA_JWT_KEYSTORE_JKS_LOCATION}
+      LAFOCA_JWT_KEYSTORE_KEYPAIR_ALIAS: ${LAFOCA_JWT_KEYSTORE_KEYPAIR_ALIAS}
+      LAFOCA_JWT_KEYSTORE_PASSWORD: ${LAFOCA_JWT_KEYSTORE_PASSWORD}
     ports:
       - "8080:8080"
     networks:
