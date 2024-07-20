@@ -101,6 +101,21 @@ public class LafocaSecurity {
         return false;
     }
 
+    public boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+
+        // Verifica se o principal é uma instância de String representando um usuário anônimo
+        if (authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser")) {
+            return false;
+        }
+
+        // Se chegou aqui, o usuário está autenticado
+        return true;
+    }
+
     public boolean checkUserHimselfOrManagerOrAdmin(String userId, String userEmail) {
         return userHimself(userId, userEmail) || isUserGroupManager() || isAdmin();
     }
@@ -114,6 +129,10 @@ public class LafocaSecurity {
     }
     public boolean isAdminOrUserGroupManager() {
         return isAdmin() || isUserGroupManager();
+    }
+
+    public boolean isAdminSystem() {
+        return isAdmin();
     }
 
 }

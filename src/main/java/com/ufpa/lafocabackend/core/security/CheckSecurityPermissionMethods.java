@@ -9,6 +9,18 @@ import java.lang.annotation.Target;
 
 public @interface CheckSecurityPermissionMethods {
 
+    @PreAuthorize("@lafocaSecurity.isAdminSystem()")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface Admin {
+    }
+
+    @PreAuthorize("@lafocaSecurity.isAuthenticated()")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface isAuthenticated {
+    }
+
     @PreAuthorize("@lafocaSecurity.isAdminOrUserGroupManager()")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
