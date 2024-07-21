@@ -3,14 +3,19 @@ package com.ufpa.lafocabackend.core.database;
 import com.smattme.MysqlExportService;
 import com.smattme.MysqlImportService;
 import lombok.Getter;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.EncryptionMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
+import java.util.Comparator;
 import java.util.Properties;
 
 @Service
@@ -32,7 +37,28 @@ public class DbInfo {
     @Value("${lafoca.database.dirtriggers}")
     private String triggers;
 
-    public File backupDatabase() {
+        public File backupDatabase() {
+            Path tempDirPath = null;
+            try {
+                tempDirPath = Files.createTempDirectory("db-backup-");
+                MysqlExportService mysqlExportService = getMysqlExportService(tempDirPath);
+
+                File generatedZipFile = mysqlExportService.getGeneratedZipFile();
+
+                if (generatedZipFile != null && generatedZipFile.exists()) {
+                    return createPasswordProtectedZip(generatedZipFile, "password");
+                } else {
+                    System.out.println("Falha ao gerar o arquivo de backup.");
+                    return null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+    private MysqlExportService getMysqlExportService(Path tempDirPath) throws IOException, SQLException, ClassNotFoundException {
+        String tempDir = tempDirPath.toString();
 
         Properties properties = new Properties();
         properties.setProperty(MysqlExportService.DB_NAME, "lafoca");
@@ -40,25 +66,27 @@ public class DbInfo {
         properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, dbUrl);
         properties.setProperty(MysqlExportService.DB_PASSWORD, dbPassword);
         properties.setProperty(MysqlExportService.PRESERVE_GENERATED_ZIP, "true");
-        properties.setProperty(MysqlExportService.TEMP_DIR, backupDir);
+        properties.setProperty(MysqlExportService.TEMP_DIR, tempDir);
 
         MysqlExportService mysqlExportService = new MysqlExportService(properties);
 
-        try {
-            mysqlExportService.export();
+        mysqlExportService.export();
+        return mysqlExportService;
+    }
 
-            File generatedZipFile = mysqlExportService.getGeneratedZipFile();
+    private File createPasswordProtectedZip(File fileToZip, String password) throws IOException {
+        String zipFilePath = fileToZip.getAbsolutePath();
+        String zipFileName = zipFilePath.substring(0, zipFilePath.lastIndexOf('.')) + "_protected.zip";
 
-            if (generatedZipFile != null && generatedZipFile.exists()) {
-                return generatedZipFile;
-            } else {
-                System.out.println("Falha ao gerar o arquivo de backup.");
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        ZipParameters zipParameters = new ZipParameters();
+        zipParameters.setEncryptFiles(true);
+        zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
+        zipParameters.setEncryptionMethod(EncryptionMethod.AES);
+
+        ZipFile zipFile = new ZipFile(zipFileName, password.toCharArray());
+        zipFile.addFile(fileToZip, zipParameters);
+
+        return new File(zipFileName);
     }
 
     public boolean importDatabase(File backupFile) {
@@ -153,8 +181,13 @@ public class DbInfo {
 
         try (
                 Statement stmt = connection.createStatement();
-                BufferedReader br = new BufferedReader(new FileReader(filePath))
+                InputStream is = getClass().getClassLoader().getResourceAsStream(filePath);
+                BufferedReader br = new BufferedReader(new InputStreamReader(is))
         ) {
+            if (is == null) {
+                throw new FileNotFoundException("Resource not found: " + filePath);
+            }
+
             StringBuilder sql = new StringBuilder();
             String line;
             String delimiter = ";";
@@ -196,19 +229,37 @@ public class DbInfo {
         }
     }
 
-    public void FileDeletion(File file) {
+    public void fileDeletion(Path filePath) {
+        if (filePath != null && Files.exists(filePath)) {
+            try {
+                // Obtemos o diretório pai do arquivo
+                Path parentDir = filePath.getParent();
 
-        try {
-            if (file.exists() && file.isFile()) {
-                boolean deleted = file.delete();
-                if (deleted) {
-                    System.out.println("Arquivo deletado: " + file.getAbsolutePath());
-                } else {
-                    System.out.println("Falha ao deletar o arquivo: " + file.getAbsolutePath());
+                // Verifica se o diretório pai existe
+                if (parentDir != null && Files.exists(parentDir)) {
+                    // Deleta todos os arquivos e subdiretórios dentro do diretório pai
+                    Files.walk(parentDir)
+                            .sorted(Comparator.reverseOrder()) // Ordena em ordem reversa para garantir que subdiretórios sejam excluídos antes de seus arquivos
+                            .forEach(path -> {
+                                try {
+                                    Files.delete(path);
+                                    System.out.println("Deletado: " + path);
+                                } catch (IOException e) {
+                                    System.err.println("Erro ao deletar: " + path);
+                                    e.printStackTrace();
+                                }
+                            });
+
+                    // Verifica se o diretório pai ainda existe e o deleta
+                    if (Files.exists(parentDir)) {
+                        Files.delete(parentDir);
+                        System.out.println("Diretório temporário deletado: " + parentDir);
+                    }
                 }
+            } catch (IOException e) {
+                System.err.println("Erro ao deletar o diretório: " + filePath.getParent());
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

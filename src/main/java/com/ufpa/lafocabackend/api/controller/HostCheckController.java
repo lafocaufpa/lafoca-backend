@@ -48,12 +48,14 @@ public class HostCheckController {
     @CheckSecurityPermissionMethods.Admin
     @GetMapping("/backup")
     public ResponseEntity<StreamingResponseBody> backupDatabase() {
+        File backupFile = null;
         try {
-            File backupFile = dbInfo.backupDatabase();
+            backupFile = dbInfo.backupDatabase();
             allSystemService.updateLastBackup();
 
             if (backupFile != null && backupFile.exists()) {
-                InputStream inputStream = new FileInputStream(backupFile);
+                File finalBackupFile = backupFile;
+                InputStream inputStream = new FileInputStream(finalBackupFile);
 
                 StreamingResponseBody responseBody = outputStream -> {
                     byte[] buffer = new byte[1024];
@@ -62,13 +64,13 @@ public class HostCheckController {
                         outputStream.write(buffer, 0, bytesRead);
                     }
                     inputStream.close();
+
+                    dbInfo.fileDeletion(finalBackupFile.toPath());
                 };
 
                 HttpHeaders headers = new HttpHeaders();
-
                 headers.add(HttpHeaders.CONTENT_TYPE, "application/zip");
                 headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + backupFile.getName());
-                dbInfo.FileDeletion(backupFile);
 
                 return new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
             } else {
@@ -79,6 +81,7 @@ public class HostCheckController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     @CheckSecurityPermissionMethods.Admin
     @PostMapping("/backup")
