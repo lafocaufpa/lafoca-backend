@@ -87,6 +87,10 @@ public class HostCheckController {
     @PostMapping("/backup")
     public ResponseEntity<String> importDatabase(@RequestParam("file") MultipartFile file) {
         try {
+            if (!file.getName().endsWith(".sql")) {
+                throw new Exception("O arquivo não é um .sql válido.");
+            }
+
             Path tempFilePath = Files.createTempFile(null, ".sql");
             Files.write(tempFilePath, file.getBytes());
 
@@ -102,7 +106,7 @@ public class HostCheckController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar o arquivo.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

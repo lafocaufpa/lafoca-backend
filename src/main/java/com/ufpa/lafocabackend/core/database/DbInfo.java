@@ -92,7 +92,26 @@ public class DbInfo {
         return new File(zipFileName);
     }
 
-    public boolean importDatabase(File backupFile) {
+    public boolean importDatabase(File backupFile) throws Exception {
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(backupFile))) {
+            String line;
+            boolean validBackup = false;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("https://github.com/SeunMatt/mysql-backup4j")) {
+                    validBackup = true;
+                    break;
+                }
+            }
+
+            if (!validBackup) {
+                throw new Exception("O arquivo SQL não foi gerado pela biblioteca mysql-backup4j.");
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+//            return false;
+        }
+
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
             connection.setAutoCommit(false);
 
