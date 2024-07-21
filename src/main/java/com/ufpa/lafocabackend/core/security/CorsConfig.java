@@ -48,6 +48,8 @@ public class CorsConfig {
         // Define quais cabeçalhos são permitidos em requisições CORS. O "*" permite todos os cabeçalhos.
         config.setAllowedHeaders(Collections.singletonList("*"));
 
+        config.setExposedHeaders(Arrays.asList("Content-Disposition"));
+
         config.setMaxAge(90L);
 
         // Mapeia a configuração CORS para todos os endpoints da aplicação ("/**").

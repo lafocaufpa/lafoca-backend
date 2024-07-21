@@ -1,0 +1,243 @@
+package com.ufpa.lafocabackend.core.database;
+
+import com.smattme.MysqlExportService;
+import com.smattme.MysqlImportService;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.nio.file.Files;
+import java.sql.*;
+import java.util.Properties;
+
+@Service
+public class DbInfo {
+
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+
+    @Getter
+    @Value("${lafoca.database.dirbackup}")
+    private String backupDir;
+
+    @Value("${lafoca.database.dirtriggers}")
+    private String triggers;
+
+    public File backupDatabase() {
+
+        Properties properties = new Properties();
+        properties.setProperty(MysqlExportService.DB_NAME, "lafoca");
+        properties.setProperty(MysqlExportService.DB_USERNAME, dbUsername);
+        properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, dbUrl);
+        properties.setProperty(MysqlExportService.DB_PASSWORD, dbPassword);
+        properties.setProperty(MysqlExportService.PRESERVE_GENERATED_ZIP, "true");
+        properties.setProperty(MysqlExportService.TEMP_DIR, backupDir);
+
+        MysqlExportService mysqlExportService = new MysqlExportService(properties);
+
+        try {
+            mysqlExportService.export();
+
+            File generatedZipFile = mysqlExportService.getGeneratedZipFile();
+
+            if (generatedZipFile != null && generatedZipFile.exists()) {
+                return generatedZipFile;
+            } else {
+                System.out.println("Falha ao gerar o arquivo de backup.");
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean importDatabase(File backupFile) {
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+            connection.setAutoCommit(false);
+
+            if (!deleteAllTables(connection)) {
+                connection.rollback();
+                return false;
+            }
+
+            String sql = new String(Files.readAllBytes(backupFile.toPath()));
+
+            boolean result = MysqlImportService.builder()
+                    .setDatabase("lafoca")
+                    .setSqlString(sql)
+                    .setUsername(dbUsername)
+                    .setPassword(dbPassword)
+                    .importDatabase();
+
+            if (!result) {
+                connection.rollback();
+                return false;
+            }
+
+            executeTriggersScript(connection);
+
+            connection.commit();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            return false;
+        }
+    }
+
+    private boolean deleteAllTables(Connection connection) {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("SET FOREIGN_KEY_CHECKS = 0");
+
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+
+            while (tables.next()) {
+                String tableName = tables.getString("TABLE_NAME");
+                stmt.executeUpdate("DROP TABLE IF EXISTS " + tableName);
+            }
+
+            stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteAllRecords() {
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+
+            connection.setAutoCommit(false);
+
+            while (tables.next()) {
+                String tableName = tables.getString("TABLE_NAME");
+                try (Statement stmt = connection.createStatement()) {
+                    stmt.executeUpdate("DELETE FROM " + tableName);
+                }
+            }
+
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            return false;
+        }
+    }
+
+    private void executeTriggersScript(Connection connection) throws SQLException {
+        String filePath = triggers;
+
+        try (
+                Statement stmt = connection.createStatement();
+                BufferedReader br = new BufferedReader(new FileReader(filePath))
+        ) {
+            StringBuilder sql = new StringBuilder();
+            String line;
+            String delimiter = ";";
+
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+
+                if (line.startsWith("DELIMITER")) {
+                    delimiter = line.split(" ")[1];
+                    continue;
+                }
+
+                if (!line.isEmpty() && !line.startsWith("--") && !line.startsWith("#")) {
+                    sql.append(line).append("\n");
+
+                    if (line.endsWith(delimiter)) {
+                        String command = sql.toString().replace(delimiter, ";");
+                        try {
+                            stmt.execute(command);
+                        } catch (SQLException e) {
+                            System.err.println("Error executing SQL command: " + command);
+                            throw e;
+                        }
+                        sql.setLength(0);
+                    }
+                }
+            }
+
+            connection.commit();
+            System.out.println("SQL file executed successfully!");
+
+        } catch (SQLException e) {
+            connection.rollback();
+            System.err.println("SQL error: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void FileDeletion(File file) {
+
+        try {
+            if (file.exists() && file.isFile()) {
+                boolean deleted = file.delete();
+                if (deleted) {
+                    System.out.println("Arquivo deletado: " + file.getAbsolutePath());
+                } else {
+                    System.out.println("Falha ao deletar o arquivo: " + file.getAbsolutePath());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getDatabaseName() {
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            return metaData.getDatabaseProductName();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Unknown";
+        }
+    }
+
+    public String getDatabaseVersion() {
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            return metaData.getDatabaseProductVersion();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Unknown";
+        }
+    }
+
+    public String getDatabaseStatus() {
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+            return "Connected";
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Disconnected";
+        }
+    }
+}

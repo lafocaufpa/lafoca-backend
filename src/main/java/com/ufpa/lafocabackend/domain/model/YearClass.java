@@ -11,7 +11,6 @@ import java.util.Set;
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "year_class")
 public class YearClass {
 
     @Id
