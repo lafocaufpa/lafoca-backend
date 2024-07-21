@@ -37,25 +37,28 @@ public class DbInfo {
     @Value("${lafoca.database.dirtriggers}")
     private String triggers;
 
-        public File backupDatabase() {
-            Path tempDirPath = null;
-            try {
-                tempDirPath = Files.createTempDirectory("db-backup-");
-                MysqlExportService mysqlExportService = getMysqlExportService(tempDirPath);
+    @Value("${lafoca.database.backuppass}")
+    private String backuppass;
 
-                File generatedZipFile = mysqlExportService.getGeneratedZipFile();
+    public File backupDatabase() {
+        Path tempDirPath = null;
+        try {
+            tempDirPath = Files.createTempDirectory("db-backup-");
+            MysqlExportService mysqlExportService = getMysqlExportService(tempDirPath);
 
-                if (generatedZipFile != null && generatedZipFile.exists()) {
-                    return createPasswordProtectedZip(generatedZipFile, "password");
-                } else {
-                    System.out.println("Falha ao gerar o arquivo de backup.");
-                    return null;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            File generatedZipFile = mysqlExportService.getGeneratedZipFile();
+
+            if (generatedZipFile != null && generatedZipFile.exists()) {
+                return createPasswordProtectedZip(generatedZipFile, backuppass);
+            } else {
+                System.out.println("Falha ao gerar o arquivo de backup.");
                 return null;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
+    }
 
     private MysqlExportService getMysqlExportService(Path tempDirPath) throws IOException, SQLException, ClassNotFoundException {
         String tempDir = tempDirPath.toString();
@@ -232,14 +235,11 @@ public class DbInfo {
     public void fileDeletion(Path filePath) {
         if (filePath != null && Files.exists(filePath)) {
             try {
-                // Obtemos o diretório pai do arquivo
                 Path parentDir = filePath.getParent();
 
-                // Verifica se o diretório pai existe
                 if (parentDir != null && Files.exists(parentDir)) {
-                    // Deleta todos os arquivos e subdiretórios dentro do diretório pai
                     Files.walk(parentDir)
-                            .sorted(Comparator.reverseOrder()) // Ordena em ordem reversa para garantir que subdiretórios sejam excluídos antes de seus arquivos
+                            .sorted(Comparator.reverseOrder())
                             .forEach(path -> {
                                 try {
                                     Files.delete(path);
@@ -250,7 +250,6 @@ public class DbInfo {
                                 }
                             });
 
-                    // Verifica se o diretório pai ainda existe e o deleta
                     if (Files.exists(parentDir)) {
                         Files.delete(parentDir);
                         System.out.println("Diretório temporário deletado: " + parentDir);
