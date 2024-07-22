@@ -105,7 +105,7 @@ public class DbInfo {
             }
 
             if (!validBackup) {
-                throw new Exception("O arquivo SQL não foi gerado pela biblioteca mysql-backup4j.");
+                throw new Exception("O arquivo SQL não foi gerado pelo sistema.");
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
