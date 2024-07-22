@@ -8,13 +8,11 @@ import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.*;
 import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
-import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
 import com.ufpa.lafocabackend.repository.MemberPhotoRepository;
 import com.ufpa.lafocabackend.repository.MemberRepository;
-import com.ufpa.lafocabackend.repository.TccRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -160,7 +158,7 @@ public class MemberService {
 
     public Page<MemberResumed> listResumedMembers(Pageable pageable) {
 
-        return memberRepository.listMembers(pageable);
+        return memberRepository.listResumed(pageable);
     }
 
     public Page<MemberResumed> searchResumedMembersByFullNameYearClassIdFunctionIdAndSkillId(String fullName, Long yearClassId, Long functionId, Long skillId, Pageable pageable) {
@@ -195,7 +193,7 @@ public class MemberService {
         } else if (skillId != null) {
             return memberRepository.findResumedMembersBySkillId(skillId, pageable);
         } else {
-            return memberRepository.listMembers(pageable);
+            return memberRepository.listResumed(pageable);
         }
     }
 

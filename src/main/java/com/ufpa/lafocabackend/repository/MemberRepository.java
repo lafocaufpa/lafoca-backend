@@ -1,18 +1,14 @@
 package com.ufpa.lafocabackend.repository;
 
 import com.ufpa.lafocabackend.domain.model.Member;
-import com.ufpa.lafocabackend.domain.model.YearClass;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import jakarta.transaction.Transactional;
 
 import java.util.Optional;
 
@@ -86,8 +82,8 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     Page<MemberResumed> findResumedMembersByYearClassAndFunctionId(@Param("yearClassId") Long yearClassId, @Param("functionId") Long functionId, Pageable pageable);
 
     @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.displayName, m.memberPhoto.url, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
-            "FROM Member m ORDER BY RAND()")
-    Page<MemberResumed> listMembers(Pageable pageable);
+            "FROM Member m")
+    Page<MemberResumed> listResumed(Pageable pageable);
 
 
     @Query("SELECT new com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed(m.memberId, m.fullName, m.displayName, m.memberPhoto.url, m.functionMember.name, m.slug, m.email, m.yearClass.year, m.dateRegister) " +
