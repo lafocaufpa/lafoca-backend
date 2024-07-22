@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/host-check")
@@ -87,7 +88,7 @@ public class HostCheckController {
     @PostMapping("/backup")
     public ResponseEntity<String> importDatabase(@RequestParam("file") MultipartFile file) {
         try {
-            if (!file.getName().endsWith(".sql")) {
+            if (!Objects.requireNonNull(file.getOriginalFilename()).endsWith(".sql")) {
                 throw new Exception("O arquivo não é um .sql válido.");
             }
 
