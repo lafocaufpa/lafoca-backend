@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -14,7 +15,6 @@ import java.util.Set;
 public class YearClass {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long yearClassId;
 
@@ -23,5 +23,12 @@ public class YearClass {
 
     @OneToMany(mappedBy = "yearClass")
     private Set<Member> members = new HashSet<>();
+
+    @PrePersist
+    private void prePersist() {
+        if (this.year != null) {
+            this.yearClassId = Long.valueOf(this.year);
+        }
+    }
 
 }
