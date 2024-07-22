@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Comparator;
 import java.util.Properties;
@@ -109,7 +108,6 @@ public class DbInfo {
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
-//            return false;
         }
 
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {

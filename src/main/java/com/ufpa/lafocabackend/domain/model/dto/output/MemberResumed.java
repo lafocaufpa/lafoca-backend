@@ -11,6 +11,8 @@ public class MemberResumed {
 
     private String id;
     private String fullName;
+    private String displayName;
+    private String photo;
     private String function;
     private String slug;
     private String email;
