@@ -50,7 +50,6 @@ public class FunctionMemberController {
         return ResponseEntity.ok(functionMemberDto);
     }
 
-    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping
     public ResponseEntity<Page<FunctionMemberDto>> list(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
         Page<FunctionMember> list;

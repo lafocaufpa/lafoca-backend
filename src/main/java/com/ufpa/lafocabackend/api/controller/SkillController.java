@@ -47,7 +47,6 @@ public class SkillController {
         return ResponseEntity.ok(skillService.read(skillId));
     }
 
-    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping
     public ResponseEntity<Page<SkillDto>> list(
             @RequestParam(value = "name", required = false) String name,

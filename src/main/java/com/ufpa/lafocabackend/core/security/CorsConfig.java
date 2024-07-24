@@ -37,11 +37,14 @@ public class CorsConfig {
         List<String> allowedOrigins = Arrays.asList(
                 "https://www.lafoca.com.br",
                 "https://lafoca.com.br",
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "http://10.0.0.227:3000",
+                "**"
         );
 
         config.setAllowedOrigins(allowedOrigins);
 
+//        config.addAllowedOrigin("*");
         // Define quais métodos HTTP são permitidos em requisições CORS. O "*" permite todos os métodos.
         config.setAllowedMethods(Collections.singletonList("*"));
 

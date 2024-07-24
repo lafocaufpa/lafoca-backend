@@ -37,7 +37,6 @@ public class YearClassController {
         return ResponseEntity.ok(yearClassService.read(yearClassId));
     }
 
-    @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @GetMapping
     public ResponseEntity<Page<YearClassDTO>> list(Pageable pageable) {
         Page<YearClassDTO> list = yearClassService.list(pageable);
