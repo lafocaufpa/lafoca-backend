@@ -14,9 +14,10 @@ services:
 
   lafoca-backend:
     image: lafoca/backend:1.0.0
-    command: ["/wait-for-it.sh", "lafoca-mysql:3306", "-t", "30", "--", "java", "-jar", "lafoca-backend.jar"]
+    # command: ["/wait-for-it.sh", "lafoca-mysql:3306", "-t", "30", "--", "java", "-jar", "lafoca-backend.jar"]
+    command: ["java", "-jar", "lafoca-backend.jar"]
     environment:
-      DB_HOST: lafoca-mysql
+      DB_HOST: ${DB_HOST}
       DEFAULT_ADMIN_USER_EMAIL: ${DEFAULT_ADMIN_USER_EMAIL}
       DEFAULT_ADMIN_USER_NAME: ${DEFAULT_ADMIN_USER_NAME}
       DEFAULT_ADMIN_USER_PASSWORD: ${DEFAULT_ADMIN_USER_PASSWORD}
@@ -30,7 +31,9 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       LAFOCA_JWT_KEYSTORE_JKS_LOCATION: ${LAFOCA_JWT_KEYSTORE_JKS_LOCATION}
       LAFOCA_JWT_KEYSTORE_KEYPAIR_ALIAS: ${LAFOCA_JWT_KEYSTORE_KEYPAIR_ALIAS}
-      LAFOCA_JWT_KEYSTORE_PASSWORD: ${LAFOCA_JWT_KEYSTORE_PASSWORD}
+      LAFOCA_JWT_KEYSTORE_PASSWORD: ${LAFOCA_JWT_KEYSTORE_PASSWORD} 
+      LAFOCA_DATABASE_BACKUPPASS: ${LAFOCA_DATABASE_BACKUPPASS}
+      LAFOCA_JWT_EXPIRESAT_OFDAYS: ${LAFOCA_JWT_EXPIRESAT_OFDAYS}
     ports:
       - "8080:8080"
     # networks:
