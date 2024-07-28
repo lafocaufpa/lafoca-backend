@@ -38,7 +38,8 @@ public class CorsConfig {
                 "https://lafoca.com.br",
                 "http://localhost:3000",
                 "http://10.0.0.227:3000",
-                "http://192.168.1.7:3000"
+                "http://192.168.1.7:3000",
+                "https://lafoca-frontend.vercel.app"
         );
 
         config.setAllowedOrigins(allowedOrigins);
