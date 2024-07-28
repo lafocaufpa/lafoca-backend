@@ -4,7 +4,6 @@ import com.ufpa.lafocabackend.core.file.CustomMultipartFile;
 import com.ufpa.lafocabackend.core.utils.LafocaUtils;
 import com.ufpa.lafocabackend.core.utils.StoragePhotoUtils;
 import com.ufpa.lafocabackend.core.utils.TypeEntityPhoto;
-import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.News;
 import com.ufpa.lafocabackend.domain.model.NewsPhoto;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;

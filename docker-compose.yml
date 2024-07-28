@@ -1,16 +1,16 @@
-networks:
-  lafoca-network:
-    driver: bridge
+# networks:
+#   lafoca-network:
+#     driver: bridge
 
 services:
-  lafoca-mysql:
-    image: mysql:8.4.0
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    ports:
-      - "3306:3306"
-    networks:
-      - lafoca-network
+  # lafoca-mysql:
+  #   image: mysql:8.4.0
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #   ports:
+  #     - "3306:3306"
+  #   networks:
+  #     - lafoca-network
 
   lafoca-backend:
     image: lafoca/backend:1.0.0
@@ -33,7 +33,7 @@ services:
       LAFOCA_JWT_KEYSTORE_PASSWORD: ${LAFOCA_JWT_KEYSTORE_PASSWORD}
     ports:
       - "8080:8080"
-    networks:
-      - lafoca-network
-    depends_on:
-      - lafoca-mysql
+    # networks:
+    #   - lafoca-network
+    # depends_on:
+    #   - lafoca-mysql

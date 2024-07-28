@@ -1,16 +1,10 @@
 package com.ufpa.lafocabackend.core.utils;
 
-import com.ufpa.lafocabackend.domain.model.AllSystem;
-import com.ufpa.lafocabackend.domain.model.dto.HostInfo;
-import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
 import com.ufpa.lafocabackend.domain.model.dto.input.RecordCountDTO;
-import com.ufpa.lafocabackend.domain.model.dto.output.LafocaDto;
-import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 public class LafocaCacheUtil {
     private static final long CACHE_MAX_AGE_GROUP = 30;

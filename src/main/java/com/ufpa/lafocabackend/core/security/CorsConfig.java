@@ -8,7 +8,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +38,7 @@ public class CorsConfig {
                 "https://lafoca.com.br",
                 "http://localhost:3000",
                 "http://10.0.0.227:3000",
-                "**"
+                "http://192.168.1.7/:3000"
         );
 
         config.setAllowedOrigins(allowedOrigins);

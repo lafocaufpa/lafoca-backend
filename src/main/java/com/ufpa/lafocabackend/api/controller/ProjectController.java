@@ -11,7 +11,6 @@ import com.ufpa.lafocabackend.domain.service.ProjectPhotoService;
 import com.ufpa.lafocabackend.domain.service.ProjectService;
 import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
-import org.hibernate.cache.spi.support.CacheUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;

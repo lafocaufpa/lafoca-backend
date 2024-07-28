@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.domain.model.dto.output;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.repository;
 
-import com.ufpa.lafocabackend.domain.model.MemberPhoto;
 import com.ufpa.lafocabackend.domain.model.SkillPicture;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;

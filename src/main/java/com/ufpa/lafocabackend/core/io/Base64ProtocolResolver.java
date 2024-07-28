@@ -6,6 +6,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ProtocolResolver;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
@@ -15,12 +16,12 @@ public class Base64ProtocolResolver implements ProtocolResolver,
 		ApplicationContextInitializer<ConfigurableApplicationContext> {
 
 	@Override
-	public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+	public void initialize(@NonNull ConfigurableApplicationContext configurableApplicationContext) {
 		configurableApplicationContext.addProtocolResolver(this);
 	}
 
 	@Override
-	public Resource resolve(String location, ResourceLoader resourceLoader) {
+	public Resource resolve(@NonNull String location, @NonNull ResourceLoader resourceLoader) {
 		if (location.startsWith("base64:")) {
 			byte[] decodedResource = Base64.getDecoder().decode(location.substring(7));
 			return new ByteArrayResource(decodedResource);

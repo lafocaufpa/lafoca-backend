@@ -1,7 +1,5 @@
 package com.ufpa.lafocabackend.core.utils;
 
-import com.ufpa.lafocabackend.domain.model.Member;
-
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

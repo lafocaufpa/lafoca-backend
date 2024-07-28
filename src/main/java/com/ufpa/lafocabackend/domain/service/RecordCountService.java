@@ -3,7 +3,6 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.model.RecordCount;
 import com.ufpa.lafocabackend.domain.model.dto.input.RecordCountDTO;
 import com.ufpa.lafocabackend.repository.RecordCountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

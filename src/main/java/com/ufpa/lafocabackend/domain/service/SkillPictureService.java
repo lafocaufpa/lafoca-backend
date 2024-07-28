@@ -8,7 +8,6 @@ import com.ufpa.lafocabackend.domain.model.Skill;
 import com.ufpa.lafocabackend.domain.model.SkillPicture;
 import com.ufpa.lafocabackend.domain.model.dto.output.PhotoDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
-import com.ufpa.lafocabackend.repository.MemberPhotoRepository;
 import com.ufpa.lafocabackend.repository.SkillPictureRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

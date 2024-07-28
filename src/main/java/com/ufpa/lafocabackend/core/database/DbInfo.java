@@ -79,15 +79,18 @@ public class DbInfo {
     private File createPasswordProtectedZip(File fileToZip, String password) throws IOException {
         String zipFilePath = fileToZip.getAbsolutePath();
         String zipFileName = zipFilePath.substring(0, zipFilePath.lastIndexOf('.')) + "_protected.zip";
-
+    
         ZipParameters zipParameters = new ZipParameters();
         zipParameters.setEncryptFiles(true);
         zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
         zipParameters.setEncryptionMethod(EncryptionMethod.AES);
-
-        ZipFile zipFile = new ZipFile(zipFileName, password.toCharArray());
-        zipFile.addFile(fileToZip, zipParameters);
-
+    
+        try (ZipFile zipFile = new ZipFile(zipFileName, password.toCharArray())) {
+            zipFile.addFile(fileToZip, zipParameters);
+        } catch (Exception e) {
+            throw new IOException("Failed to create password-protected ZIP file", e);
+        }
+    
         return new File(zipFileName);
     }
 

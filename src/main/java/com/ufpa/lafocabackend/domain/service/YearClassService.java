@@ -2,10 +2,8 @@ package com.ufpa.lafocabackend.domain.service;
 
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
-import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.YearClass;
 import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
-import com.ufpa.lafocabackend.domain.model.dto.output.MemberDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.repository.MemberRepository;
 import com.ufpa.lafocabackend.repository.YearClassRepository;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class YearClassService {
@@ -80,8 +77,7 @@ public class YearClassService {
     }
 
     public Page<MemberResumed> listMembersByYearClass(Long yearClassId, String name, Pageable pageable) {
-        // Busca pela YearClass específica
-        YearClass yearClass = yearClassRepository.findById(yearClassId)
+        yearClassRepository.findById(yearClassId)
                 .orElseThrow(() -> new EntityNotFoundException("Ano não encontrado", yearClassId));
 
         // Se o parâmetro 'name' for fornecido, busca por membros pelo nome dentro da YearClass

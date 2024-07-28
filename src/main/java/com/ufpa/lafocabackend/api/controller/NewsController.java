@@ -92,7 +92,7 @@ public class NewsController {
     @CheckSecurityPermissionMethods.AdminOrEditorOrModerator
     @PutMapping("/{newsId}")
     public ResponseEntity<NewsDto> update (@PathVariable String newsId, @RequestBody NewsInputDto newsInputDto){
-        final News news = newsService.read(newsId);
+        newsService.read(newsId);
 
 
         final News newsUpdate = newsService.update(newsId, newsInputDto);

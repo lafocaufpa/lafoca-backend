@@ -1,6 +1,5 @@
 package com.ufpa.lafocabackend.domain.model.dto.input;
 
-import com.ufpa.lafocabackend.domain.model.dto.output.LineOfResearchDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtil {
 
+    @Value("${lafoca.jwt.expiresAt.ofDays}")
+    private String expiresAtLong;
+
     private final JwtDecoder jwtDecoder;
     private final JwtEncoder jwtEncoder;
 
@@ -62,7 +65,7 @@ public class JwtUtil {
 
 
         var now = Instant.now();
-        var expiresIn = now.plus(Duration.ofDays(15)); //15d * 24h * 60m * 60s = 1296000s/15 dias
+        var expiresIn = now.plus(Duration.ofDays(Long.parseLong(expiresAtLong)));
 
         Collection<GrantedAuthority> authorities = getAuthorities(user);
         Set<String> roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
