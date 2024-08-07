@@ -39,6 +39,7 @@ public class Project {
     @Column(nullable = false, length = 10)
     private String date;
 
+    @Column(length = 10)
     private String modality;
 
     @Column(length = 10)

@@ -41,7 +41,7 @@ public class Member {
     @Column(nullable = false, unique = true, length = 225)
     private String email;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, length = 1000)
     private String biography;
 
     @Column(nullable = true, unique = true, length = 225)
