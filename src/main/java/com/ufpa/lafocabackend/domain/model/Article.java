@@ -44,6 +44,9 @@ public class Article {
     @Column(columnDefinition = "TEXT")
     private String abstractText;
 
+    @Column(length = 30)
+    private String qualis;
+
     @ManyToMany
     @JoinTable(name = "article_line_of_research",
             joinColumns = @JoinColumn(name = "article_id", foreignKey = @ForeignKey(name = "fk_article_research_id")),
