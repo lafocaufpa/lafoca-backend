@@ -29,6 +29,9 @@ public class DbInfo {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
+    @Value("${MYSQL_DATABASE}")
+    private String databaseName;
+
     @Getter
     @Value("${lafoca.database.dirbackup}")
     private String backupDir;
@@ -63,7 +66,7 @@ public class DbInfo {
         String tempDir = tempDirPath.toString();
 
         Properties properties = new Properties();
-        properties.setProperty(MysqlExportService.DB_NAME, "lafoca");
+        properties.setProperty(MysqlExportService.DB_NAME, databaseName);
         properties.setProperty(MysqlExportService.DB_USERNAME, dbUsername);
         properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, dbUrl);
         properties.setProperty(MysqlExportService.DB_PASSWORD, dbPassword);
