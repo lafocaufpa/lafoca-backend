@@ -119,15 +119,15 @@ public class DbInfo {
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
             connection.setAutoCommit(false);
 
-            if (!deleteAllTables(connection)) {
-                connection.rollback();
-                return false;
-            }
+//            if (!deleteAllTables(connection)) {
+//                connection.rollback();
+//                return false;
+//            }
 
             String sql = new String(Files.readAllBytes(backupFile.toPath()));
 
             boolean result = MysqlImportService.builder()
-                    .setDatabase("lafoca")
+                    .setDatabase(databaseName)
                     .setSqlString(sql)
                     .setUsername(dbUsername)
                     .setPassword(dbPassword)
