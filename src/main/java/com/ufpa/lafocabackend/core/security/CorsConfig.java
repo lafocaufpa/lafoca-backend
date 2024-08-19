@@ -36,6 +36,7 @@ public class CorsConfig {
         List<String> allowedOrigins = Arrays.asList(
                 "https://www.lafoca.com.br",
                 "https://lafoca.com.br",
+                "http://lafoca.com.br",
                 "http://localhost:3000",
                 "http://10.0.0.227:3000",
                 "http://192.168.1.7:3000",
