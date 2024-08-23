@@ -135,6 +135,8 @@ public class MemberService {
             Long tccId = memberInputDto.getTccId();
             Tcc read = tccService.read(tccId);
             member.setTcc(read);
+        } else {
+            member.setTcc(null);
         }
 
         if(memberInputDto.getYearClassId() != null) {
