@@ -33,22 +33,23 @@ jobs:
       - name: Remove docker container
         run: docker rm -f lafocabackend
       - name: Run docker container
-        run: docker run -d -p 8080:8080 -e DB_HOST=${{secrets.DB_HOST}} \
-            -e DEFAULT_ADMIN_USER_EMAIL=${{secrets.DEFAULT_ADMIN_USER_EMAIL}} \
-            -e DEFAULT_ADMIN_USER_NAME=${{secrets.DEFAULT_ADMIN_USER_NAME}} \
-            -e DEFAULT_ADMIN_USER_PASSWORD=${{secrets.DEFAULT_ADMIN_USER_PASSWORD}} \
-            -e LAFOCA_STORAGE_S3_CHAVE_ACESSO_SECRETA=${{secrets.LAFOCA_STORAGE_S3_CHAVE_ACESSO_SECRETA}} \
-            -e LAFOCA_STORAGE_S3_ID_CHAVE_ACESSO=${{secrets.LAFOCA_STORAGE_S3_ID_CHAVE_ACESSO}} \
-            -e LAFOCA_STORAGE_S3_BUCKET=${{secrets.LAFOCA_STORAGE_S3_BUCKET}} \
-            -e SPRING_MAIL_PASSWORD=${{secrets.SPRING_MAIL_PASSWORD}} \
-            -e SPRING_MAIL_PORT=${{secrets.SPRING_MAIL_PORT}} \
-            -e SPRING_MAIL_HOST=${{secrets.SPRING_MAIL_HOST}} \
-            -e LAFOCA_MAIL_SENDER=${{secrets.LAFOCA_MAIL_SENDER}} \
-            -e MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}} \
-            -e MYSQL_USERNAME=${{secrets.MYSQL_USERNAME}} \
-            -e MYSQL_DATABASE=${{secrets.MYSQL_DATABASE}} \
-            -e LAFOCA_JWT_KEYSTORE_KEYPAIR_ALIAS=${{secrets.LAFOCA_JWT_KEYSTORE_KEYPAIR_ALIAS}} \
-            -e LAFOCA_JWT_KEYSTORE_PASSWORD=${{secrets.LAFOCA_JWT_KEYSTORE_PASSWORD}} \
-            -e LAFOCA_DATABASE_BACKUPPASS=${{secrets.LAFOCA_DATABASE_BACKUPPASS}} \
-            -e LAFOCA_JWT_EXPIRESAT_OFDAYS=${{secrets.LAFOCA_JWT_EXPIRESAT_OFDAYS}} \
+        run: > 
+            docker run -d -p 8080:8080 -e DB_HOST=${{secrets.DB_HOST}} 
+            -e DEFAULT_ADMIN_USER_EMAIL=${{secrets.DEFAULT_ADMIN_USER_EMAIL}} 
+            -e DEFAULT_ADMIN_USER_NAME=${{secrets.DEFAULT_ADMIN_USER_NAME}} 
+            -e DEFAULT_ADMIN_USER_PASSWORD=${{secrets.DEFAULT_ADMIN_USER_PASSWORD}} 
+            -e LAFOCA_STORAGE_S3_CHAVE_ACESSO_SECRETA=${{secrets.LAFOCA_STORAGE_S3_CHAVE_ACESSO_SECRETA}} 
+            -e LAFOCA_STORAGE_S3_ID_CHAVE_ACESSO=${{secrets.LAFOCA_STORAGE_S3_ID_CHAVE_ACESSO}} 
+            -e LAFOCA_STORAGE_S3_BUCKET=${{secrets.LAFOCA_STORAGE_S3_BUCKET}} 
+            -e SPRING_MAIL_PASSWORD=${{secrets.SPRING_MAIL_PASSWORD}} 
+            -e SPRING_MAIL_PORT=${{secrets.SPRING_MAIL_PORT}} 
+            -e SPRING_MAIL_HOST=${{secrets.SPRING_MAIL_HOST}} 
+            -e LAFOCA_MAIL_SENDER=${{secrets.LAFOCA_MAIL_SENDER}} 
+            -e MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}} 
+            -e MYSQL_USERNAME=${{secrets.MYSQL_USERNAME}} 
+            -e MYSQL_DATABASE=${{secrets.MYSQL_DATABASE}} 
+            -e LAFOCA_JWT_KEYSTORE_KEYPAIR_ALIAS=${{secrets.LAFOCA_JWT_KEYSTORE_KEYPAIR_ALIAS}} 
+            -e LAFOCA_JWT_KEYSTORE_PASSWORD=${{secrets.LAFOCA_JWT_KEYSTORE_PASSWORD}} 
+            -e LAFOCA_DATABASE_BACKUPPASS=${{secrets.LAFOCA_DATABASE_BACKUPPASS}} 
+            -e LAFOCA_JWT_EXPIRESAT_OFDAYS=${{secrets.LAFOCA_JWT_EXPIRESAT_OFDAYS}} 
             --name lafocabackend lafocaufpa/lafocabackend
