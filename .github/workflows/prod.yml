@@ -29,6 +29,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull Image from docker hub
-        run: docker pull lafocaufpa/lafocabackend:lates
+        run: docker pull lafocaufpa/lafocabackend:latest
       - name: Run docker container
         run: docker run -d -p 8080:8080 --name lafocabackend lafocaufpa/lafocabackend
