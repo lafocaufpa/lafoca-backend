@@ -33,3 +33,7 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/resources/jwt-keys/lafoca.jks
+src/main/resources/jwt-keys/
+src/main/resources/scripts/
+
