@@ -51,4 +51,4 @@ jobs:
             -e LAFOCA_JWT_KEYSTORE_PASSWORD=${{secrets.LAFOCA_JWT_KEYSTORE_PASSWORD}} \
             -e LAFOCA_DATABASE_BACKUPPASS=${{secrets.LAFOCA_DATABASE_BACKUPPASS}} \
             -e LAFOCA_JWT_EXPIRESAT_OFDAYS=${{secrets.LAFOCA_JWT_EXPIRESAT_OFDAYS}} \
-             --name lafocabackend lafocaufpa/lafocabackend
+            --name lafocabackend lafocaufpa/lafocabackend
