@@ -23,3 +23,12 @@ jobs:
         run: docker build -t lafocaufpa/lafocabackend .
       - name: Push image docker
         run:  docker push lafocaufpa/lafocabackend
+  
+  deploy: 
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull Image from docker hub
+        run: docker pull lafocaufpa/lafocabackend:lates
+      - name: Run docker container
+        run: docker run -d -p 8080:8080 --name lafocabackend lafocaufpa/lafocabackend
