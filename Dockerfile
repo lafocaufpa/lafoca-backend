@@ -2,9 +2,7 @@ FROM bellsoft/liberica-openjdk-alpine:21.0.3-cds
 
 WORKDIR /app
 
-ARG JAR_FILE
-
-COPY target/${JAR_FILE} /app/lafoca-backend.jar
+COPY target/lafoca-backend-1.0.0.jar lafoca-backend.jar
 
 EXPOSE 8080
 
