@@ -23,6 +23,7 @@ public class YearClass {
     private Set<Member> members = new HashSet<>();
 
     @PrePersist
+    @PreUpdate
     private void prePersist() {
         if (this.year != null) {
             this.yearClassId = Long.valueOf(this.year);
