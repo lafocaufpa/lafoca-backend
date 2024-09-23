@@ -6,7 +6,6 @@ import com.ufpa.lafocabackend.domain.exception.EntityAlreadyRegisteredException;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.*;
-import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
 import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
@@ -36,9 +35,8 @@ public class MemberService {
     private final ProjectService projectService;
     private final MemberPhotoRepository memberPhotoRepository;
     private final PhotoStorageService photoStorageService;
-    private final YearClassService yearClassService;
 
-    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService, YearClassService yearClassService) {
+    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService) {
         this.memberRepository = memberRepository;
         this.functionMemberService = functionMemberService;
         this.skillService = skillService;
@@ -48,7 +46,6 @@ public class MemberService {
         this.projectService = projectService;
         this.memberPhotoRepository = memberPhotoRepository;
         this.photoStorageService = photoStorageService;
-        this.yearClassService = yearClassService;
     }
 
     @Transactional
@@ -61,9 +58,7 @@ public class MemberService {
         Member member = modelMapper.map(memberInputDto, Member.class);
 
         if (memberInputDto.getYearClassId() != null) {
-            YearClassDTO yearClassDTO = yearClassService.read(memberInputDto.getYearClassId());
-            YearClass yearClass = modelMapper.map(yearClassDTO, YearClass.class);
-            member.setYearClass(yearClass);
+            member.setYearClass(memberInputDto.getYearClassId());
         }
 
         if (memberInputDto.getFunctionMemberId() != null) {
@@ -140,8 +135,7 @@ public class MemberService {
         }
 
         if(memberInputDto.getYearClassId() != null) {
-            YearClass yearClass = yearClassService.getOrFail(memberInputDto.getYearClassId());
-            member.setYearClass(yearClass);
+            member.setYearClass(member.getYearClass());
         }
 
         return member;

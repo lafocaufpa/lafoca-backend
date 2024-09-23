@@ -1,7 +1,6 @@
 package com.ufpa.lafocabackend.domain.model.dto.output;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ufpa.lafocabackend.domain.model.dto.YearClassDTO;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,7 @@ public class MemberDto {
     private String biography;
     private String linkPortifolio;
     private String linkLinkedin;
-    private YearClassDTO yearClass;
+    private Integer yearClass;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OffsetDateTime dateRegister;

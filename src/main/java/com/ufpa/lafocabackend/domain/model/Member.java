@@ -50,9 +50,8 @@ public class Member {
     @Column(nullable = true, unique = true, length = 225)
     private String linkLinkedin;
 
-    @ManyToOne
-    @JoinColumn(name = "year_class_id", foreignKey = @ForeignKey(name = "fk_member_year_class_id"))
-    private YearClass yearClass;
+    @Column(columnDefinition = "integer")
+    private Integer yearClass;
 
     @ManyToMany
     @JoinTable(
