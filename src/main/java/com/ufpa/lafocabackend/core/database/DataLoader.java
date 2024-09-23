@@ -29,6 +29,9 @@ public class DataLoader implements CommandLineRunner {
     @Value("${group.admin.name}")
     private String adminGroupName;
 
+    @Value("${group.admin.description}")
+    private String adminGroupDescription;
+
     @Value("${permission.admin.name}")
     private String permissionFullAccessName;
 
@@ -64,6 +67,7 @@ public class DataLoader implements CommandLineRunner {
 
             Group admin = new Group();
             admin.setName(adminGroupName);
+            admin.setDescription(adminGroupDescription);
             admin.setPermissions(permissions);
 
             groupService.save(admin);

@@ -37,6 +37,9 @@ public class Group {
                     foreignKey = @ForeignKey(name = "fk_permission_group_permission_id")))
     private Set<Permission> permissions = new HashSet<>();
 
+    @Column(nullable = false)
+    private String description;
+
     public Group() {
 
     }

@@ -26,4 +26,7 @@ public class GroupDto {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<@Positive @NotNull Long> permissionsId;
 
+    @NotBlank
+    private String description;
+
 }
