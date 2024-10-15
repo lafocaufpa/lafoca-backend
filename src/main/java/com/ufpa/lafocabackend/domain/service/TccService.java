@@ -3,8 +3,10 @@ package com.ufpa.lafocabackend.domain.service;
 import com.ufpa.lafocabackend.domain.exception.EntityInUseException;
 import com.ufpa.lafocabackend.domain.exception.EntityNotFoundException;
 import com.ufpa.lafocabackend.domain.model.LineOfResearch;
+import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.Tcc;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
+import com.ufpa.lafocabackend.repository.MemberRepository;
 import com.ufpa.lafocabackend.repository.TccRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TccService {
@@ -24,14 +27,16 @@ public class TccService {
     private final TccRepository tccRepository;
     private final LineOfResearchService lineOfResearchService;
     private final ModelMapper modelMapper;
+    private final MemberRepository memberRepository;
 
-
-    public TccService(TccRepository tccRepository, LineOfResearchService lineOfResearchService, ModelMapper modelMapper) {
+    public TccService(TccRepository tccRepository, LineOfResearchService lineOfResearchService, ModelMapper modelMapper, MemberRepository memberRepository) {
         this.tccRepository = tccRepository;
         this.lineOfResearchService = lineOfResearchService;
         this.modelMapper = modelMapper;
+        this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public Tcc save (TccInputDto tccInputDto) {
         final Tcc tcc = modelMapper.map(tccInputDto, Tcc.class);
 
@@ -43,7 +48,16 @@ public class TccService {
                     add(lineOfResearch);
         }
         tcc.setLinesOfResearch(lineOfResearches);
-        return tccRepository.save(tcc);
+        Tcc tccSaved = tccRepository.save(tcc);
+
+        if(tccInputDto.getSlugMember() != null) {
+            Member member = memberRepository.findBySlug(tccInputDto.getSlugMember()).
+                    orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), tccInputDto.getSlugMember()));
+            member.setTcc(tccSaved);
+            memberRepository.save(member);
+        }
+
+        return tccSaved ;
     }
 
     public Page<Tcc> list (Pageable pageable){
@@ -92,6 +106,21 @@ public class TccService {
         }
 
         currentTcc.setLinesOfResearch(linesOfResearches);
+
+        if(tccInputDto.getSlugMember() != null) {
+
+            Optional<Member> memberByTcc = tccRepository.findMemberByTcc(tccId);
+
+            if(memberByTcc.isPresent()) {
+                memberByTcc.get().setTcc(null);
+                memberRepository.save(memberByTcc.get());
+            }
+
+            Member member = memberRepository.findBySlug(tccInputDto.getSlugMember()).
+                    orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), tccInputDto.getSlugMember()));
+            member.setTcc(currentTcc);
+            memberRepository.save(member);
+        }
 
         return currentTcc;
     }

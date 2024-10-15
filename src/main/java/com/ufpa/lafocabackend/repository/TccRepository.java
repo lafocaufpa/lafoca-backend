@@ -1,5 +1,6 @@
 package com.ufpa.lafocabackend.repository;
 
+import com.ufpa.lafocabackend.domain.model.Member;
 import com.ufpa.lafocabackend.domain.model.Tcc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface TccRepository extends JpaRepository<Tcc, Long> {
@@ -31,6 +34,9 @@ public interface TccRepository extends JpaRepository<Tcc, Long> {
 
     @Query("SELECT t FROM Tcc t JOIN t.linesOfResearch l WHERE t.title LIKE %:title% AND l.lineOfResearchId = :lineOfResearchId AND YEAR(t.date) = :year")
     Page<Tcc> findByNameContainingAndLineOfResearchIdAndYear(@Param("title") String title, @Param("lineOfResearchId") String lineOfResearchId, @Param("year") Integer year, Pageable pageable);
+
+    @Query("SELECT m FROM Member m where m.tcc.tccId = :tccId")
+    Optional<Member> findMemberByTcc(Long tccId);
 }
 
 
