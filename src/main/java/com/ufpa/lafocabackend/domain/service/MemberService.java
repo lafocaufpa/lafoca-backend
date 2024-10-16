@@ -134,9 +134,12 @@ public class MemberService {
             read.setNameMember(member.getFullName());
             member.setTcc(read);
         } else {
-            member.getTcc().setNameMember(null);
-            member.getTcc().setSlugMember(null);
-            member.setTcc(null);
+            Tcc tcc = member.getTcc();
+            if(tcc != null){
+                member.getTcc().setNameMember(null);
+                member.getTcc().setSlugMember(null);
+                member.setTcc(null);
+            }
         }
 
         if(memberInputDto.getYearClassId() != null) {
