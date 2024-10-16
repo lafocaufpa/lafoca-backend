@@ -86,6 +86,8 @@ public class MemberService {
         if(memberInputDto.getTccId() != null){
             Long tccId = memberInputDto.getTccId();
             Tcc read = tccService.read(tccId);
+            read.setNameMember(member.getFullName());
+            read.setSlugMember(member.getSlug());
             member.setTcc(read);
         }
 
@@ -127,10 +129,13 @@ public class MemberService {
         }
 
         if(memberInputDto.getTccId() != null){
-            Long tccId = memberInputDto.getTccId();
-            Tcc read = tccService.read(tccId);
+            Tcc read = tccService.read(memberInputDto.getTccId());
+            read.setSlugMember(member.getSlug());
+            read.setNameMember(member.getFullName());
             member.setTcc(read);
         } else {
+            member.getTcc().setNameMember(null);
+            member.getTcc().setSlugMember(null);
             member.setTcc(null);
         }
 

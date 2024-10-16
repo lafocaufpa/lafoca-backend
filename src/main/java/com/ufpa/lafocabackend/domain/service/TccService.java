@@ -53,6 +53,8 @@ public class TccService {
         if(tccInputDto.getSlugMember() != null) {
             Member member = memberRepository.findBySlug(tccInputDto.getSlugMember()).
                     orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), tccInputDto.getSlugMember()));
+            tccSaved.setSlugMember(member.getSlug());
+            tccSaved.setNameMember(member.getFullName());
             member.setTcc(tccSaved);
             memberRepository.save(member);
         }
@@ -118,8 +120,20 @@ public class TccService {
 
             Member member = memberRepository.findBySlug(tccInputDto.getSlugMember()).
                     orElseThrow(() -> new EntityNotFoundException(Member.class.getSimpleName(), tccInputDto.getSlugMember()));
+            currentTcc.setSlugMember(member.getSlug());
+            currentTcc.setNameMember(member.getFullName());
             member.setTcc(currentTcc);
             memberRepository.save(member);
+        } else {
+            Optional<Member> memberByTcc = tccRepository.findMemberByTcc(tccId);
+
+            if(memberByTcc.isPresent()) {
+                memberByTcc.get().setTcc(null);
+                currentTcc.setNameMember(null);
+                currentTcc.setSlugMember(null);
+
+                memberRepository.save(memberByTcc.get());
+            }
         }
 
         return currentTcc;
