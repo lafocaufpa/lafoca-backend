@@ -19,5 +19,4 @@ public class MemberInfo implements Serializable {
             this.slug = null;
         }
     }
-
 }

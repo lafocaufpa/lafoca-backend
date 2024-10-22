@@ -90,6 +90,10 @@ public class Member {
             inverseJoinColumns = @JoinColumn(name = "article_id", foreignKey = @ForeignKey(name = "fk_member_article_article_id")))
     private Set<Article> articles = new HashSet<>();
 
+    public boolean removeArticle(Article article) {
+        return articles.remove(article);
+    }
+
     @ManyToMany
     @JoinTable(name = "member_project",
             joinColumns = @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "fk_member_project_member_id")),
@@ -136,4 +140,7 @@ public class Member {
     }
 
 
+    public void removeProject(Project currentProject) {
+        projects.remove(currentProject);
+    }
 }

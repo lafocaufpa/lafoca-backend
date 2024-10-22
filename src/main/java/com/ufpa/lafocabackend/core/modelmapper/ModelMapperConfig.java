@@ -1,6 +1,7 @@
 package com.ufpa.lafocabackend.core.modelmapper;
 
 import com.ufpa.lafocabackend.domain.model.*;
+import com.ufpa.lafocabackend.domain.model.dto.input.ArticleInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.TccInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.input.UserInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.FunctionMemberDto;

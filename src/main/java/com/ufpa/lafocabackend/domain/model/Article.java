@@ -65,6 +65,20 @@ public class Article {
         return getLinesOfResearch().remove(lineOfResearch);
     }
 
+    public boolean addMember(Member member){
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setName(member.getFullName());
+        memberInfo.setSlug(member.getSlug());
+        return members.add(memberInfo);
+    }
+
+    public boolean removeMember(Member member){
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setName(member.getFullName());
+        memberInfo.setSlug(member.getSlug());
+        return members.add(memberInfo);
+    }
+
 
     @PreUpdate
     @PrePersist
@@ -77,4 +91,7 @@ public class Article {
 
     }
 
+    public boolean addMember(MemberInfo memberInfo) {
+        return members.add(memberInfo);
+    }
 }

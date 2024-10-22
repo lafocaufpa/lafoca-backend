@@ -10,8 +10,10 @@ import com.ufpa.lafocabackend.domain.model.dto.input.MemberInputDto;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberResumed;
 import com.ufpa.lafocabackend.domain.model.dto.output.MemberSummaryDto;
 import com.ufpa.lafocabackend.infrastructure.service.PhotoStorageService;
+import com.ufpa.lafocabackend.repository.ArticleRepository;
 import com.ufpa.lafocabackend.repository.MemberPhotoRepository;
 import com.ufpa.lafocabackend.repository.MemberRepository;
+import com.ufpa.lafocabackend.repository.ProjectRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -35,8 +37,10 @@ public class MemberService {
     private final ProjectService projectService;
     private final MemberPhotoRepository memberPhotoRepository;
     private final PhotoStorageService photoStorageService;
+    private final ArticleRepository articleRepository;
+    private final ProjectRepository projectRepository;
 
-    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService) {
+    public MemberService(MemberRepository memberRepository, FunctionMemberService functionMemberService, SkillService skillService, ModelMapper modelMapper, TccService tccService, ArticleService articleService, ProjectService projectService, MemberPhotoRepository memberPhotoRepository, PhotoStorageService photoStorageService, ArticleRepository articleRepository, ProjectRepository projectRepository) {
         this.memberRepository = memberRepository;
         this.functionMemberService = functionMemberService;
         this.skillService = skillService;
@@ -46,6 +50,8 @@ public class MemberService {
         this.projectService = projectService;
         this.memberPhotoRepository = memberPhotoRepository;
         this.photoStorageService = photoStorageService;
+        this.articleRepository = articleRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Transactional
@@ -72,14 +78,20 @@ public class MemberService {
         }
 
         if (memberInputDto.getProjectsId() != null) {
+            memberRepository.save(member);
             for (String projectId : memberInputDto.getProjectsId()) {
-                member.addProject(projectService.read(projectId));
+                Project project = projectService.read(projectId);
+                member.addProject(project);
+                project.addMember(member);
             }
         }
 
         if (memberInputDto.getArticlesId() != null) {
+            memberRepository.save(member);
             for (Long articleId : memberInputDto.getArticlesId()) {
-                member.addArticles(articleService.read(articleId));
+                Article article = articleService.read(articleId);
+                member.addArticles(article);
+                article.addMember(member);
             }
         }
 
@@ -113,20 +125,151 @@ public class MemberService {
         }
 
         if (memberInputDto.getProjectsId() != null) {
-            Set<Project> projects = new HashSet<>();
-            for (String projectId : memberInputDto.getProjectsId()) {
-                projects.add(projectService.read(projectId));
+            Set<Project> currentProjects = member.getProjects(); // Projetos associados atualmente no banco de dados
+
+            // Verifica se há mudanças no número de projetos
+            if (currentProjects.size() != memberInputDto.getProjectsId().size()) {
+                Set<Project> newProjects = new HashSet<>();
+                for (String projectId : memberInputDto.getProjectsId()) {
+                    Project project = projectService.read(projectId);
+                    newProjects.add(project);
+
+                    // Obter o conjunto de MemberInfo do projeto
+                    Set<MemberInfo> memberInfos = project.getMembers();
+
+                    // Verificar se o membro já está no projeto, baseado no slug
+                    MemberInfo existingMemberInfo = null;
+                    for (MemberInfo memberInfo : memberInfos) {
+                        if (memberInfo.getSlug() != null && memberInfo.getSlug().equals(member.getSlug())) {
+                            existingMemberInfo = memberInfo;
+                            break;
+                        }
+                    }
+
+                    // Se o membro ainda não estiver associado ao projeto, adicionar um novo MemberInfo
+                    if (existingMemberInfo == null) {
+                        MemberInfo newMemberInfo = new MemberInfo();
+                        newMemberInfo.setName(member.getFullName());
+
+                        // Se o membro for interno (tem slug)
+                        if (member.getSlug() != null) {
+                            newMemberInfo.setSlug(member.getSlug());
+                        }
+
+                        // Adicionar o novo MemberInfo ao projeto
+                        memberInfos.add(newMemberInfo);
+                        projectRepository.save(project);  // Persistir as alterações no projeto
+                    }
+                }
+
+                Set<Project> oldProjects = member.getProjects();
+
+                // Cria uma lista para armazenar os projetos que estão apenas em oldProjects
+                Set<Project> projectsNotInNewList = new HashSet<>(oldProjects);
+
+                // Retira todos os projetos presentes em newProjects da lista de oldProjects
+                projectsNotInNewList.removeAll(newProjects);
+
+                for (Project removedProject : projectsNotInNewList) {
+                    // Obter o conjunto de MemberInfo do projeto
+                    Set<MemberInfo> memberInfos = removedProject.getMembers();
+
+                    // Encontra o MemberInfo que corresponde ao membro que está sendo removido
+                    MemberInfo memberInfoToRemove = null;
+                    for (MemberInfo memberInfo : memberInfos) {
+                        if (memberInfo.getSlug() != null && memberInfo.getSlug().equals(member.getSlug())) {
+                            memberInfoToRemove = memberInfo;
+                            break;
+                        }
+                    }
+
+                    // Se foi encontrado o MemberInfo correspondente, remover da lista
+                    if (memberInfoToRemove != null) {
+                        memberInfos.remove(memberInfoToRemove);
+                    }
+
+                    projectRepository.save(removedProject);  // Persistir as alterações no projeto removido
+                }
+
+                // Atualizar os projetos do membro
+                member.setProjects(newProjects);
             }
-            member.setProjects(projects);
         }
 
         if (memberInputDto.getArticlesId() != null) {
-            Set<Article> articles = new HashSet<>();
-            for (Long articleId : memberInputDto.getArticlesId()) {
-                articles.add(articleService.read(articleId));
+            Set<Article> currentArticles = member.getArticles(); // Artigos associados atualmente no banco de dados
+
+            // Verifica se há mudança no número de artigos
+            if (currentArticles.size() != memberInputDto.getArticlesId().size()) {
+                Set<Article> newArticles = new HashSet<>();
+                for (Long articleId : memberInputDto.getArticlesId()) {
+
+                    Article article = articleService.read(articleId);
+                    newArticles.add(article);
+
+                    // Obter o conjunto de MemberInfo do artigo
+                    Set<MemberInfo> memberInfos = article.getMembers();
+
+                    // Verificar se o membro já está no article, baseado no slug
+                    MemberInfo existingMemberInfo = null;
+                    for (MemberInfo memberInfo : memberInfos) {
+                        if (memberInfo.getSlug() != null && memberInfo.getSlug().equals(member.getSlug())) {
+                            existingMemberInfo = memberInfo;
+                            break;
+                        }
+                    }
+
+                    // Se o membro ainda não estiver associado ao artigo, adicionar um novo MemberInfo
+                    if (existingMemberInfo == null) {
+                        MemberInfo newMemberInfo = new MemberInfo();
+                        newMemberInfo.setName(member.getFullName());
+
+                        // Se o membro for interno (tem slug)
+                        if (member.getSlug() != null) {
+                            newMemberInfo.setSlug(member.getSlug());
+                        }
+
+                        // Adicionar o novo MemberInfo ao artigo
+                        memberInfos.add(newMemberInfo);
+                        articleRepository.save(article);  // Persistir as alterações no artigo
+                    }
+                }
+
+                Set<Article> oldArticles = member.getArticles();
+
+                // Cria uma lista para armazenar os artigos que estão apenas em oldArticles
+                Set<Article> articlesNotInNewList = new HashSet<>(oldArticles);
+
+                // Retira todos os artigos presentes em newArticles da lista de oldArticles
+                articlesNotInNewList.removeAll(newArticles);
+
+                for (Article removedArticle : articlesNotInNewList) {
+                    // Obtem o conjunto de MemberInfo do artigo
+                    Set<MemberInfo> memberInfos = removedArticle.getMembers();
+
+                    // Encontra o MemberInfo que corresponde ao membro que está sendo removido
+                    MemberInfo memberInfoToRemove = null;
+                    for (MemberInfo memberInfo : memberInfos) {
+                        if (memberInfo.getSlug() != null && memberInfo.getSlug().equals(member.getSlug())) {
+                            memberInfoToRemove = memberInfo;
+                            break;
+                        }
+                    }
+
+                    // Se foi encontrado o MemberInfo correspondente, remover da lista
+                    if (memberInfoToRemove != null) {
+                        memberInfos.remove(memberInfoToRemove);
+                    }
+
+                    articleRepository.save(removedArticle);
+                }
+
+                // Atualizar os artigos do membro
+                member.setArticles(newArticles);
             }
-            member.setArticles(articles);
         }
+
+
 
         if(memberInputDto.getTccId() != null){
             Tcc read = tccService.read(memberInputDto.getTccId());

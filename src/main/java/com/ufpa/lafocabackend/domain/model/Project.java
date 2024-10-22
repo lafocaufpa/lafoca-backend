@@ -99,7 +99,19 @@ public class Project {
         }
     }
 
+
     public boolean isOngoing() {
         return this.endDate == null || this.endDate.trim().isEmpty();
+    }
+
+    public void addMember(MemberInfo memberInfo) {
+        members.add(memberInfo);
+    }
+
+    public boolean addMember(Member member){
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setName(member.getFullName());
+        memberInfo.setSlug(member.getSlug());
+        return members.add(memberInfo);
     }
 }
