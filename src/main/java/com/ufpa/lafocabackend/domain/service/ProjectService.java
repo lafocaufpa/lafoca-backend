@@ -181,6 +181,7 @@ public class ProjectService {
 
     private void setMembersInProject(Project currentProject, Set<MemberInfo> members) {
         if (members != null && !members.isEmpty()) {
+            currentProject.setMembers(members);
             for (MemberInfo memberInfo : members) {
 
                 if (memberInfo.getSlug() != null) {
@@ -192,8 +193,6 @@ public class ProjectService {
                         foundMember.addProject(currentProject);
                         memberRepository.save(foundMember);
                     }
-                } else if (memberInfo.getSlug() == null && memberInfo.getName() != null) {
-                    currentProject.addMember(memberInfo);
                 }
             }
         }

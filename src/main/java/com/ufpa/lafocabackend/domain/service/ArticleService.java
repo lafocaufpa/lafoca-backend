@@ -120,7 +120,7 @@ public class ArticleService {
             }
         }
 
-        // Associar novos membros
+        // Associa novos membros
         setMembersInArticle(currentArticle, newMembers);
 
         return articleRepository.save(currentArticle);  // Salvar o artigo atualizado
@@ -128,19 +128,15 @@ public class ArticleService {
 
     private void setMembersInArticle(Article currentArticle, Set<MemberInfo> members) {
         if (members != null && !members.isEmpty()) {
+            currentArticle.setMembers(members);
             for (MemberInfo memberInfo : members) {
-
                 if (memberInfo.getSlug() != null) {
                     Optional<Member> member = memberRepository.findBySlug(memberInfo.getSlug());
-
                     if (member.isPresent()) {
                         Member foundMember = member.get();
                         foundMember.addArticles(currentArticle);  // Associar o artigo ao membro
                         memberRepository.save(foundMember);  // Persistir a alteração no banco
                     }
-                } else if (memberInfo.getSlug() == null && memberInfo.getName() != null) {
-                    // Tratar membros externos (sem slug)
-                    currentArticle.addMember(memberInfo);  // Adiciona o MemberInfo diretamente ao artigo
                 }
             }
         }
